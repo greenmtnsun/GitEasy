@@ -35,12 +35,11 @@ function Set-Vault {
 }
 
 ## --- 2. THE SYNC ENGINE ---
-
 function Save-Work {
     <#
     .SYNOPSIS
-        Snapshots every file and pushes to GitLab. 
-        Handles Module versioning and ensures you pull peer updates first.
+        Snapshots every file (SQL, PS1, RDL, DTSX) and pushes to GitLab/GitHub.
+        Handles atomic versioning and "First-Day" sync issues.
     #>
     param(
         [Parameter(Mandatory=$true)][string]$Note, 
@@ -49,13 +48,12 @@ function Save-Work {
         [string]$BumpType = 'Revision'
     )
     
-    # 1. Handle PowerShell Module Versioning
+    # 1. THE FULL VERSIONING LOGIC (RESTORED)
     if ($NewVersion) {
         $Manifest = Get-ChildItem *.psd1 | Select-Object -First 1
         if ($Manifest) {
             $v = [version](Import-PowerShellDataFile $Manifest.FullName).ModuleVersion
             
-            # Smart Bump Logic
             switch ($BumpType) {
                 'Major'    { $newV = New-Object System.Version ($v.Major + 1), 0, 0, 0 }
                 'Minor'    { $newV = New-Object System.Version $v.Major, ($v.Minor + 1), 0, 0 }
@@ -69,17 +67,28 @@ function Save-Work {
         }
     }
 
-    # 2. The Git Flow
+    # 2. STAGE ALL ASSETS
     git add .
+
+    # 3. SYNC ENGINE (HARDENED)
     if (git status --porcelain) {
-        Write-Host "Checking for peer updates..." -ForegroundColor Gray
-        git pull origin main --rebase
+        Write-Host "Syncing with Vault..." -ForegroundColor Cyan
         
+        # This handles the 'unrelated histories' curveball from GitHub
+        git pull origin main --rebase --allow-unrelated-histories 2>$null
+
         git commit -m "$Note"
-        git push origin main
-        Write-Host "Work synced and secured." -ForegroundColor Green
+        
+        # Ensure we track the branch (vital for the first push)
+        git push -u origin main
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Work synced and secured." -ForegroundColor Green
+        } else {
+            Write-Error "Push failed! Check your connection or credentials."
+        }
     } else {
-        Write-Warning "No changes found to save."
+        Write-Warning "No changes detected. Nothing to vault."
     }
 }
 
