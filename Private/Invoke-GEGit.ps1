@@ -8,10 +8,14 @@
     $old = Get-Location
     try {
         Set-Location -LiteralPath $WorkingDirectory
+        $oldNativePreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
         $output = & git @ArgumentList 2>&1
         $code = $LASTEXITCODE
+        $ErrorActionPreference = $oldNativePreference
     }
     finally {
+        $ErrorActionPreference = 'Stop'
         Set-Location -LiteralPath $old
     }
     if (($code -ne 0) -and (-not $AllowFailure)) {
