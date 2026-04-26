@@ -1,5 +1,18 @@
 ﻿function Show-History {
     [CmdletBinding()]
-    param()
-    throw 'Show-History exists as part of the classic GitEasy public API, but its V2 engine implementation is not wired yet.'
+    param(
+        [ValidateRange(1, 200)]
+        [int]$Count = 20
+    )
+
+    $history = @(Get-GEHistory -Count $Count)
+
+    if ($history.Count -eq 0) {
+        return [PSCustomObject]@{
+            Repository = Get-GERepoRoot
+            Message    = 'No commit history found.'
+        }
+    }
+
+    return $history
 }
