@@ -9,36 +9,89 @@
         [switch]$NoPush
     )
 
-    Assert-GESafeSave
+    function Invoke-GEGitCommand {
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory)]
+            [string[]]$ArgumentList
+        )
 
-    $StatusOutput = @(git status --porcelain)
+        $StandardOutputFile = [System.IO.Path]::GetTempFileName()
+        $StandardErrorFile = [System.IO.Path]::GetTempFileName()
 
-    if ($LASTEXITCODE -ne 0) {
-        throw 'Unable to read git status.'
+        try {
+            $Process = Start-Process -FilePath 'git.exe' -ArgumentList $ArgumentList -NoNewWindow -Wait -PassThru -RedirectStandardOutput $StandardOutputFile -RedirectStandardError $StandardErrorFile
+
+            $OutputLines = @()
+
+            if (Test-Path -LiteralPath $StandardOutputFile -PathType Leaf) {
+                $OutputLines += @(Get-Content -LiteralPath $StandardOutputFile -ErrorAction SilentlyContinue)
+            }
+
+            if (Test-Path -LiteralPath $StandardErrorFile -PathType Leaf) {
+                $OutputLines += @(Get-Content -LiteralPath $StandardErrorFile -ErrorAction SilentlyContinue)
+            }
+
+            [PSCustomObject]@{
+                ExitCode = $Process.ExitCode
+                Output   = $OutputLines
+            }
+        }
+        finally {
+            Remove-Item -LiteralPath $StandardOutputFile -Force -ErrorAction SilentlyContinue
+            Remove-Item -LiteralPath $StandardErrorFile -Force -ErrorAction SilentlyContinue
+        }
     }
 
-    if ($StatusOutput.Count -eq 0) {
+    $null = Assert-GESafeSave
+
+    $StatusResult = Invoke-GEGitCommand -ArgumentList @('status', '--porcelain')
+
+    if ($StatusResult.ExitCode -ne 0) {
+        throw 'Unable to read git status. ' + ($StatusResult.Output -join ' ')
+    }
+
+    if ($StatusResult.Output.Count -eq 0) {
         Write-Host 'No changes to save.'
         return
     }
 
-    git add --all
+    $AddResult = Invoke-GEGitCommand -ArgumentList @('add', '--all')
 
-    if ($LASTEXITCODE -ne 0) {
-        throw 'git add failed.'
+    foreach ($Line in $AddResult.Output) {
+        Write-Host $Line
     }
 
-    git commit -m $Message
-
-    if ($LASTEXITCODE -ne 0) {
-        throw 'git commit failed.'
+    if ($AddResult.ExitCode -ne 0) {
+        throw 'git add failed. ' + ($AddResult.Output -join ' ')
     }
 
-    $BranchName = git branch --show-current
+    $CommitMessageFile = Join-Path ([System.IO.Path]::GetTempPath()) ('GitEasyCommitMessage_' + [guid]::NewGuid().ToString() + '.txt')
 
-    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($BranchName)) {
-        throw 'Unable to determine current branch.'
+    try {
+        Set-Content -LiteralPath $CommitMessageFile -Value @($Message) -Encoding UTF8
+
+        $CommitResult = Invoke-GEGitCommand -ArgumentList @('commit', '-F', $CommitMessageFile)
+
+        foreach ($Line in $CommitResult.Output) {
+            Write-Host $Line
+        }
+
+        if ($CommitResult.ExitCode -ne 0) {
+            throw 'git commit failed. ' + ($CommitResult.Output -join ' ')
+        }
     }
+    finally {
+        Remove-Item -LiteralPath $CommitMessageFile -Force -ErrorAction SilentlyContinue
+    }
+
+    $BranchResult = Invoke-GEGitCommand -ArgumentList @('branch', '--show-current')
+
+    if ($BranchResult.ExitCode -ne 0 -or $BranchResult.Output.Count -eq 0) {
+        throw 'Unable to determine current branch. ' + ($BranchResult.Output -join ' ')
+    }
+
+    $BranchName = $BranchResult.Output[0]
 
     Write-Host "Saved work on branch $BranchName."
 
@@ -47,9 +100,13 @@
         return
     }
 
-    git push
+    $PushResult = Invoke-GEGitCommand -ArgumentList @('push')
 
-    if ($LASTEXITCODE -ne 0) {
-        throw 'git push failed.'
+    foreach ($Line in $PushResult.Output) {
+        Write-Host $Line
+    }
+
+    if ($PushResult.ExitCode -ne 0) {
+        throw 'git push failed. ' + ($PushResult.Output -join ' ')
     }
 }
