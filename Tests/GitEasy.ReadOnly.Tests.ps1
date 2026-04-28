@@ -69,27 +69,28 @@ Describe 'read-only GitEasy commands' {
 
     It 'Show-Remote reports origin fetch and push remotes' {
         $remotes = @(Show-Remote)
-        $remotes.Count | Should -Be 2
-        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'fetch' }).Count | Should -Be 1
-        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'push' }).Count | Should -Be 1
-        @($remotes | Select-Object -ExpandProperty Provider -Unique) | Should -Contain 'GitHub'
+        $remotes.Count | Should Be 2
+        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'fetch' }).Count | Should Be 1
+        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'push' }).Count | Should Be 1
+        (@($remotes | Select-Object -ExpandProperty Provider -Unique) -contains 'GitHub') | Should Be $true
     }
 
     It 'Show-History returns recent commits' {
         $history = @(Show-History -Count 5)
-        $history.Count | Should -BeGreaterThan 0
-        ($history | Select-Object -First 1).Message | Should -Be 'read only baseline'
+        ($history.Count -gt 0) | Should Be $true
+        ($history | Select-Object -First 1).Message | Should Be 'read only baseline'
     }
 
     It 'Find-CodeChange reports a clean tree and then a dirty tree' {
         $clean = Find-CodeChange
-        $clean.IsClean | Should -BeTrue
+        $clean.IsClean | Should Be $true
 
         Set-Content -LiteralPath (Join-Path $script:TempRepo 'change.txt') -Value 'pending change' -Encoding UTF8
         $dirty = Find-CodeChange
 
-        $dirty.IsClean | Should -BeFalse
-        $dirty.ChangeCount | Should -BeGreaterThan 0
-        $dirty.UntrackedCount | Should -BeGreaterThan 0
+        $dirty.IsClean | Should Be $false
+        ($dirty.ChangeCount -gt 0) | Should Be $true
+        ($dirty.UntrackedCount -gt 0) | Should Be $true
     }
 }
+

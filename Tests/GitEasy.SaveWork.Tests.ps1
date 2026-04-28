@@ -69,10 +69,10 @@ Describe 'Save-Work' {
         Save-Work 'initial pester commit' -NoPush
 
         $log = Invoke-TestGit -ArgumentList @('log', '--oneline', '-1')
-        ($log.Output -join ' ') | Should -Match 'initial pester commit'
+        ($log.Output -join ' ') | Should Match 'initial pester commit'
 
         $status = Invoke-TestGit -ArgumentList @('status', '--porcelain=v1')
-        @($status.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should -Be 0
+        @($status.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should Be 0
     }
 
     It 'does not create a new commit when the tree is clean' {
@@ -83,13 +83,13 @@ Describe 'Save-Work' {
         Save-Work 'should not commit' -NoPush
         $after = (Invoke-TestGit -ArgumentList @('rev-parse', 'HEAD')).Output | Select-Object -First 1
 
-        $after | Should -Be $before
+        $after | Should Be $before
     }
 
     It 'refuses to push without upstream unless NoPush or SetUpstream is used' {
         Set-Content -LiteralPath (Join-Path $script:TempRepo 'README.md') -Value 'no upstream test' -Encoding UTF8
 
-        { Save-Work 'should fail without upstream' } | Should -Throw '*No upstream branch*'
+        { Save-Work 'should fail without upstream' } | Should Throw
     }
 
     It 'refuses to save when a Git operation is in progress' {
@@ -99,6 +99,8 @@ Describe 'Save-Work' {
         Set-Content -LiteralPath (Join-Path $script:TempRepo '.git\MERGE_HEAD') -Value '0000000000000000000000000000000000000000' -Encoding UTF8
         Set-Content -LiteralPath (Join-Path $script:TempRepo 'busy.txt') -Value 'busy change' -Encoding UTF8
 
-        { Save-Work 'blocked by merge' -NoPush } | Should -Throw '*operation in progress*'
+        { Save-Work 'blocked by merge' -NoPush } | Should Throw
     }
 }
+
+

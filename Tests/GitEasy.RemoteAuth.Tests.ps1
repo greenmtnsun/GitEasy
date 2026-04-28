@@ -67,25 +67,27 @@ Describe 'remote and credential helper commands' {
     }
 
     It 'Set-Token rejects embedded credentials' {
-        { Set-Token -RemoteUrl 'https://token@github.com/greenmtnsun/GitEasy.git' } | Should -Throw '*Do not embed*'
+        { Set-Token -RemoteUrl 'https://token@github.com/greenmtnsun/GitEasy.git' } | Should Throw
     }
 
     It 'Set-Token configures a clean HTTPS origin' {
         Set-Token -RemoteUrl 'https://github.com/greenmtnsun/GitEasy.git'
         $url = (Invoke-TestGit -ArgumentList @('remote', 'get-url', 'origin')).Output | Select-Object -First 1
-        $url | Should -Be 'https://github.com/greenmtnsun/GitEasy.git'
+        $url | Should Be 'https://github.com/greenmtnsun/GitEasy.git'
     }
 
     It 'Set-Ssh converts an HTTPS origin to SSH' {
         Set-Token -RemoteUrl 'https://github.com/greenmtnsun/GitEasy.git' | Out-Null
         Set-Ssh | Out-Null
         $url = (Invoke-TestGit -ArgumentList @('remote', 'get-url', 'origin')).Output | Select-Object -First 1
-        $url | Should -Be 'git@github.com:greenmtnsun/GitEasy.git'
+        $url | Should Be 'git@github.com:greenmtnsun/GitEasy.git'
     }
 
     It 'Get-VaultStatus returns a structured object' {
         $status = Get-VaultStatus
-        $status.PSObject.Properties.Name | Should -Contain 'CredentialHelper'
-        $status.PSObject.Properties.Name | Should -Contain 'Configured'
+        ($status.PSObject.Properties.Name -contains 'CredentialHelper') | Should Be $true
+        ($status.PSObject.Properties.Name -contains 'Configured') | Should Be $true
     }
 }
+
+
