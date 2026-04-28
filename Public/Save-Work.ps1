@@ -1,4 +1,4 @@
-﻿function Save-Work {
+function Save-Work {
     [CmdletBinding()]
     param(
         [Parameter()]
@@ -69,7 +69,7 @@
     $CommitMessageFile = Join-Path ([System.IO.Path]::GetTempPath()) ('GitEasyCommitMessage_' + [guid]::NewGuid().ToString() + '.txt')
 
     try {
-        Set-Content -LiteralPath $CommitMessageFile -Value @($Message) -Encoding UTF8
+        [System.IO.File]::WriteAllText($CommitMessageFile, $Message, [System.Text.UTF8Encoding]::new($false))
 
         $CommitResult = Invoke-GEGitCommand -ArgumentList @('commit', '-F', $CommitMessageFile)
 
