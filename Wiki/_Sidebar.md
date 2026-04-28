@@ -1,0 +1,27 @@
+# GitEasy
+
+- [[Home]]
+- [[Public-Commands]]
+- [[Private-Helpers]]
+- [[Architecture]]
+- [[Troubleshooting]]
+- [[Known-Bugs-and-Fixes]]
+- [[Roadmap]]
+- [[Generated-Page-Index]]
+
+## Public Commands
+- [[Public-Clear-Junk]]
+- [[Public-Find-CodeChange]]
+- [[Public-Get-VaultStatus]]
+- [[Public-New-WorkBranch]]
+- [[Public-Reset-Login]]
+- [[Public-Restore-File]]
+- [[Public-Save-Work]]
+- [[Public-Set-Ssh]]
+- [[Public-Set-Token]]
+- [[Public-Set-Vault]]
+- [[Public-Show-History]]
+- [[Public-Show-Remote]]
+- [[Public-Switch-Work]]
+- [[Public-Test-Login]]
+- [[Public-Undo-Changes]]
