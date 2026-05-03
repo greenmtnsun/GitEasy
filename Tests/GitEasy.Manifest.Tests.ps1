@@ -90,7 +90,13 @@ Describe 'GitEasy manifest and command surface' {
             'Show-History',
             'Find-CodeChange',
             'Set-Ssh',
-            'Reset-Login'
+            'Reset-Login',
+            'Show-Diagnostic',
+            'New-WorkBranch',
+            'Switch-Work',
+            'Restore-File',
+            'Undo-Changes',
+            'Clear-Junk'
         )
 
         foreach ($command in $implemented) {
