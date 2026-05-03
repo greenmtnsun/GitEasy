@@ -1,0 +1,70 @@
+name: Pester
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pester-windows-powershell:
+    name: Pester on Windows PowerShell 5.1
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Git and PowerShell versions
+        shell: powershell
+        run: |
+          git --version
+          $PSVersionTable | Format-List
+
+      - name: Run Pester
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module Pester -Force
+          $r = Invoke-Pester -Script .\Tests -PassThru -Quiet
+          Write-Host ""
+          Write-Host "Total: $($r.TotalCount)  Passed: $($r.PassedCount)  Failed: $($r.FailedCount)"
+          if ($r.FailedCount -gt 0) {
+              $r.TestResult | Where-Object { -not $_.Passed } | ForEach-Object {
+                  Write-Host "FAIL: $($_.Name) >> $($_.FailureMessage)"
+              }
+              throw "Pester reported $($r.FailedCount) failure(s)."
+          }
+
+      - name: Public-surface jargon audit
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\tools\Audit-PublicJargon.ps1 -ProjectRoot .
+
+  pester-pwsh:
+    name: Pester on PowerShell 7
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Git and PowerShell versions
+        shell: pwsh
+        run: |
+          git --version
+          $PSVersionTable | Format-List
+
+      - name: Run Pester
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module Pester -Force
+          $r = Invoke-Pester -Script .\Tests -PassThru -Quiet
+          Write-Host ""
+          Write-Host "Total: $($r.TotalCount)  Passed: $($r.PassedCount)  Failed: $($r.FailedCount)"
+          if ($r.FailedCount -gt 0) {
+              $r.TestResult | Where-Object { -not $_.Passed } | ForEach-Object {
+                  Write-Host "FAIL: $($_.Name) >> $($_.FailureMessage)"
+              }
+              throw "Pester reported $($r.FailedCount) failure(s)."
+          }
