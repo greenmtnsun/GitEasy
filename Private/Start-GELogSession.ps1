@@ -22,7 +22,7 @@ function Start-GELogSession {
 
     Remove-GEOldLog -Directory $logDirectory -RetentionDays $RetentionDays -ErrorAction SilentlyContinue
 
-    $stamp = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ')
+    $stamp = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssfffZ')
     $fileName = "$Command-$stamp.log"
     $filePath = Join-Path $logDirectory $fileName
 
