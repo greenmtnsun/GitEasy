@@ -18,6 +18,7 @@
         'Set-Ssh'
         'Set-Token'
         'Set-Vault'
+        'Show-Diagnostic'
         'Show-History'
         'Show-Remote'
         'Switch-Work'

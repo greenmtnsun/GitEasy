@@ -40,3 +40,11 @@ Find-CodeChange
 Save-Work -Message 'Add GitEasy command wiki enrichment script'
 Show-History -Count 5
 git status -sb
+
+
+
+$ErrorActionPreference = 'Stop'
+
+Set-Location 'C:\Sysadmin\Scripts\GitEasyV2'
+
+.\Update-GitEasyCommandWiki.ps1
