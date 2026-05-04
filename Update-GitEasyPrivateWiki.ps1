@@ -8,10 +8,10 @@ Update-GitEasyPrivateWiki.ps1 keeps the Private-*.md wiki pages in sync with the
 Pages whose helper has been deleted from source are removed automatically.
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasyV2.
+Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
 
 .PARAMETER WikiRoot
-Absolute path to the local clone of the GitEasy GitHub Wiki repo. Defaults to C:\Sysadmin\Scripts\GitEasyV2-GitHubWiki.
+Absolute path to the local clone of the GitEasy GitHub Wiki repo. Defaults to C:\Sysadmin\Scripts\GitEasy-GitHubWiki.
 
 .EXAMPLE
 .\Update-GitEasyPrivateWiki.ps1
@@ -22,8 +22,8 @@ Pairs with Update-GitEasyCommandWiki.ps1 (richer schema for the user-facing publ
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2',
-    [string]$WikiRoot    = 'C:\Sysadmin\Scripts\GitEasyV2-GitHubWiki'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
+    [string]$WikiRoot    = 'C:\Sysadmin\Scripts\GitEasy-GitHubWiki'
 )
 
 Set-StrictMode -Version Latest

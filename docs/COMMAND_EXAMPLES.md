@@ -1,10 +1,10 @@
-﻿# GitEasy V2 Command Examples
+# GitEasy V2 Command Examples
 
 ## Import the module
 
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasyV2
-Import-Module C:\Sysadmin\Scripts\GitEasyV2\GitEasy.psd1 -Force
+Set-Location C:\Sysadmin\Scripts\GitEasy
+Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
 Get-Command -Module GitEasy
 ```
 

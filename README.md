@@ -20,7 +20,7 @@ When something goes wrong, you get a plain-English message and a path to a self-
 This module is local-install for now (no PowerShell Gallery release yet). Clone or copy it somewhere on your `$env:PSModulePath`, or import directly:
 
 ```powershell
-Import-Module 'C:\Sysadmin\Scripts\GitEasyV2\GitEasy.psd1' -Force
+Import-Module 'C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1' -Force
 ```
 
 ## Quickstart

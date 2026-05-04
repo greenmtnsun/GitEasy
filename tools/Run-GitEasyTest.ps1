@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Run the legacy GitEasy manifest sanity test in a fresh PowerShell child process.
 
@@ -6,7 +6,7 @@ Run the legacy GitEasy manifest sanity test in a fresh PowerShell child process.
 Wrapper around Tests\Test-GitEasyManifest.ps1 that runs the test in a fresh Windows PowerShell child so leftover module state in the current session cannot mask a failure. Throws if the child exits non-zero.
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasyV2.
+Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
 
 .EXAMPLE
 .\tools\Run-GitEasyTest.ps1
@@ -17,7 +17,7 @@ Use Run-GitEasyPester.ps1 for the full Pester suite. This script is the lighter 
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy'
 )
 $ErrorActionPreference = 'Stop'
 $test = Join-Path $ProjectRoot 'Tests\Test-GitEasyManifest.ps1'

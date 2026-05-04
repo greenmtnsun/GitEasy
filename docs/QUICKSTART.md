@@ -1,4 +1,4 @@
-﻿# GitEasy V2 Quickstart
+# GitEasy V2 Quickstart
 
 ## Goal
 
@@ -9,7 +9,7 @@ Use GitEasy from inside a Git repository.
 Current working project:
 
 ```powershell
-C:\Sysadmin\Scripts\GitEasyV2
+C:\Sysadmin\Scripts\GitEasy
 ```
 
 ## First thing every time
@@ -17,7 +17,7 @@ C:\Sysadmin\Scripts\GitEasyV2
 Run the state check example first:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasyV2\Examples\00-State-Check.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasy\Examples\00-State-Check.ps1
 ```
 
 That tells you whether the module imports, whether Git sees a repository, whether the working tree is clean, and whether the remote is configured.
@@ -25,8 +25,8 @@ That tells you whether the module imports, whether Git sees a repository, whethe
 ## Daily workflow
 
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasyV2
-Import-Module C:\Sysadmin\Scripts\GitEasyV2\GitEasy.psd1 -Force
+Set-Location C:\Sysadmin\Scripts\GitEasy
+Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
 Find-CodeChange
 Save-Work "describe what changed" -NoPush
 Show-History -Count 5
@@ -39,8 +39,8 @@ Use normal push only after `Test-Login` passes.
 ## Check GitHub access
 
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasyV2
-Import-Module C:\Sysadmin\Scripts\GitEasyV2\GitEasy.psd1 -Force
+Set-Location C:\Sysadmin\Scripts\GitEasy
+Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
 Get-VaultStatus
 Show-Remote
 Test-Login

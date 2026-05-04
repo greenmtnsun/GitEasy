@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Run the GitEasy Pester test suite using whichever Pester version is installed.
 
@@ -6,7 +6,7 @@ Run the GitEasy Pester test suite using whichever Pester version is installed.
 Loads the highest installed Pester version and invokes the test runner over the Tests folder. Picks the right invocation form for Pester 3 vs Pester 5+. Throws on any failed tests.
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasyV2.
+Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
 
 .EXAMPLE
 .\tools\Run-GitEasyPester.ps1
@@ -17,7 +17,7 @@ Most environments ship Pester 3 by default with Windows PowerShell 5.1. Tests mu
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy'
 )
 
 Set-StrictMode -Version Latest

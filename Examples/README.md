@@ -1,11 +1,11 @@
-﻿# GitEasy V2 Examples
+# GitEasy V2 Examples
 
 Run these examples from PowerShell.
 
 Start here:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasyV2\Examples\00-State-Check.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasy\Examples\00-State-Check.ps1
 ```
 
 Recommended order:

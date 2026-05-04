@@ -1,6 +1,6 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy'
 )
 
 Set-StrictMode -Version Latest

@@ -8,7 +8,7 @@ Audit-PublicJargon.ps1 walks every Public\*.ps1 file, extracts user-facing strin
 The script does not modify any files; it produces a report.
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasyV2.
+Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
 
 .EXAMPLE
 .\tools\Audit-PublicJargon.ps1
@@ -19,7 +19,7 @@ Companion to the GitEasy "no jargon for users" rule.
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy'
 )
 
 Set-StrictMode -Version Latest

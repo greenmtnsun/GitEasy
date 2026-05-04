@@ -17,10 +17,10 @@ It tracks two version stamps in the wiki:
   - Module version watermark, embedded in Public-Commands.md as <!-- ge-module-version: ... -->. Warns when the manifest has bumped since the last refresh.
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasyV2.
+Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
 
 .PARAMETER WikiRoot
-Absolute path to the local clone of the GitEasy GitHub Wiki repo. Defaults to C:\Sysadmin\Scripts\GitEasyV2-GitHubWiki.
+Absolute path to the local clone of the GitEasy GitHub Wiki repo. Defaults to C:\Sysadmin\Scripts\GitEasy-GitHubWiki.
 
 .PARAMETER DryRun
 Report what would change without writing any files. Reports cover drift, CBH gaps, stale claims, orphan pages, and module-version drift.
@@ -41,8 +41,8 @@ Pairs with Update-GitEasyPrivateWiki.ps1 (same shape, simpler schema for interna
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasyV2',
-    [string]$WikiRoot    = 'C:\Sysadmin\Scripts\GitEasyV2-GitHubWiki',
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
+    [string]$WikiRoot    = 'C:\Sysadmin\Scripts\GitEasy-GitHubWiki',
     [switch]$DryRun
 )
 
