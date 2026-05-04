@@ -1,3 +1,4 @@
 *.bak
 /Wiki/
 /New-GitEasyWiki.ps1
+/coverage.txt

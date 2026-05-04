@@ -17,7 +17,20 @@ Most environments ship Pester 3 by default with Windows PowerShell 5.1. Tests mu
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy'
+    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
+
+    # Emit Pester 3 code-coverage data. Pester 3 has no native
+    # JaCoCo / Cobertura export, so we render a per-file summary
+    # to stdout and write a coverage.txt artifact for the CI to
+    # publish. Report-only - no threshold gate.
+    [switch]$Coverage,
+
+    [string]$CoverageOutputPath,
+
+    # Suppress Pester 3's per-Describe/It chatter; show only the
+    # totals summary and any failure detail. Matches the prior
+    # CI contract that called Invoke-Pester -Quiet directly.
+    [switch]$Quiet
 )
 
 Set-StrictMode -Version Latest
@@ -48,7 +61,32 @@ Write-Host "Project: $ProjectRoot"
 Write-Host "Pester:  $($pester.Version)"
 Write-Host ""
 
-$result = Invoke-Pester -Script $testRoot -PassThru
+$invokeParams = @{
+    Script   = $testRoot
+    PassThru = $true
+}
+if ($Quiet) {
+    $invokeParams.Quiet = $true
+}
+
+if ($Coverage) {
+    $publicRoot  = Join-Path $ProjectRoot 'Public'
+    $privateRoot = Join-Path $ProjectRoot 'Private'
+    $coveragePaths = @()
+    foreach ($r in @($publicRoot, $privateRoot)) {
+        if (Test-Path -LiteralPath $r) {
+            $coveragePaths += (Get-ChildItem -Path $r -Filter '*.ps1' -Recurse -File).FullName
+        }
+    }
+    if ($coveragePaths.Count -gt 0) {
+        $invokeParams.CodeCoverage = $coveragePaths
+    } else {
+        Write-Warning "No Public/Private .ps1 files found under $ProjectRoot - coverage skipped."
+        $Coverage = $false
+    }
+}
+
+$result = Invoke-Pester @invokeParams
 
 $summary = [PSCustomObject]@{
     Total   = $result.TotalCount
@@ -60,6 +98,48 @@ $summary = [PSCustomObject]@{
 Write-Host ""
 Write-Host "GitEasy Pester summary:" -ForegroundColor Cyan
 $summary | Format-List
+
+if ($Coverage -and $result.PSObject.Properties['CodeCoverage'] -and $result.CodeCoverage) {
+    $cc = $result.CodeCoverage
+    $analyzed = $cc.NumberOfCommandsAnalyzed
+    $executed = $cc.NumberOfCommandsExecuted
+    $missed   = $cc.NumberOfCommandsMissed
+    $pct      = if ($analyzed -gt 0) { [math]::Round(($executed / $analyzed) * 100, 1) } else { 0 }
+
+    $perFile = $cc.AnalyzedFiles | ForEach-Object {
+        $file       = $_
+        $fileMissed = @($cc.MissedCommands | Where-Object { $_.File -eq $file }).Count
+        $fileHit    = @($cc.HitCommands    | Where-Object { $_.File -eq $file }).Count
+        $fileTotal  = $fileHit + $fileMissed
+        $filePct    = if ($fileTotal -gt 0) { [math]::Round(($fileHit / $fileTotal) * 100, 1) } else { 0 }
+        [PSCustomObject]@{
+            File     = (Split-Path -Leaf $file)
+            Hit      = $fileHit
+            Missed   = $fileMissed
+            Total    = $fileTotal
+            Percent  = $filePct
+        }
+    } | Sort-Object Percent
+
+    Write-Host ""
+    Write-Host "Code coverage: $executed / $analyzed commands ($pct%)" -ForegroundColor Cyan
+    $perFile | Format-Table -AutoSize | Out-String | Write-Host
+
+    if (-not $CoverageOutputPath) {
+        $CoverageOutputPath = Join-Path $ProjectRoot 'coverage.txt'
+    }
+    $reportLines = @(
+        "GitEasy code coverage",
+        "Generated: $(Get-Date -Format 'o')",
+        "Total: $executed / $analyzed commands ($pct%)",
+        "Missed: $missed",
+        "",
+        "Per-file:"
+    )
+    $reportLines += ($perFile | Format-Table -AutoSize | Out-String).TrimEnd()
+    Set-Content -Path $CoverageOutputPath -Value $reportLines -Encoding UTF8
+    Write-Host "Coverage report written to $CoverageOutputPath" -ForegroundColor Cyan
+}
 
 if ($result.FailedCount -gt 0) {
     throw "GitEasy Pester tests failed."

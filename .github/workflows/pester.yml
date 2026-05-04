@@ -20,20 +20,25 @@ jobs:
           git --version
           $PSVersionTable | Format-List
 
-      - name: Run Pester
+      - name: Run Pester (with coverage)
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          Import-Module Pester -Force
-          $r = Invoke-Pester -Script .\Tests -PassThru -Quiet
-          Write-Host ""
-          Write-Host "Total: $($r.TotalCount)  Passed: $($r.PassedCount)  Failed: $($r.FailedCount)"
-          if ($r.FailedCount -gt 0) {
-              $r.TestResult | Where-Object { -not $_.Passed } | ForEach-Object {
-                  Write-Host "FAIL: $($_.Name) >> $($_.FailureMessage)"
-              }
-              throw "Pester reported $($r.FailedCount) failure(s)."
-          }
+          # Use the runner script so coverage behavior stays in one place
+          # (single source of truth shared with local dev). Coverage is
+          # collected only on the PS 5.1 leg - the PS 7 leg below is a
+          # parity check that the same tests pass on both hosts and does
+          # not need to duplicate the coverage report.
+          .\tools\Run-GitEasyPester.ps1 -ProjectRoot . -Coverage -Quiet `
+                                        -CoverageOutputPath '.\coverage.txt'
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: giteasy-coverage-txt
+          path: coverage.txt
+          if-no-files-found: warn
 
       - name: Public-surface jargon audit
         shell: powershell
