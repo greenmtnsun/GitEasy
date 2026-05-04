@@ -86,9 +86,15 @@ function Undo-Changes {
             return $result
         }
 
+        $hasExplicitOptIn = $Force -or $PSBoundParameters.ContainsKey('Confirm') -or $PSBoundParameters.ContainsKey('WhatIf')
+        if (-not $hasExplicitOptIn) {
+            throw "Refusing to discard unsaved changes without confirmation. Re-run with -Force to skip the prompt, pass -Confirm to be prompted explicitly, use -WhatIf to preview, or use Save-Work -NoPush first to keep a recoverable checkpoint."
+        }
+
         if (-not $Force) {
             if (-not $PSCmdlet.ShouldProcess($repoRoot, "Discard $($statusLines.Count) unsaved change(s) - this cannot be reversed")) {
-                throw "Refusing to discard unsaved changes without confirmation. Re-run with -Force, or use Save-Work -NoPush first to keep a recoverable checkpoint."
+                Complete-GELogSession -Path $session.Path -Outcome 'SUCCESS' -UserMessage 'Skipped (Confirm declined or WhatIf).'
+                return
             }
         }
 
