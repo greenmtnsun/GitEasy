@@ -2,6 +2,32 @@
 
 All notable changes to this module are recorded here. The format is loosely [Keep a Changelog](https://keepachangelog.com/), and this project follows semantic versioning.
 
+## [1.3.0] - 2026-05-03
+
+Tag/release management is now on the public surface. First gap surfaced by the dogfood test (a sister Claude session running real workflow on a different project) is fixed.
+
+(Note: version jumped from 1.1.0 to 1.3.0 because `Save-Work -BumpVersion -BumpKind Minor` was used on a manifest that had already been hand-set to 1.2.0. No 1.2.0 was tagged or shipped — the commit and tag use 1.3.0.)
+
+### Added
+
+- **`New-Release -Version <ver> -Note <text>`** — creates an annotated release marker (Git tag) at the current saved point, with the note travelling alongside. Publishes by default; `-NoPush` keeps it local. `-Force` overwrites an existing release of the same version. 8 Pester tests cover the happy path, NoPush, overwrite refusal, overwrite with Force, and log-session SUCCESS markers.
+- **`Show-Releases`** — lists named releases as structured objects (Repository / Version / Date / Note), newest first. `-Pattern <wildcard>` filters; `-Count` limits. 3 Pester tests.
+
+### Changed
+
+- Public command surface count is now **19** (was 17). The two new commands keep the plain-English contract: no Git terminology in user-facing strings.
+- Wiki module-version watermark moves from 1.1.0 to 1.3.0.
+
+### Fixed
+
+- **`tools\Run-GitEasyPester.ps1` and `tools\Install-GitEasy.ps1` now pin Pester 3 explicitly.** When Pester 5 was also installed (e.g., via PSGallery user-scope), `Get-Module -ListAvailable | Sort -Desc | Select -First 1` was picking Pester 5, whose legacy adapter mis-runs Pester 3 syntax tests as 0/N pass. Both scripts now filter `Where Version.Major -lt 4` and load the highest 3.x they find.
+- All `{ ... } | Should Not Throw` assertions migrated to the deterministic `try/catch + Should BeNullOrEmpty` pattern. `Should Not Throw` (like `Should Throw`) was misbehaving under interactive elevated PowerShell hosts.
+- `Undo-Changes` no longer relies on `ShouldProcess` alone for the destructive-op guard. Now requires explicit `-Force`, `-Confirm`, or `-WhatIf`. Eliminates a host-dependent path where ConfirmPreference auto-approved the action.
+
+### Tests
+
+- **110 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 99).
+
 ## [1.1.0] - 2026-05-03
 
 The two parallel GitEasy lines (the V1 daily-driver and the V2 from-scratch reboot) merge into a single module. **There is no longer a V1 or V2 — just GitEasy.** This release absorbs the V2 engine wholesale, plus the seven V1 features that were better or more complete than V2.
