@@ -2,6 +2,20 @@
 
 All notable changes to this module are recorded here. The format is loosely [Keep a Changelog](https://keepachangelog.com/), and this project follows semantic versioning.
 
+## [1.4.3] - 2026-05-09
+
+Closes the audit gap from 1.4.2. No public-surface behavior changes.
+
+### Added
+
+- **`Tests\Unit\<Helper>.Tests.ps1` for each of the 19 private helpers** — AST-based contract tests that don't depend on the helper being exported. Each asserts: source file exists, function name matches file name, GE-prefix convention holds, parameters are declared with the right shapes (Mandatory / SwitchParameter / ValidateSet), `[CmdletBinding()]` is present where expected, and comment-based help with `.SYNOPSIS` is present.
+- **`tools\Build-PrivateUnitTests.ps1`** — AST-driven generator paralleling `Build-PublicUnitTests.ps1`. Re-runnable; regenerates files in place.
+
+### Changed
+
+- Test count is now **408 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 264 in 1.4.2).
+- `Invoke-PfAudit` now reports **38/38 functions as Covered (dedicated)**: 19 public + 19 private. The structural gap is closed.
+
 ## [1.4.2] - 2026-05-09
 
 Test coverage improvement triggered by re-running the PesterForge `Invoke-PfAudit` (DR-026) against the current source. No public-surface behavior changes.
