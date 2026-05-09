@@ -2,6 +2,26 @@
 
 All notable changes to this module are recorded here. The format is loosely [Keep a Changelog](https://keepachangelog.com/), and this project follows semantic versioning.
 
+## [1.5.0] - 2026-05-09
+
+Two new commands fill obvious workflow gaps that surfaced during the dogfood roadmap pass.
+
+### Added
+
+- **`Show-Change`** — the natural counterpart to `Find-CodeChange`. Where Find-CodeChange tells you HOW MANY things changed, Show-Change shows the actual lines added and removed. Returns one structured object per file with `Path` and `Diff`. Switches: `-Path` filters to one file; `-NextSave` shows what is already prepared for the next saved point (default shows the unprepared working-area changes); `-Compact` returns a one-line summary per file instead of full diff text. 6 Pester tests.
+- **`Get-Updates`** — fetches peer updates from the published location without merging or changing the working area. Reports how many new saved points were fetched. Use it to peek at peer activity without committing to Save-Work. 5 Pester tests.
+
+### Changed
+
+- Public command surface count is now **21** (was 19).
+- Wiki module-version watermark moves to 1.5.0.
+- 16 new dedicated unit-test files for the two new commands (per-function generator regenerated). Test count is now **456 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 408).
+- `Invoke-PfAudit` reports **40/40 functions as Covered (dedicated)**.
+
+### No-jargon discipline
+
+- Initial draft of `Show-Change` exposed a `-Staged` switch. The audit caught it as a HARD-jargon hit (`staged` is git-specific). Renamed to `-NextSave` ("show changes prepared for the next save"). 0 HARD-jargon hits in 1.5.0.
+
 ## [1.4.3] - 2026-05-09
 
 Closes the audit gap from 1.4.2. No public-surface behavior changes.

@@ -1,6 +1,6 @@
 @{
     RootModule        = 'GitEasy.psm1'
-    ModuleVersion     = '1.4.3'
+    ModuleVersion     = '1.5.0'
     GUID              = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author            = 'Keith Ramsey'
     CompanyName       = 'Keith Ramsey'
@@ -11,6 +11,7 @@
     FunctionsToExport = @(
         'Clear-Junk'
         'Find-CodeChange'
+        'Get-Updates'
         'Get-VaultStatus'
         'New-Release'
         'New-WorkBranch'
@@ -21,6 +22,7 @@
         'Set-Ssh'
         'Set-Token'
         'Set-Vault'
+        'Show-Change'
         'Show-Diagnostic'
         'Show-History'
         'Show-Releases'

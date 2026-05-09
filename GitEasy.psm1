@@ -6,6 +6,7 @@ Get-ChildItem -LiteralPath $publicPath -Filter '*.ps1' -File | Sort-Object Name 
 Export-ModuleMember -Function @(
     'Clear-Junk',
     'Find-CodeChange',
+    'Get-Updates',
     'Get-VaultStatus',
     'New-Release',
     'New-WorkBranch',
@@ -16,6 +17,7 @@ Export-ModuleMember -Function @(
     'Set-Ssh',
     'Set-Token',
     'Set-Vault',
+    'Show-Change',
     'Show-Diagnostic',
     'Show-History',
     'Show-Releases',

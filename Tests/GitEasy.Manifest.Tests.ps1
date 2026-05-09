@@ -3,6 +3,7 @@ $ModulePath = Join-Path $ProjectRoot 'GitEasy.psd1'
 $ExpectedPublicCommands = @(
     'Clear-Junk',
     'Find-CodeChange',
+    'Get-Updates',
     'Get-VaultStatus',
     'New-Release',
     'New-WorkBranch',
@@ -13,6 +14,7 @@ $ExpectedPublicCommands = @(
     'Set-Ssh',
     'Set-Token',
     'Set-Vault',
+    'Show-Change',
     'Show-Diagnostic',
     'Show-History',
     'Show-Releases',
