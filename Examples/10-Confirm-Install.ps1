@@ -24,7 +24,7 @@ $rows = foreach ($name in $expected) {
     }
 }
 
-$rows | Format-Table -AutoSize
+$rows | Format-Table -AutoSize | Out-Host
 
 $missing = @($rows | Where-Object { $_.Available -eq 'No' })
 if ($missing.Count -eq 0) {
