@@ -1,0 +1,40 @@
+@startuml GitEasyArchitectureOverview
+title GitEasy - Architecture Overview (v1.5.0)
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+actor "User / PowerShell session" as User
+
+package "GitEasy module" {
+  component "Public command surface\n21 commands" <<command>> as Public
+  component "Git engine\nInvoke-GEGit" <<engine>> as Engine
+  component "Logging\nsession + 30-day prune" <<helper>> as Log
+  component "Query helpers\nGet-GE* repo facts" <<helper>> as Query
+  component "Safety helpers\nAssert-GESafeSave, URL checks" <<helper>> as Safety
+}
+
+component "git executable" <<boundary>> as Git
+component ".git repository" <<store>> as Repo
+component "Diagnostic log files" <<store>> as Logs
+component "Network remote\nGitHub / GitLab" <<boundary>> as Remote
+component "Credential stores\nGCM / Windows Vault / SSH / SecretManagement" <<store>> as Creds
+
+User --> Public : runs a command
+Public --> Safety : mutating commands gate first
+Public --> Log : open / close session
+Public --> Query : resolve repo facts
+Public --> Engine : every git call routes here
+Query --> Engine
+Safety --> Engine
+Engine --> Git : spawns
+Git --> Repo : read / write
+Git --> Remote : push / fetch
+Log --> Logs : append / prune
+Public --> Creds : auth commands only
+
+note bottom of Engine
+  Single point of contact with git.
+  No other component shells out to git.
+end note
+@enduml
