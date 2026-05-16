@@ -20,4 +20,4 @@ Recommended order:
 8. 07-Switch-To-Ssh.ps1
 9. 08-Reset-Bad-Login.ps1
 10. 09-Daily-Workflow.ps1
-11. 10-What-Is-Not-Wired-Yet.ps1
+11. 10-Confirm-Install.ps1

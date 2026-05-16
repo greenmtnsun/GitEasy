@@ -81,7 +81,7 @@ The full documentation lives in the [GitHub Wiki](https://github.com/greenmtnsun
 
 ## Status
 
-GitEasy is at **1.0.0** — feature-complete public surface, comprehensive Pester coverage on both PowerShell hosts, and full plain-English contract.
+GitEasy is at **1.5.0** — feature-complete public surface (21 commands), comprehensive Pester coverage on both PowerShell hosts, and full plain-English contract.
 
 See [CHANGELOG.md](CHANGELOG.md) for the history.
 
