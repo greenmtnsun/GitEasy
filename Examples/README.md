@@ -2,11 +2,15 @@
 
 Run these examples from PowerShell.
 
-Start here:
+Start here (from the repository root):
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasy\Examples\00-State-Check.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Examples\00-State-Check.ps1
 ```
+
+Each script derives the project root from its own location, so no path
+argument is needed when run from inside a GitEasy checkout. Override with
+`-ProjectRoot <path>` only if running a script copied elsewhere.
 
 Recommended order:
 

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
+    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
     [string]$Message = 'local checkpoint from GitEasy example'
 )
 

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy')
+param([string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot))
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
