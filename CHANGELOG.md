@@ -2,6 +2,30 @@
 
 All notable changes to this module are recorded here. The format is loosely [Keep a Changelog](https://keepachangelog.com/), and this project follows semantic versioning.
 
+## [Unreleased]
+
+### Added
+
+- **`Tests/GitEasy.AssertSafeSave.Tests.ps1`** — dedicated behavioral suite for the `Assert-GESafeSave` guard (the one genuinely-open Roadmap item; previously it had only an AST/private-contract test plus transitive coverage through Save-Work). 10 tests across real temp-repo integration (safe workspace, subdirectory resolution, not-a-workspace, in-progress-merge busy state) and module-scoped-mock isolation of the conflict-only branch (which real git cannot produce without also being "busy"), plus the no-raw-git-jargon contract on every failure message and the Boolean-`$true` success shape.
+
+### Fixed (documentation)
+
+- **All per-version test-count figures audited; two were overstated; no tests were ever lost.** Every version's claimed count was checked by parsing the `Tests/` tree at that version's commit and counting `It` statements with the PowerShell AST (a static count — no execution, no environment dependence). The static count matched the changelog **exactly** for five of seven versions, which validates the method for this codebase (these suites use no runtime-expanding `-TestCases`):
+
+  | Version | Commit | Changelog | Actual (static `It`) | Verdict |
+  |---|---|---|---|---|
+  | 1.0.0 | `6c9e77e` | 86 | **74** | overstated by 12 — and commit `6c9e77e`'s own subject says "74 total" |
+  | 1.1.0 | `afa0a44` | 99 | 99 | exact |
+  | 1.3.0 | `54dfb17` | 110 | 110 | exact |
+  | 1.4.0 | `8206bc1` | 113 | 113 | exact |
+  | 1.4.2 | `bf60a8b` | 264 | 264 | exact |
+  | 1.4.3 | `88f5914` | 408 | 408 | exact |
+  | 1.5.0 | `34bcd75` | 456 | **435** | overstated by 21 (corroborated by `git diff --stat 34bcd75 HEAD -- Tests/`: only additions since, never deletions/modifications) |
+
+  Only the 1.0.0 (86 → **74**) and 1.5.0 (456 → **435**) narrative figures were wrong, both overstatements in the prose — `git diff` confirms **zero** test files were ever deleted or modified across the whole history, so there is nothing to recover; this is purely a documentation correction. The 1.1.0 entry's "(was 86 in 1.0.0)" back-reference inherits the 1.0.0 error and should read "(was 74)".
+
+  **Current empirically-measured total: 464** (`tools\Run-GitEasyPester.ps1`, Pester 3.4.0, run `bitbf459z`: Passed 464 Failed 0) — the 435 baseline at the 1.5.0 tree plus the +19 vault suite (`02b5bbc`) and the +10 `Assert-GESafeSave` suite above. Reconciliation arithmetic: 464 − 10 − 19 = 435.
+
 ## [1.5.0] - 2026-05-09
 
 Two new commands fill obvious workflow gaps that surfaced during the dogfood roadmap pass.
@@ -15,7 +39,7 @@ Two new commands fill obvious workflow gaps that surfaced during the dogfood roa
 
 - Public command surface count is now **21** (was 19).
 - Wiki module-version watermark moves to 1.5.0.
-- 16 new dedicated unit-test files for the two new commands (per-function generator regenerated). Test count is now **456 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 408).
+- 16 new dedicated unit-test files for the two new commands (per-function generator regenerated). Test count is now **456 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 408). _(Correction — see [Unreleased]: this figure was an estimate; the verified total at this tree is 435. No tests were lost.)_
 - `Invoke-PfAudit` reports **40/40 functions as Covered (dedicated)**.
 
 ### No-jargon discipline
@@ -132,7 +156,7 @@ The two parallel GitEasy lines (the V1 daily-driver and the V2 from-scratch rebo
 
 ### Tests
 
-- **99 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 86 in 1.0.0).
+- **99 Pester 3 tests** passing on Windows PowerShell 5.1 and PowerShell 7+ (was 86 in 1.0.0). _(Correction — see [Unreleased]: 1.0.0 was actually 74, not 86; this 99 figure is itself exact.)_
 - 12 new tests covering Search-History, Show-History -Graph, Save-Work -BumpVersion, and Set-Vault -WriteIgnoreList.
 - Clear-Junk tests rewritten to exercise the gitignore-aware engine (and the `-Aggressive` switch).
 
@@ -154,7 +178,7 @@ First feature-complete public surface of the V2 design. Every command is impleme
 - **`Update-GitEasyCommandWiki.ps1`** — generates the public-command wiki pages from CBH source-of-truth, with drift detection, CBH audit, stale-claim flagging, source-hash watermarks, module-version watermark, machine/human section merge, orphan removal, and a `-DryRun` mode.
 - **`tools/Audit-PublicJargon.ps1`** — scans the public surface for git-terminology leakage and reports HARD vs SOFT hits.
 - **MPL-2.0 LICENSE**, README.md, CONTRIBUTING.md, GitHub Actions CI workflow, issue and PR templates.
-- **86 Pester 3 tests** covering every public command directly, plus the logging helpers. All pass on Windows PowerShell 5.1 and PowerShell 7+.
+- **86 Pester 3 tests** covering every public command directly, plus the logging helpers. All pass on Windows PowerShell 5.1 and PowerShell 7+. _(Correction — see [Unreleased]: the real count at this commit is 74, matching commit `6c9e77e`'s own "74 total". The "86" was an overstatement; no tests were lost.)_
 
 ### Changed
 
