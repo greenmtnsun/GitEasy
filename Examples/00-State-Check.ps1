@@ -30,7 +30,7 @@ Import-Module $modulePath -Force
 
 Write-Host ""
 Write-Host "Module commands:" -ForegroundColor Cyan
-Get-Command -Module GitEasy | Select-Object CommandType, Name, Version, Source | Format-Table -AutoSize
+Get-Command -Module GitEasy | Select-Object CommandType, Name, Version, Source | Format-Table -AutoSize | Out-Host
 
 Write-Host ""
 Write-Host "Git status:" -ForegroundColor Cyan
@@ -42,12 +42,12 @@ git branch --show-current
 
 Write-Host ""
 Write-Host "Remote:" -ForegroundColor Cyan
-Show-Remote | Format-List
+Show-Remote | Format-List | Out-Host
 
 Write-Host ""
 Write-Host "Login test:" -ForegroundColor Cyan
-Test-Login | Format-List
+Test-Login | Format-List | Out-Host
 
 Write-Host ""
 Write-Host "Change summary:" -ForegroundColor Cyan
-Find-CodeChange | Format-List
+Find-CodeChange | Format-List | Out-Host
