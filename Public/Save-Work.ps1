@@ -180,7 +180,11 @@ function Save-Work {
             }
 
             $manifestText = [System.IO.File]::ReadAllText($manifestPath)
-            $bumpedText = $manifestText -replace "ModuleVersion\s*=\s*'[^']+'", "ModuleVersion     = '$newVersion'"
+            # Accept either a single- or double-quoted ModuleVersion value.
+            # The capture (['""]) binds the chosen quote and the backreference
+            # \1 forces a matching close-quote; project convention is single-
+            # quoted, so the replacement is single-quoted regardless of input.
+            $bumpedText = $manifestText -replace "ModuleVersion\s*=\s*(['""])[^'""]+\1", "ModuleVersion     = '$newVersion'"
 
             [System.IO.File]::WriteAllText($manifestPath, $bumpedText, [System.Text.UTF8Encoding]::new($false))
 

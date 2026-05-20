@@ -42,6 +42,11 @@
     $remoteUrl = Get-GERemoteUrl -RemoteName $RemoteName -Path $root
     $provider = Get-GEProviderName -RemoteUrl $remoteUrl
 
+    # F-05: .git/config is an untrusted read-path input; the URL may carry
+    # embedded credentials. Sanitise before exposing on the returned object
+    # or echoing through Get-GEProviderName-derived display.
+    $safeUrl = Format-GESafeUrl -Url $remoteUrl
+
     if ([string]::IsNullOrWhiteSpace($remoteUrl)) {
         return [PSCustomObject]@{
             Repository = $root
@@ -61,7 +66,11 @@
         $message = 'Remote login/connectivity test passed.'
     }
     else {
-        $message = $result.Output -join [Environment]::NewLine
+        # F-05: ls-remote stderr can quote the offending URL in an error
+        # message ("fatal: unable to access 'https://x:tok@host/...'").
+        # Sanitise each line so any embedded credential is stripped before
+        # it lands on the returned object.
+        $message = ($result.Output | ForEach-Object { Format-GESafeUrl -Url $_ }) -join [Environment]::NewLine
     }
 
     return [PSCustomObject]@{
@@ -69,7 +78,7 @@
         Branch     = $branch
         Remote     = $RemoteName
         Provider   = $provider
-        Url        = $remoteUrl
+        Url        = $safeUrl
         Passed     = ($result.ExitCode -eq 0)
         ExitCode   = $result.ExitCode
         Message    = $message

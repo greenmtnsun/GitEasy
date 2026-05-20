@@ -39,7 +39,7 @@
     directory as 1 entry, not one per file inside".
   - 1.3.0 dogfood gap (tag/release management) → New-Release / Show-Releases,
     covered by GitEasy.Releases.Tests.ps1.
-  All pass in the current 464/0 suite (run bitbf459z).
+  All pass in the current 522/0 suite (run bi7a5czgk, 2026-05-20, 1.5.2).
 
 ## Open
 

@@ -76,8 +76,15 @@ function Invoke-GEGit {
         }
     }
 
+    # F-06: an arg to Invoke-GEGit can be a remote URL with embedded
+    # credentials (e.g. `remote set-url origin https://x:tok@host/...`).
+    # Sanitise each arg before it lands in the log step header or the
+    # thrown error message. Format-GESafeUrl is a no-op on args that are
+    # not URL-shaped, so this is safe to apply unconditionally.
+    $safeArgs = @($ArgumentList | ForEach-Object { Format-GESafeUrl -Url $_ })
+
     if (-not [string]::IsNullOrWhiteSpace($LogPath)) {
-        $stepText = 'git ' + ($ArgumentList -join ' ')
+        $stepText = 'git ' + ($safeArgs -join ' ')
 
         $logLines = New-Object System.Collections.Generic.List[string]
         foreach ($line in $stdoutLines) {
@@ -95,7 +102,7 @@ function Invoke-GEGit {
         foreach ($line in $stdoutLines) { $combined.Add($line) }
         foreach ($line in $stderrLines) { $combined.Add($line) }
 
-        throw ("git " + ($ArgumentList -join ' ') + " exited with code $exitCode" + [Environment]::NewLine + ($combined -join [Environment]::NewLine))
+        throw ("git " + ($safeArgs -join ' ') + " exited with code $exitCode" + [Environment]::NewLine + ($combined -join [Environment]::NewLine))
     }
 
     [PSCustomObject]@{

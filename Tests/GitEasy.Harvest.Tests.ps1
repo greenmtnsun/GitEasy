@@ -82,10 +82,10 @@ Describe 'Search-History' {
         $hits.Count -gt 0 | Should Be $true
     }
 
-    It 'returns objects with Hash, Date, Author, Message' {
+    It 'returns objects with Id, Date, Author, Message' {
         $hits = @(Search-History -Pattern 'CREATE TABLE Foo')
         $first = $hits | Select-Object -First 1
-        ($first.PSObject.Properties.Name -contains 'Hash')    | Should Be $true
+        ($first.PSObject.Properties.Name -contains 'Id')      | Should Be $true
         ($first.PSObject.Properties.Name -contains 'Date')    | Should Be $true
         ($first.PSObject.Properties.Name -contains 'Author')  | Should Be $true
         ($first.PSObject.Properties.Name -contains 'Message') | Should Be $true

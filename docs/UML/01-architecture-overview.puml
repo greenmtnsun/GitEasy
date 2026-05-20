@@ -1,5 +1,5 @@
 @startuml GitEasyArchitectureOverview
-title GitEasy - Architecture Overview (v1.5.0)
+title GitEasy - Architecture Overview (v1.5.2)
 skinparam componentStyle rectangle
 skinparam shadowing false
 left to right direction
@@ -11,7 +11,7 @@ package "GitEasy module" {
   component "Git engine\nInvoke-GEGit" <<engine>> as Engine
   component "Logging\nsession + 30-day prune" <<helper>> as Log
   component "Query helpers\nGet-GE* repo facts" <<helper>> as Query
-  component "Safety helpers\nAssert-GESafeSave, URL checks" <<helper>> as Safety
+  component "Safety helpers\nAssert-GESafeSave, URL input guards,\nURL + log-line output sanitisers" <<helper>> as Safety
 }
 
 component "git executable" <<boundary>> as Git

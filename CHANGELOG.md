@@ -4,6 +4,48 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-05-20
+
+### Fixed (security)
+
+Second adversarial pass after the 2026-05-17 credential-surface review. The same root cause as F-01/F-02/F-03 — regex-based URL parsing on the read/log path — recurred in three sibling locations not swept the first time. Full trust-boundary trace and kill-test mapping in [`docs/SECURITY-FINDINGS-2026-05-20.md`](docs/SECURITY-FINDINGS-2026-05-20.md). **1.5.1 was not published to PowerShell Gallery; 1.5.2 is the first release intended for public consumption.**
+
+- **F-04 — High — CWE-200 / CWE-532 — embedded credentials persisted via Set-Ssh's HTTPS→SSH conversion.** `Private/Convert-GERemoteToSsh.ps1`'s regex `^https://(?<Host>[^/]+)/(?<Path>.+)$` greedily captured `user:token@host` as the host (identical shape to the F-02 Reset-Login bug). When `.git/config` already held a credential-embedded HTTPS URL, `Set-Ssh` (no `-RemoteUrl`) would read it, convert to a corrupt `git@user:token@host:path` SSH form, write that to `git remote set-url`, and echo it through `Invoke-GEGit`'s log step header — persisting the secret in two places. Fixed by rewriting `Convert-GERemoteToSsh` to parse with `[uri]` and refuse URLs whose `UserInfo` is non-empty; `Set-Ssh` now also calls `Test-GERemoteUrlSafe` on the input URL before invoking Convert (defence in depth).
+- **F-05 — Medium — CWE-200 — embedded credentials surfaced on Test-Login's returned object.** `Public/Test-Login.ps1` placed the raw remote URL on the `Url` field and joined raw `ls-remote` stderr into `Message`; both could expose credentials carried in `.git/config`. Fixed by applying `Format-GESafeUrl` to the `Url` field and piping each line of the `Message` through it on the failure branch. **`Format-GESafeUrl` was simultaneously generalised** — the `^` anchor was removed so it sanitises URLs that appear mid-string (e.g. a creds URL quoted inside a git error message).
+- **F-06 — Medium — CWE-200 / CWE-532 — credential-bearing arguments echoed verbatim into the log step header and thrown error.** `Private/Invoke-GEGit.ps1`'s `$stepText = 'git ' + ($ArgumentList -join ' ')` and the `throw` line both joined raw arguments. Any caller passing a URL-shaped argument (the canonical hit path was F-04 via `git remote set-url`) would land the secret in `%LOCALAPPDATA%\GitEasy\Logs\*.log` and the user-facing error message. Fixed by piping every argument through `Format-GESafeUrl` (no-op on non-URL args) before joining for either surface.
+
+Kill-test suite: `Tests/GitEasy.AuthHardening.Tests.ps1` extended with seven new contexts — F-04 Convert-GERemoteToSsh, F-05 Test-Login, F-06 Invoke-GEGit, `Format-GESafeUrl` mid-string + alt-scheme edges (`ssh://`, `git+ssh://`, IPv6 literal `[::1]`, multi-URL strings, `%40`), `Format-GESafeLogLine` edges (`Proxy-Authorization` added, line-shape intent locked), `[uri].Host` behaviour locks for IDN / IPv6 / port-in-authority, and a direct accept/reject matrix for `Test-GERemoteUrlSafe`.
+
+### Fixed (correctness)
+
+- **`Reset-Login.ps1` cmdkey path now checks each cmdkey exit code** before flipping `clearedSomething = $true`. The previous code set the flag unconditionally when `cmdkey.exe` existed on the machine, so a Reset-Login on a host with no matching cmdkey entries would claim success while doing nothing useful. Same "silent success" pattern as F-02, in a different surface.
+- **`Save-Work.ps1` ModuleVersion regex now accepts either single- or double-quoted version values.** The prior regex `ModuleVersion\s*=\s*'[^']+'` silently failed on manifests with `ModuleVersion = "1.0.0"`. Pattern now matches either quote and forces a matching close-quote via backreference; the replacement remains single-quoted per project convention.
+- **`Set-Vault.ps1` now uses the same log-session bracket as every other state-changing command.** Previously returned `$null` on `-WhatIf` decline (violating the structured-result contract) and had no `try/catch` or `LogPath` parameter. Now opens a log session, returns a structured object on every path including `-WhatIf`, and emits SUCCESS / FAILURE outcomes consistent with `Set-Token` / `Set-Ssh`.
+
+### Fixed (plain-English / no-jargon)
+
+- **`Public/Show-Change.ps1` comment-based help** updated to describe the actual `-NextSave` parameter; the 1.5.0 rename from `-Staged` had left the CBH text stale.
+- **`Public/Search-History.ps1`** returned property `Hash` renamed to `Id` (avoid raw git jargon on the public surface). Local variable name also changed from `$args` (which shadows the PowerShell automatic) to `$logArgs`.
+- **`Format/GitEasy.format.ps1xml`** display labels for the `GitEasy.CodeChange` table renamed: `Staged` → `Ready`, `Unstaged` → `Pending`, `Untracked` → `New`. Property names (`StagedCount`, `UnstagedCount`, `UntrackedCount`) preserved so downstream consumers reading the structured object are not broken; the jargon hit was only in the column labels. The jargon-audit script does not currently scan `.ps1xml` or property names — extending it is deferred.
+
+### Changed (cross-platform robustness)
+
+- **`Public/Show-Diagnostic.ps1`** now platform-detects before calling `Start-Process explorer.exe` and `Start-Process $logFile`. On non-Windows hosts it prints the path to the host with a hint rather than failing. Module's `PowerShellVersion = '5.1'` baseline remains Windows-only by stated contract; the change is best-effort for cross-platform users.
+
+### Changed (test discipline)
+
+- **`tools\Build-PrivateUnitTests.ps1` re-run** to add the AST-contract test files that had been missing for `Format-GESafeUrl.ps1` and `Format-GESafeLogLine.ps1` (the generator had not been re-run when those helpers landed in 1.5.1).
+- **`Tests/GitEasy.GetVaultStatus.Tests.ps1:346`** — replaced a `$true | Should Be $true` tautology in the else-branch with `$result.Configured | Should Be $false` so the assertion meaningfully reflects the branch's invariant.
+- **`Tests/GitEasy.AuthCommands.Tests.ps1`** — the "every invocation writes a log file" test now asserts that `Reset-Login` actually threw before checking log-file existence, eliminating a silent-pass risk if Reset-Login ever succeeds unexpectedly.
+- **`Tests/GitEasy.Logging.Tests.ps1`** — hardcoded `C:\test-env-logs` / `C:\test-explicit` strings replaced with `Join-Path ([IO.Path]::GetTempPath()) ...` so the tests read as platform-neutral; the second test also rewired to pass the path through `param()` since module-scope script blocks do not inherit caller variables.
+
+### Changed (provenance)
+
+- **UML diagrams** updated to v1.5.2: `01-architecture-overview.puml` safety-helper bullet now includes the URL/log-line sanitisers; `02-internal-call-graph.puml` `UrlSafe` cluster renamed to "Credential surface safety" with all four helpers listed and the new edges `Engine → UrlSafe` (F-06), `Qry → UrlSafe` (F-05 via Test-Login), `QHelp → UrlSafe` (F-01 via Get-GERemoteSummary); `03-data-flow.puml` adds a sanitiser stage between Cmd / Engine and the log/return surface.
+- **`docs/UML/README.md`** reconciliation date bumped to 2026-05-20; four takeover findings struck as resolved (the stale `10-What-Is-Not-Wired-Yet.ps1` example, the 1.0.0 README drift, the thin credential-path coverage, and "no formal security review on record"); remaining three findings updated to reflect 1.5.2 state.
+- **`PROJECT_MANIFEST.md`** title corrected from "GitEasy V2 Project Manifest" to "GitEasy Project Manifest" — the V1/V2 distinction was retired in 1.1.0 per CHANGELOG.
+- **Test-count reconciliation**: empirical total at 1.5.2 is **522** (`tools\Run-GitEasyPester.ps1`, Pester 3.4.0, run `bi7a5czgk`, 2026-05-20: Passed 522 Failed 0) — the 484 baseline at the 1.5.1 tree plus the 1.5.2 additions: ~26 new behavioural tests in `Tests/GitEasy.AuthHardening.Tests.ps1` (F-04/F-05/F-06 kill-tests, F-01/F-02/F-03 edge locks, Test-GERemoteUrlSafe accept/reject matrix) and the auto-generated AST contract tests in `Tests/Unit/` for the two safe-format helpers that had been missing since 1.5.1. Net: +38 tests, 0 deletions.
+
 ## [1.5.1] - 2026-05-20
 
 ### Added

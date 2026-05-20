@@ -35,7 +35,12 @@ function Format-GESafeLogLine {
 
     begin {
         # key=value (git credential protocol) or "Header: value" (HTTP-style).
-        $pattern = '(?i)^(?<lead>\s*)(?<key>password|secret|token|bearer|authorization)(?<sep>\s*[:=]\s*).+$'
+        # The optional "proxy-" prefix covers Proxy-Authorization headers,
+        # which are credential-bearing the same way Authorization is.
+        # The anchor at ^\s* is intentional: only line-shaped credential
+        # output is redacted. A literal mid-sentence "password=foo" inside
+        # narrative text is left alone, by design.
+        $pattern = '(?i)^(?<lead>\s*)(?<key>password|secret|token|bearer|(?:proxy-)?authorization)(?<sep>\s*[:=]\s*).+$'
     }
 
     process {

@@ -23,17 +23,17 @@
             <Alignment>Right</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Staged</Label>
+            <Label>Ready</Label>
             <Width>7</Width>
             <Alignment>Right</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Unstaged</Label>
+            <Label>Pending</Label>
             <Width>9</Width>
             <Alignment>Right</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Untracked</Label>
+            <Label>New</Label>
             <Width>10</Width>
             <Alignment>Right</Alignment>
           </TableColumnHeader>

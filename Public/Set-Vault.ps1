@@ -14,6 +14,9 @@ function Set-Vault {
     .PARAMETER WriteIgnoreList
     Also write a starter .gitignore in the active project folder. Adds common junk patterns; preserves anything already in the file.
 
+    .PARAMETER LogPath
+    Override the directory where the diagnostic log for this run is written.
+
     .EXAMPLE
     Set-Vault
 
@@ -43,86 +46,103 @@ function Set-Vault {
         [ValidateSet('manager', 'manager-core', 'wincred', 'cache')]
         [string]$Helper = 'manager',
 
-        [switch]$WriteIgnoreList
+        [switch]$WriteIgnoreList,
+
+        [string]$LogPath = ''
     )
 
-    Test-GEGitInstalled | Out-Null
+    $repoRoot = $null
+    try { $repoRoot = Get-GERepoRoot } catch { $repoRoot = $null }
 
-    if (-not $PSCmdlet.ShouldProcess('global Git config', "Set credential.helper to $Helper")) {
-        return
-    }
+    $session = Start-GELogSession -Command 'Set-Vault' -Repository ([string]$repoRoot) -LogPath $LogPath
 
-    Invoke-GEGit -ArgumentList @('config', '--global', 'credential.helper', $Helper) | Out-Null
+    $userMessageOnFailure = 'Could not configure credential storage.'
 
-    $ignoreInfo = $null
+    try {
+        Test-GEGitInstalled | Out-Null
 
-    if ($WriteIgnoreList) {
-        $repoRoot = $null
-        try {
-            $repoRoot = Get-GERepoRoot
-        }
-        catch {
-            $repoRoot = $null
-        }
-
-        if ($repoRoot) {
-            $starterPatterns = @(
-                '# Added by Set-Vault -WriteIgnoreList',
-                '*.user',
-                '*.suo',
-                '*.tmp',
-                '*.log',
-                '*.bak',
-                'bin/',
-                'obj/',
-                'TestResults/',
-                '.vs/',
-                '.idea/',
-                '.vscode/',
-                '*.pfx',
-                'secrets.json',
-                '*.rdl.data'
-            )
-
-            $ignorePath = Join-Path $repoRoot '.gitignore'
-            $existing = @()
-
-            if (Test-Path -LiteralPath $ignorePath -PathType Leaf) {
-                $existing = @(Get-Content -LiteralPath $ignorePath)
+        if (-not $PSCmdlet.ShouldProcess('global Git config', "Set credential.helper to $Helper")) {
+            Complete-GELogSession -Path $session.Path -Outcome 'SUCCESS' -UserMessage 'Skipped (WhatIf).'
+            return [PSCustomObject]@{
+                CredentialHelper = $Helper
+                IgnoreList       = $null
+                Message          = 'Skipped (WhatIf).'
             }
+        }
 
-            $missing = @()
-            foreach ($pattern in $starterPatterns) {
-                if (-not ($existing -contains $pattern)) {
-                    $missing += $pattern
+        Invoke-GEGit -ArgumentList @('config', '--global', 'credential.helper', $Helper) -LogPath $session.Path | Out-Null
+
+        $ignoreInfo = $null
+
+        if ($WriteIgnoreList) {
+            if ($repoRoot) {
+                $starterPatterns = @(
+                    '# Added by Set-Vault -WriteIgnoreList',
+                    '*.user',
+                    '*.suo',
+                    '*.tmp',
+                    '*.log',
+                    '*.bak',
+                    'bin/',
+                    'obj/',
+                    'TestResults/',
+                    '.vs/',
+                    '.idea/',
+                    '.vscode/',
+                    '*.pfx',
+                    'secrets.json',
+                    '*.rdl.data'
+                )
+
+                $ignorePath = Join-Path $repoRoot '.gitignore'
+                $existing = @()
+
+                if (Test-Path -LiteralPath $ignorePath -PathType Leaf) {
+                    $existing = @(Get-Content -LiteralPath $ignorePath)
                 }
-            }
 
-            if ($missing.Count -gt 0) {
-                $appendBody = ''
-                if ($existing.Count -gt 0) {
-                    $appendBody = ($existing -join "`r`n")
-                    if (-not $appendBody.EndsWith("`r`n")) {
+                $missing = @()
+                foreach ($pattern in $starterPatterns) {
+                    if (-not ($existing -contains $pattern)) {
+                        $missing += $pattern
+                    }
+                }
+
+                if ($missing.Count -gt 0) {
+                    $appendBody = ''
+                    if ($existing.Count -gt 0) {
+                        $appendBody = ($existing -join "`r`n")
+                        if (-not $appendBody.EndsWith("`r`n")) {
+                            $appendBody += "`r`n"
+                        }
                         $appendBody += "`r`n"
                     }
-                    $appendBody += "`r`n"
+                    $appendBody += ($missing -join "`r`n") + "`r`n"
+
+                    [System.IO.File]::WriteAllText($ignorePath, $appendBody, [System.Text.UTF8Encoding]::new($false))
                 }
-                $appendBody += ($missing -join "`r`n") + "`r`n"
 
-                [System.IO.File]::WriteAllText($ignorePath, $appendBody, [System.Text.UTF8Encoding]::new($false))
-            }
-
-            $ignoreInfo = [PSCustomObject]@{
-                Path    = $ignorePath
-                Added   = $missing.Count
-                Skipped = $starterPatterns.Count - $missing.Count
+                $ignoreInfo = [PSCustomObject]@{
+                    Path    = $ignorePath
+                    Added   = $missing.Count
+                    Skipped = $starterPatterns.Count - $missing.Count
+                }
             }
         }
-    }
 
-    [PSCustomObject]@{
-        CredentialHelper = $Helper
-        IgnoreList       = $ignoreInfo
-        Message          = "Credential storage set to $Helper."
+        $result = [PSCustomObject]@{
+            CredentialHelper = $Helper
+            IgnoreList       = $ignoreInfo
+            Message          = "Credential storage set to $Helper."
+        }
+
+        Complete-GELogSession -Path $session.Path -Outcome 'SUCCESS'
+        return $result
+    }
+    catch {
+        $err = $_
+        $msg = if ($err.Exception.Message -like 'git *') { $userMessageOnFailure } else { $err.Exception.Message }
+        Complete-GELogSession -Path $session.Path -Outcome 'FAILURE' -UserMessage $msg -ErrorMessage $err.Exception.Message
+        throw "$msg Details: $($session.Path)"
     }
 }

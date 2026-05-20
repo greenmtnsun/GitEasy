@@ -26,15 +26,20 @@ Describe 'Get-GELogPath' {
     }
 
     It 'honors the GITEASY_LOG_PATH environment variable' {
-        $env:GITEASY_LOG_PATH = 'C:\test-env-logs'
+        $envPath = Join-Path ([IO.Path]::GetTempPath()) 'giteasy-test-env-logs'
+        $env:GITEASY_LOG_PATH = $envPath
         $result = & (Get-Module GitEasy) { Get-GELogPath }
-        $result | Should Be 'C:\test-env-logs'
+        $result | Should Be $envPath
     }
 
     It 'honors the -OverridePath parameter above env and default' {
-        $env:GITEASY_LOG_PATH = 'C:\test-env-logs'
-        $result = & (Get-Module GitEasy) { Get-GELogPath -OverridePath 'C:\test-explicit' }
-        $result | Should Be 'C:\test-explicit'
+        $envPath      = Join-Path ([IO.Path]::GetTempPath()) 'giteasy-test-env-logs'
+        $explicitPath = Join-Path ([IO.Path]::GetTempPath()) 'giteasy-test-explicit'
+        $env:GITEASY_LOG_PATH = $envPath
+        # Module-scope script blocks do not inherit caller variables; pass the
+        # path through param() so the assertion can compare against it cleanly.
+        $result = & (Get-Module GitEasy) { param($p) Get-GELogPath -OverridePath $p } $explicitPath
+        $result | Should Be $explicitPath
     }
 }
 

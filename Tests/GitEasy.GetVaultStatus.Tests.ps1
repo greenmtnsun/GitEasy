@@ -342,8 +342,9 @@ Describe 'Get-VaultStatus — contract' {
                 $result.CredentialHelper | Should Not BeNullOrEmpty
             }
             else {
-                # helper was already absent before we could set it; pass through.
-                $true | Should Be $true
+                # helper was already absent before we could set it; assert
+                # the contract we DO know in this branch instead of $true|=$true.
+                $result.Configured | Should Be $false
             }
         }
     }

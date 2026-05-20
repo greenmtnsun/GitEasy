@@ -1,5 +1,5 @@
 @startuml GitEasyInternalCallGraph
-title GitEasy - Internal Call Graph (v1.5.0)
+title GitEasy - Internal Call Graph (v1.5.2)
 skinparam componentStyle rectangle
 skinparam shadowing false
 
@@ -15,7 +15,7 @@ component "Remove-GEOldLog" <<helper>> as Prune
 component "Assert-GESafeSave" <<helper>> as Safe
 component "Repo-state checks\nTest-GERepositoryBusy,\nGet-GEConflictFiles, Get-GERepoRoot" <<helper>> as RepoChk
 component "Query helpers\nGet-GEBranchName, Get-GERemoteUrl,\nGet-GEProviderName, Get-GERemoteSummary,\nGet-GEHistory, Get-GECodeChange" <<helper>> as QHelp
-component "URL safety\nTest-GERemoteUrlSafe,\nConvert-GERemoteToSsh" <<helper>> as UrlSafe
+component "Credential surface safety\nTest-GERemoteUrlSafe (input guard),\nConvert-GERemoteToSsh (input transform),\nFormat-GESafeUrl (output sanitiser),\nFormat-GESafeLogLine (output sanitiser)" <<helper>> as UrlSafe
 component "Invoke-GEGit" <<engine>> as Engine
 
 Mut --> StartLog
@@ -28,18 +28,21 @@ RepoChk --> Engine
 Cfg --> StartLog
 Cfg --> Engine
 Cfg --> EndLog
-Cfg --> UrlSafe : Set-Token / Set-Ssh only
+Cfg --> UrlSafe : Set-Token / Set-Ssh (input);\nReset-Login (output, F-01/F-03)
 Cfg --> QHelp : Set-Token / Set-Ssh / Reset-Login only
 
 Qry --> QHelp
 Qry --> RepoChk : Get-VaultStatus repo checks
 Qry --> Engine : all but Show-Diagnostic
 Qry --> LogPath : Show-Diagnostic only
+Qry --> UrlSafe : Test-Login (output, F-05)
 
 StartLog --> LogPath
 StartLog --> Prune
 QHelp --> Engine
+QHelp --> UrlSafe : Get-GERemoteSummary (output, F-01)
 Engine --> AddLog : per git step, when log session open
+Engine --> UrlSafe : F-06: sanitises URL-shaped args before log + throw
 
 note bottom of Engine
   Three paths, not one spine: mutating gates

@@ -214,7 +214,13 @@ Describe 'Reset-Login' {
     }
 
     It 'every invocation writes a log file' {
-        try { Reset-Login } catch { }
+        # Reset-Login is expected to fail here (no remote configured in the
+        # test repo). Assert the throw happened first, so the log-file check
+        # is not a silent pass if Reset-Login ever succeeds unexpectedly.
+        $thrown = $null
+        try { Reset-Login } catch { $thrown = $_ }
+
+        $thrown | Should Not BeNullOrEmpty
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Reset-Login-*.log' -File)
         $logs.Count -gt 0 | Should Be $true

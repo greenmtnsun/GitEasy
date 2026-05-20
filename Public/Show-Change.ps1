@@ -6,7 +6,7 @@ function Show-Change {
     .DESCRIPTION
     Show-Change is the natural counterpart to Find-CodeChange. Where Find-CodeChange tells you HOW MANY things changed and which files, Show-Change tells you the actual changes - the lines added and removed.
 
-    By default, Show-Change returns the changes you have not yet saved (working area vs last saved point), one structured object per file with Path and Diff. Pipe to Format-List for the full text. With -Staged, it shows changes that are already staged for the next saved point. With -Compact, it returns a one-line summary per file instead of the full text.
+    By default, Show-Change returns the changes you have not yet saved (working area vs last saved point), one structured object per file with Path and Diff. Pipe to Format-List for the full text. With -NextSave, it shows changes that are already prepared for the next saved point. With -Compact, it returns a one-line summary per file instead of the full text.
 
     .PARAMETER Path
     Filter to a single file (relative to the project root or absolute). Without this, every changed file is included.

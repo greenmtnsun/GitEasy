@@ -1,8 +1,8 @@
 # GitEasy — Architecture (UML)
 
-Technical-takeover documentation for **GitEasy v1.5.1**. Three views plus this
-walkthrough. Reconciled against the working tree on 2026-05-15 (manifest
-`ModuleVersion = 1.5.1`). Source is canonical; no rendered images are committed.
+Technical-takeover documentation for **GitEasy v1.5.2**. Three views plus this
+walkthrough. Reconciled against the working tree on 2026-05-20 (manifest
+`ModuleVersion = 1.5.2`). Source is canonical; no rendered images are committed.
 
 This file is the **skim** deliverable — read it and you have the picture even
 without a PlantUML viewer. The `.puml` files are the **render** deliverable.
@@ -96,36 +96,38 @@ What reads/writes which artifact:
 
 Things a new owner should know that are **not** obvious from the code:
 
-1. **Stale example — `Examples/10-What-Is-Not-Wired-Yet.ps1`.** Lists
-   New-WorkBranch, Switch-Work, Undo-Changes, Restore-File, Clear-Junk as "not
-   wired yet." All five are fully implemented and tested in 1.5.0. The script
-   misrepresents current state — delete or invert it.
-2. **Dev tooling at repo root.** `Update-GitEasyCommandWiki.ps1` and
+1. **Dev tooling at repo root.** `Update-GitEasyCommandWiki.ps1` and
    `Update-GitEasyPrivateWiki.ps1` live at the repo root, not in `tools/`,
    mixing maintenance scripts with the module root. Cosmetic, but a new owner
    will not expect generators there.
-3. **README version drift.** [README.md](../../README.md) states GitEasy is at
-   1.0.0; the manifest and CHANGELOG say 1.5.0. First-impression embarrassment
-   on a public repo.
-4. **`Invoke-GEGit` mutates global CWD.** It does `Set-Location` into
+2. **`Invoke-GEGit` mutates global CWD.** It does `Set-Location` into
    `WorkingDirectory` around `& git`, restored in a `finally`. Correct under
    normal use, but it is **not reentrancy/thread safe** — concurrent calls in
    the same runspace would race the working directory. Not a bug today
    (commands are sequential); a constraint to respect if anyone parallelizes.
-5. **Engine swallows nothing but throws raw on failure.** `Invoke-GEGit`
-   throws a multi-line string containing raw git stdout+stderr when a non-
-   `-AllowFailure` call exits non-zero. Public commands catch this and
-   substitute plain-English messages — so the plain-English contract depends on
-   **every caller** wrapping engine calls. A new command that forgets the
-   try/catch leaks raw git output to the user. Not enforced by the type system.
-6. **Credential-path test coverage is thin.** `Reset-Login` ~23%, `Show-Remote`
-   ~36% line coverage (per `coverage.txt`). The lowest-proven code is on the
-   credential surface — the riskiest place for it to be weak. No known failing
-   tests; this is under-tested, not broken.
-7. **No formal security review on record.** GitEasy shells out to git, parses
-   remote URLs, and writes to credential stores, but (unlike ClusterValidator)
-   has no adversarial-review artifact. `Test-GERemoteUrlSafe` is the one
-   explicit injection guard; there is no systematic CWE pass.
+   Tracked in `Wiki/Roadmap.md` as a deferred refactor.
+3. **Engine throws raw stdout/stderr on failure.** `Invoke-GEGit` throws a
+   multi-line string containing raw git stdout+stderr when a non-
+   `-AllowFailure` call exits non-zero. As of 1.5.2 (F-06), URL-shaped args
+   are sanitised in the step header and thrown message; the **body** of
+   stdout/stderr is still raw, so any caller that surfaces the body to the
+   user must apply its own sanitisation. Public commands catch this and
+   substitute plain-English messages — the plain-English contract depends on
+   **every caller** wrapping engine calls. Not enforced by the type system.
+
+### Resolved since this document was first written
+
+- **Stale example** `Examples/10-What-Is-Not-Wired-Yet.ps1` → renamed to
+  `10-Confirm-Install.ps1` with content that probes a real install.
+- **README version drift** (was 1.0.0 vs manifest 1.5.0) → README now tracks
+  the manifest watermark; verified at every release.
+- **Credential-path test coverage thin** (`Reset-Login` ~23%, `Show-Remote`
+  ~36% per old `coverage.txt`) → `Tests/GitEasy.AuthHardening.Tests.ps1` is
+  the dedicated kill-test suite for the credential surface (F-01/F-02/F-03
+  in 1.5.1; F-04/F-05/F-06 plus F-01/F-02/F-03 edge locks added in 1.5.2).
+- **No formal security review on record** → `docs/SECURITY-FINDINGS-2026-05-17.md`
+  (1.5.1 — three findings) and `docs/SECURITY-FINDINGS-2026-05-20.md` (1.5.2
+  — three findings) are the on-record adversarial-review artifacts.
 
 ## Verification status
 
@@ -151,6 +153,6 @@ Things a new owner should know that are **not** obvious from the code:
   command call sites, plus full reads of `Save-Work`, `Test-Login`,
   `Show-Diagnostic` as path exemplars. Per-command call *ordering* inside the
   other 18 commands is inferred from the path pattern, not line-verified.
-- **Version pin is manual.** Titles carry `(v1.5.0)`; nothing automatically
+- **Version pin is manual.** Titles carry `(v1.5.2)`; nothing automatically
   checks the pin against the manifest. Update titles in the same commit as any
   `ModuleVersion` bump.

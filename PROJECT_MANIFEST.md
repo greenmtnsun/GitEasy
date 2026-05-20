@@ -1,4 +1,4 @@
-﻿# GitEasy V2 Project Manifest
+﻿# GitEasy Project Manifest
 
 ## Immutable Rules
 

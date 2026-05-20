@@ -64,7 +64,12 @@ function Show-Diagnostic {
     }
 
     if ($All) {
-        Start-Process -FilePath 'explorer.exe' -ArgumentList $logDirectory
+        if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+            Start-Process -FilePath 'explorer.exe' -ArgumentList $logDirectory
+        }
+        else {
+            Write-Host "Logs folder: $logDirectory"
+        }
         return
     }
 
@@ -95,5 +100,10 @@ function Show-Diagnostic {
     $mostRecent = $allLogs | Select-Object -First 1
     Write-Host "Opening: $($mostRecent.FullName)"
 
-    Start-Process -FilePath $mostRecent.FullName
+    if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+        Start-Process -FilePath $mostRecent.FullName
+    }
+    else {
+        Write-Host "Open this file in your editor: $($mostRecent.FullName)"
+    }
 }

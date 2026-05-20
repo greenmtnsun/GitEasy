@@ -52,10 +52,11 @@ function Search-History {
     $root = Get-GERepoRoot
     $delim = '<<<GE-SEARCH-DELIM>>>'
 
-    $args = @('log', "-S$Pattern", "--max-count=$Count", '--date=short', "--pretty=format:$delim%h%x09%ad%x09%an%x09%s")
-    if ($Patch) { $args += '--patch' }
+    # Local list named to avoid shadowing the $args automatic variable.
+    $logArgs = @('log', "-S$Pattern", "--max-count=$Count", '--date=short', "--pretty=format:$delim%h%x09%ad%x09%an%x09%s")
+    if ($Patch) { $logArgs += '--patch' }
 
-    $r = Invoke-GEGit -ArgumentList $args -WorkingDirectory $root -AllowFailure
+    $r = Invoke-GEGit -ArgumentList $logArgs -WorkingDirectory $root -AllowFailure
 
     if ($r.ExitCode -ne 0) {
         return @()
@@ -77,7 +78,7 @@ function Search-History {
 
         $entry = [PSCustomObject]@{
             Repository = $root
-            Hash       = $parts[0].Trim()
+            Id         = $parts[0].Trim()
             Date       = $parts[1].Trim()
             Author     = $parts[2].Trim()
             Message    = $parts[3].Trim()

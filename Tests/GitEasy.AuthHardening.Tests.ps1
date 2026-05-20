@@ -252,4 +252,264 @@ Describe 'Credential-surface hardening' {
             $thrown.Exception.Message | Should Not Match '(?i)\bgit\b'
         }
     }
+
+    # -----------------------------------------------------------------------
+    # F-01 / F-05 edges: Format-GESafeUrl now handles URLs embedded mid-string
+    # (the F-05 fix dropped the `^` anchor so a creds URL quoted inside an
+    # error message is sanitised) plus alt-scheme URLs (ssh://, git+ssh://)
+    # and IPv6 literal hosts.
+    # -----------------------------------------------------------------------
+    Context 'Format-GESafeUrl mid-string and alt-scheme (F-05 + F-01 edges)' {
+
+        It 'strips a creds URL embedded in a git-style error message' {
+            $r = InModuleScope GitEasy {
+                Format-GESafeUrl -Url "fatal: unable to access 'https://x:tok@github.com/o/r.git/': SSL"
+            }
+            $r | Should Be "fatal: unable to access 'https://github.com/o/r.git/': SSL"
+            $r | Should Not Match 'x:tok'
+        }
+
+        It 'strips userinfo from an ssh:// scheme URL' {
+            $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'ssh://user:pw@host/path' }
+            $r | Should Be 'ssh://host/path'
+        }
+
+        It 'strips userinfo from a git+ssh:// scheme URL' {
+            $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'git+ssh://user:pw@host/path' }
+            $r | Should Be 'git+ssh://host/path'
+        }
+
+        It 'leaves an IPv6 literal host untouched when no userinfo is present' {
+            $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://[::1]/o/r.git' }
+            $r | Should Be 'https://[::1]/o/r.git'
+        }
+
+        It 'strips userinfo from an IPv6 literal host URL' {
+            $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://u:tok@[::1]/o/r.git' }
+            $r | Should Be 'https://[::1]/o/r.git'
+        }
+
+        It 'handles multiple URLs in the same string' {
+            $r = InModuleScope GitEasy {
+                Format-GESafeUrl -Url 'a https://u:t@x.com b https://u:t@y.com c'
+            }
+            $r | Should Be 'a https://x.com b https://y.com c'
+        }
+
+        It 'leaves "%40" alone (percent-encoded @ is data, not the auth boundary)' {
+            $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://github.com/o/a%40b.git' }
+            $r | Should Be 'https://github.com/o/a%40b.git'
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # F-03 edges: Format-GESafeLogLine now also redacts Proxy-Authorization
+    # headers (the regex previously only matched the bare "authorization"
+    # alternation). The line-anchor remains by design — a literal
+    # "password=foo" mid-sentence in narrative text is left alone.
+    # -----------------------------------------------------------------------
+    Context 'Format-GESafeLogLine edges (F-03)' {
+
+        It 'redacts a Proxy-Authorization header' {
+            $r = InModuleScope GitEasy { 'Proxy-Authorization: Bearer abc' | Format-GESafeLogLine }
+            $r | Should Be 'Proxy-Authorization: [redacted]'
+        }
+
+        It 'redacts Proxy-Authorization case-insensitively' {
+            $r = InModuleScope GitEasy { 'PROXY-AUTHORIZATION: Bearer xyz' | Format-GESafeLogLine }
+            $r | Should Be 'PROXY-AUTHORIZATION: [redacted]'
+        }
+
+        It 'leaves a mid-sentence "password=" alone (line-shape intent lock)' {
+            $r = InModuleScope GitEasy { 'Operator said password=foo on the phone' | Format-GESafeLogLine }
+            $r | Should Be 'Operator said password=foo on the phone'
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # F-04 kill-test: Convert-GERemoteToSsh now uses [uri] parsing and
+    # refuses URLs whose authority embeds userinfo. The old regex
+    # ^https://(?<Host>[^/]+)/ would greedily capture "user:tok@host" as
+    # the host, the same shape as the F-02 Reset-Login bug.
+    # -----------------------------------------------------------------------
+    Context 'Convert-GERemoteToSsh refuses embedded credentials (F-04 kill-test)' {
+
+        It 'converts a clean HTTPS URL to its SSH form' {
+            $r = InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'https://github.com/o/r.git' }
+            $r | Should Be 'git@github.com:o/r.git'
+        }
+
+        It 'returns an already-SSH URL unchanged' {
+            $r = InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'git@github.com:o/r.git' }
+            $r | Should Be 'git@github.com:o/r.git'
+        }
+
+        It 'throws when the URL embeds credentials in userinfo' {
+            $thrown = $null
+            try {
+                InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'https://x:ghp_REALSECRET@github.com/o/r.git' }
+            } catch { $thrown = $_ }
+            $thrown | Should Not BeNullOrEmpty
+            $thrown.Exception.Message | Should Match '(?i)embed|password|token'
+            $thrown.Exception.Message | Should Not Match 'ghp_REALSECRET'
+        }
+
+        It 'throws on a non-HTTPS URL' {
+            $thrown = $null
+            try {
+                InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'ftp://host/path' }
+            } catch { $thrown = $_ }
+            $thrown | Should Not BeNullOrEmpty
+        }
+
+        It 'the [uri] parse the F-04 fix relies on isolates UserInfo from Host' {
+            $parsed = InModuleScope GitEasy { 'https://x:ghp_REALSECRET@github.example/o/r.git' -as [uri] }
+            $parsed.Host | Should Be 'github.example'
+            $parsed.UserInfo | Should Be 'x:ghp_REALSECRET'
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # F-02 edges: Reset-Login relies on [uri].Host for the credential reject
+    # target. Lock the .NET behaviour for hosts that have caused regex
+    # parsers to misbehave elsewhere: IDN punycode, IPv6 literals, ports in
+    # authority.
+    # -----------------------------------------------------------------------
+    Context '[uri].Host edge cases for Reset-Login (F-02 edges)' {
+
+        It 'punycode IDN host is preserved verbatim' {
+            $parsed = 'https://xn--80akhbyknj4f.example/o/r.git' -as [uri]
+            $parsed.Host | Should Be 'xn--80akhbyknj4f.example'
+        }
+
+        It 'IPv6 literal host is preserved (.NET strips the brackets on .Host)' {
+            $parsed = 'https://[::1]/o/r.git' -as [uri]
+            $parsed.Host | Should Be '[::1]'
+        }
+
+        It 'port in authority is split out from .Host' {
+            $parsed = 'https://github.example:8443/o/r.git' -as [uri]
+            $parsed.Host | Should Be 'github.example'
+            $parsed.Port | Should Be 8443
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # F-05 kill-test: Test-Login must not surface an embedded credential
+    # through its returned object, no matter what is sitting in .git/config.
+    # Test-Login will return Passed=false here (ls-remote cannot reach an
+    # invented host), but the Url field must be sanitised regardless.
+    # -----------------------------------------------------------------------
+    Context 'Test-Login does not leak embedded credentials (F-05 kill-test)' {
+
+        BeforeEach {
+            $script:Stem = [guid]::NewGuid().ToString('N').Substring(0, 8)
+            $script:Repo = Join-Path ([IO.Path]::GetTempPath()) "GitEasy_TL_$script:Stem"
+            New-TestRepository -Path $script:Repo
+            Push-Location -LiteralPath $script:Repo
+        }
+
+        AfterEach {
+            Pop-Location
+            Remove-Item -LiteralPath $script:Repo -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'redacts an embedded token from the Url field of the returned object' {
+            Invoke-TestGit -ArgumentList @('remote', 'add', 'origin', 'https://x-access-token:ghp_REALSECRET@github.invalid/o/r.git') | Out-Null
+
+            $r = Test-Login
+
+            $r.Url | Should Not Match 'ghp_REALSECRET'
+            $r.Url | Should Not Match 'x-access-token'
+            $r.Url | Should Be 'https://github.invalid/o/r.git'
+        }
+
+        It 'redacts an embedded token from any URL quoted in the Message field' {
+            Invoke-TestGit -ArgumentList @('remote', 'add', 'origin', 'https://x-access-token:ghp_REALSECRET@github.invalid/o/r.git') | Out-Null
+
+            $r = Test-Login
+
+            $r.Passed | Should Be $false
+            $r.Message | Should Not Match 'ghp_REALSECRET'
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # F-06 kill-test: Invoke-GEGit sanitises URL-shaped args before they
+    # land in the log step header or the thrown error message. A bogus
+    # `remote set-url` against a non-existent remote fails fast (no
+    # network), so the throw path is exercised cleanly.
+    # -----------------------------------------------------------------------
+    Context 'Invoke-GEGit sanitises URL-shaped args (F-06 kill-test)' {
+
+        BeforeEach {
+            $script:Stem = [guid]::NewGuid().ToString('N').Substring(0, 8)
+            $script:Repo = Join-Path ([IO.Path]::GetTempPath()) "GitEasy_IGS_$script:Stem"
+            New-TestRepository -Path $script:Repo
+            Push-Location -LiteralPath $script:Repo
+        }
+
+        AfterEach {
+            Pop-Location
+            Remove-Item -LiteralPath $script:Repo -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'redacts a creds-URL arg in the thrown error message' {
+            $thrown = $null
+            $repoPath = $script:Repo
+            try {
+                & (Get-Module GitEasy) {
+                    param($wd)
+                    Invoke-GEGit -ArgumentList @('remote','set-url','noSuchRemote','https://x:ghp_REALSECRET@host.invalid/r.git') -WorkingDirectory $wd
+                } $repoPath
+            } catch { $thrown = $_ }
+
+            $thrown | Should Not BeNullOrEmpty
+            $thrown.Exception.Message | Should Not Match 'ghp_REALSECRET'
+            $thrown.Exception.Message | Should Not Match 'x:'
+        }
+    }
+
+    # -----------------------------------------------------------------------
+    # Test-GERemoteUrlSafe accept/reject matrix. Previously covered only
+    # transitively through Set-Token / Set-Ssh; this locks the helper's
+    # contract directly.
+    # -----------------------------------------------------------------------
+    Context 'Test-GERemoteUrlSafe accept/reject matrix' {
+
+        It 'accepts a clean https URL' {
+            $r = InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'https://github.com/o/r.git' }
+            $r | Should Be $true
+        }
+
+        It 'accepts the scp-style SSH form' {
+            $r = InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'git@github.com:o/r.git' }
+            $r | Should Be $true
+        }
+
+        It 'rejects an embedded-cred https URL' {
+            $thrown = $null
+            try {
+                InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'https://x:tok@github.com/o/r.git' }
+            } catch { $thrown = $_ }
+            $thrown | Should Not BeNullOrEmpty
+            $thrown.Exception.Message | Should Match '(?i)embed|password|token'
+        }
+
+        It 'rejects a non-HTTPS, non-SSH URL' {
+            $thrown = $null
+            try {
+                InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'ftp://host/path' }
+            } catch { $thrown = $_ }
+            $thrown | Should Not BeNullOrEmpty
+        }
+
+        It 'rejects empty/whitespace input' {
+            $thrown = $null
+            try {
+                InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl '   ' }
+            } catch { $thrown = $_ }
+            $thrown | Should Not BeNullOrEmpty
+        }
+    }
 }

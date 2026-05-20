@@ -62,6 +62,14 @@ function Set-Ssh {
                 throw "Remote '$RemoteName' is not configured. Provide -RemoteUrl."
             }
 
+            # F-04 defence in depth: validate the input read from .git/config
+            # before passing to Convert-GERemoteToSsh. An embedded user:token@
+            # in the read path would otherwise be silently carried through to
+            # `git remote set-url` and the diagnostic log header. Convert
+            # itself also refuses, but failing here gives a clear input-side
+            # error rather than relying on the conversion helper's guard.
+            Test-GERemoteUrlSafe -RemoteUrl $currentUrl | Out-Null
+
             $RemoteUrl = Convert-GERemoteToSsh -RemoteUrl $currentUrl
         }
 

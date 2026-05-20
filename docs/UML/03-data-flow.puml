@@ -1,5 +1,5 @@
 @startuml GitEasyDataFlow
-title GitEasy - Data Flow (v1.5.0)
+title GitEasy - Data Flow (v1.5.2)
 skinparam componentStyle rectangle
 skinparam shadowing false
 left to right direction
@@ -7,6 +7,7 @@ left to right direction
 component "Public commands" <<command>> as Cmd
 component "Invoke-GEGit\n+ git executable" <<engine>> as Engine
 component "Log session helpers\nStart / Add / Complete" <<helper>> as LogH
+component "Credential-surface sanitisers\nFormat-GESafeUrl, Format-GESafeLogLine" <<helper>> as Sanitise
 component "Get-GELogPath" <<helper>> as LogPath
 component "Remove-GEOldLog" <<helper>> as Prune
 component "Show-Diagnostic" <<command>> as Diag
@@ -23,6 +24,9 @@ Cmd --> Engine : all git work
 Engine --> Repo : read / write
 Engine --> Remote : push = write, fetch = read
 Cmd --> LogH : mutating + config commands
+Cmd --> Sanitise : credential-surface commands\n(Reset-Login, Test-Login,\nShow-Remote via QHelp)
+Engine --> Sanitise : F-06: arg URLs before log + throw
+Sanitise --> LogH : sanitised lines into log session
 LogH --> Logs : write / append
 LogH --> LogPath
 LogPath --> Env : read resolution order
@@ -37,5 +41,8 @@ Cmd --> Creds : Set-Token / Set-Ssh / Set-Vault write;\nTest-Login / Get-VaultSt
 note bottom of Logs
   One self-contained file per invocation.
   Header + per-git-step records + outcome.
+  All URL-shaped content sanitised through
+  the Credential-surface sanitisers above
+  (F-01/F-03/F-05/F-06 hardening).
 end note
 @enduml

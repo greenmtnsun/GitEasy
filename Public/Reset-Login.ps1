@@ -121,7 +121,11 @@ function Reset-Login {
             # Erase is best-effort - reject above is the primary path
         }
 
-        # Step 3: remove matching cmdkey entries on Windows
+        # Step 3: remove matching cmdkey entries on Windows. Only set
+        # clearedSomething when a delete actually succeeded — cmdkey returns
+        # non-zero when a target does not exist, so a machine with no matching
+        # entries would otherwise have Reset-Login claim success while doing
+        # nothing useful (the same "silent success" pattern as F-02).
         if (Get-Command cmdkey.exe -ErrorAction SilentlyContinue) {
             $cmdkeyTargets = @(
                 "git:$hostName",
@@ -134,9 +138,11 @@ function Reset-Login {
                 $cmdOutput = & cmdkey.exe /delete:$target 2>&1
                 $cmdExit = $LASTEXITCODE
                 Add-GELogStep -Path $session.Path -Step "cmdkey /delete:$target" -ExitCode $cmdExit -Output @($cmdOutput | ForEach-Object { $_.ToString() })
-            }
 
-            $clearedSomething = $true
+                if ($cmdExit -eq 0) {
+                    $clearedSomething = $true
+                }
+            }
         }
 
         if (-not $clearedSomething) {
