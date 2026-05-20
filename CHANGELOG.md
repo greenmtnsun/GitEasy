@@ -4,9 +4,21 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-05-20
+
 ### Added
 
 - **`Tests/GitEasy.AssertSafeSave.Tests.ps1`** — dedicated behavioral suite for the `Assert-GESafeSave` guard (the one genuinely-open Roadmap item; previously it had only an AST/private-contract test plus transitive coverage through Save-Work). 10 tests across real temp-repo integration (safe workspace, subdirectory resolution, not-a-workspace, in-progress-merge busy state) and module-scoped-mock isolation of the conflict-only branch (which real git cannot produce without also being "busy"), plus the no-raw-git-jargon contract on every failure message and the Boolean-`$true` success shape.
+
+### Fixed (security)
+
+Adversarial review of GitEasy's credential / remote-auth surface (the 2026-05-15 UML takeover note flagged Reset-Login / Show-Remote coverage gaps with no formal security review on record). Three findings, all fixed in this release; full trust-boundary trace and kill-test mapping in [`docs/SECURITY-FINDINGS-2026-05-17.md`](docs/SECURITY-FINDINGS-2026-05-17.md).
+
+- **F-01 — High — CWE-200 / CWE-532 — embedded credentials in `.git/config` echoed to console and persisted to plaintext log.** `Test-GERemoteUrlSafe` rejects `scheme://user:token@host/...` on the **input** path (`Set-Token`, `Set-Ssh`), but the **read** path (`Get-GERemoteSummary` → `Show-Remote`, and `Reset-Login`'s error message) surfaced whatever was already in `.git/config` with no guard. With a remote of the form `https://x-access-token:ghp_REAL@github.com/o/r.git`, `Show-Remote` returned the live PAT in `Url` and Reset-Login's failure log wrote it verbatim via `AppendAllText` to `%LOCALAPPDATA%\GitEasy\Logs\*.log`. Fixed by `Private/Format-GESafeUrl.ps1` (strips `userinfo@` from a `scheme://` authority; leaves clean URLs and the scp-like SSH form `git@host:path` untouched), wired into `Get-GERemoteSummary` and the Reset-Login error message.
+- **F-02 — Medium — correctness + contributes to F-01 — wrong host extracted from credential-embedding URL.** `Reset-Login`'s old regex `^https://(?<Host>[^/]+)/` greedily captured `user:tok@host` as the host, so `git credential reject` was sent the wrong host and silently did nothing while Reset-Login reported success. Fixed by parsing with `[uri]` and requiring `.Scheme -eq 'https'` and non-empty `.Host`; `[uri]` places `user:tok@` in `UserInfo`, never in `.Host`.
+- **F-03 — Low — CWE-200 — credential-helper output written verbatim to log.** `Add-GELogStep` calls in `Reset-Login` recorded raw `git credential reject` / `git credential-manager erase` stdout, which can echo `password=` / `secret=` / `token=` / `bearer=` / `Authorization:` lines. Fixed by `Private/Format-GESafeLogLine.ps1` (key-preserving redaction — replaces the value with `[redacted]`, keeps the key for diagnostics), piped into both `Add-GELogStep` calls.
+
+Kill-test suite: `Tests/GitEasy.AuthHardening.Tests.ps1` — 20 tests across the `Format-GESafeUrl` and `Format-GESafeLogLine` unit contexts plus the integration-level "no live secret appears in the failure log" assertion. `Test-GERemoteUrlSafe` is unchanged — it remains the input-path guard by design; the read path is now covered by `Format-GESafeUrl` (input guard vs output sanitiser, deliberately separate).
 
 ### Fixed (documentation)
 
@@ -24,7 +36,7 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
   Only the 1.0.0 (86 → **74**) and 1.5.0 (456 → **435**) narrative figures were wrong, both overstatements in the prose — `git diff` confirms **zero** test files were ever deleted or modified across the whole history, so there is nothing to recover; this is purely a documentation correction. The 1.1.0 entry's "(was 86 in 1.0.0)" back-reference inherits the 1.0.0 error and should read "(was 74)".
 
-  **Current empirically-measured total: 464** (`tools\Run-GitEasyPester.ps1`, Pester 3.4.0, run `bitbf459z`: Passed 464 Failed 0) — the 435 baseline at the 1.5.0 tree plus the +19 vault suite (`02b5bbc`) and the +10 `Assert-GESafeSave` suite above. Reconciliation arithmetic: 464 − 10 − 19 = 435.
+  **Current empirically-measured total: 484** (`tools\Run-GitEasyPester.ps1`, Pester 3.4.0, run `bak6780l9`, 2026-05-20: Passed 484 Failed 0) — the 435 baseline at the 1.5.0 tree plus the +19 vault suite (`02b5bbc`), the +10 `Assert-GESafeSave` suite, and the +20 `AuthHardening` suite (this release). Reconciliation arithmetic: 484 − 20 − 10 − 19 = 435.
 
 ## [1.5.0] - 2026-05-09
 

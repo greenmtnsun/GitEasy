@@ -1,8 +1,8 @@
 # GitEasy — Architecture (UML)
 
-Technical-takeover documentation for **GitEasy v1.5.0**. Three views plus this
+Technical-takeover documentation for **GitEasy v1.5.1**. Three views plus this
 walkthrough. Reconciled against the working tree on 2026-05-15 (manifest
-`ModuleVersion = 1.5.0`). Source is canonical; no rendered images are committed.
+`ModuleVersion = 1.5.1`). Source is canonical; no rendered images are committed.
 
 This file is the **skim** deliverable — read it and you have the picture even
 without a PlantUML viewer. The `.puml` files are the **render** deliverable.

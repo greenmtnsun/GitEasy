@@ -61,11 +61,18 @@ function Reset-Login {
             throw "Remote '$RemoteName' is not configured."
         }
 
-        if ($remoteUrl -notmatch '^https://(?<Host>[^/]+)/') {
-            throw "Reset-Login currently supports HTTPS remotes only. Current remote: $remoteUrl"
+        # Never echo a remote URL that may embed credentials (.git/config is
+        # an untrusted read-path input). Parse the host with [uri] so an
+        # embedded "user:token@" cannot be mistaken for the host (which would
+        # both leak the secret into the log and clear the wrong entry).
+        $safeUrl   = Format-GESafeUrl -Url $remoteUrl
+        $parsedUri = $remoteUrl -as [uri]
+
+        if ((-not $parsedUri) -or ($parsedUri.Scheme -ne 'https') -or [string]::IsNullOrWhiteSpace($parsedUri.Host)) {
+            throw "Reset-Login currently supports HTTPS remotes only. Current remote: $safeUrl"
         }
 
-        $hostName = $Matches.Host
+        $hostName = $parsedUri.Host
 
         if (-not $PSCmdlet.ShouldProcess($hostName, 'Forget cached login')) {
             Complete-GELogSession -Path $session.Path -Outcome 'SUCCESS' -UserMessage 'Skipped (WhatIf).'
@@ -84,7 +91,7 @@ function Reset-Login {
         $rejectOutput = $rejectInput | & git credential reject 2>&1
         $rejectExit = $LASTEXITCODE
 
-        Add-GELogStep -Path $session.Path -Step "git credential reject (host=$hostName)" -ExitCode $rejectExit -Output @($rejectOutput | ForEach-Object { $_.ToString() })
+        Add-GELogStep -Path $session.Path -Step "git credential reject (host=$hostName)" -ExitCode $rejectExit -Output @($rejectOutput | ForEach-Object { $_.ToString() } | Format-GESafeLogLine)
 
         if ($rejectExit -eq 0) {
             $clearedSomething = $true
@@ -103,7 +110,7 @@ function Reset-Login {
                 $eraseOutput = $eraseInput | & git credential-manager erase 2>&1
                 $eraseExit = $LASTEXITCODE
 
-                Add-GELogStep -Path $session.Path -Step "git credential-manager erase (host=$hostName)" -ExitCode $eraseExit -Output @($eraseOutput | ForEach-Object { $_.ToString() })
+                Add-GELogStep -Path $session.Path -Step "git credential-manager erase (host=$hostName)" -ExitCode $eraseExit -Output @($eraseOutput | ForEach-Object { $_.ToString() } | Format-GESafeLogLine)
 
                 if ($eraseExit -eq 0) {
                     $clearedSomething = $true

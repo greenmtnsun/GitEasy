@@ -41,12 +41,15 @@
             $purpose = $Matches['Purpose']
             $provider = Get-GEProviderName -RemoteUrl $remoteUrl
 
+            # Never surface embedded credentials. .git/config is an untrusted
+            # input on the read path (clone-with-creds, CI, hostile repo);
+            # Test-GERemoteUrlSafe only guards GitEasy's own input path.
             [PSCustomObject]@{
                 Repository = $root
                 Remote     = $remoteName
                 Purpose    = $purpose
                 Provider   = $provider
-                Url        = $remoteUrl
+                Url        = (Format-GESafeUrl -Url $remoteUrl)
             }
         }
     }

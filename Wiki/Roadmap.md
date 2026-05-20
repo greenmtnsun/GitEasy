@@ -2,9 +2,19 @@
 
 ## Next
 
-- Dedicated behavioral Pester tests for `Assert-GESafeSave`. It currently has
-  an AST/private-contract test plus transitive coverage through Save-Work's
-  conflict and busy-repo tests, but no behavioral suite of its own.
+_(empty — the prior "Next" item, dedicated behavioral tests for
+`Assert-GESafeSave`, shipped 2026-05-17 in commit `988857d` as
+`Tests/GitEasy.AssertSafeSave.Tests.ps1`. Open architectural work is tracked
+under "Takeover findings" in Wiki/Known-Bugs-and-Fixes.md.)_
+
+## Done (reconciled 2026-05-17)
+
+- **Dedicated behavioral tests for `Assert-GESafeSave`** — shipped as
+  `Tests/GitEasy.AssertSafeSave.Tests.ps1` (commit `988857d`): 10 tests, real
+  temp-repo integration + module-scoped-mock conflict-branch isolation.
+- **Credential-surface security review** — formal adversarial pass with three
+  fixed findings; see `docs/SECURITY-FINDINGS-2026-05-17.md` and
+  `Tests/GitEasy.AuthHardening.Tests.ps1`.
 
 ## Done (reconciled 2026-05-16)
 
