@@ -1,6 +1,6 @@
 @{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.2'
+    ModuleVersion        = '1.5.3'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
@@ -57,49 +57,49 @@
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
-GitEasy 1.5.2 - 2026-05-20
+GitEasy 1.5.3 - 2026-05-21
 ==========================
 
-Second adversarial pass after the 2026-05-17 credential-surface review.
-522 tests on Pester 3.4.0, PS 5.1 + PS 7.
+PowerShell Gallery readiness release. No public-command behavior
+change, no private-helper signature change, no format.ps1xml change.
+569 tests on Pester 3.4.0, PS 5.1 + PS 7.
 
-Security (CWE-200 / CWE-532)
-----------------------------
-- F-04 (High) - Set-Ssh HTTPS->SSH conversion no longer persists
-  credential-embedded user-info from .git/config. Convert-GERemoteToSsh
-  now parses with [uri] and refuses non-empty UserInfo.
-- F-05 (Medium) - Test-Login return object and error message now route
-  through Format-GESafeUrl. Format-GESafeUrl generalised to sanitise
-  URLs that appear mid-string.
-- F-06 (Medium) - Invoke-GEGit step header and thrown error no longer
-  echo credential-bearing arguments. Every argument runs through
-  Format-GESafeUrl (no-op on non-URL args) before being joined.
+Gallery metadata
+----------------
+- Description rewritten audience-first (sysadmins / change managers /
+  compliance teams), under 400 chars to avoid search-card truncation.
+- Tags replaced with a 14-entry list incl. PSEdition_Desktop and
+  PSEdition_Core (drive Find-Module -Tag), DevOps, Automation,
+  SourceControl, VersionControl, Bitbucket.
+- CompatiblePSEditions = @('Desktop','Core') stamped explicitly.
+- IconUri set; LicenseUri now points at the in-repo LICENSE file
+  (display matches shipped license).
+- ReleaseNotes is now inline plaintext. PSGallery does not render
+  Markdown; a URL stub wastes the surface.
 
-Correctness
------------
-- Reset-Login cmdkey path now checks each cmdkey exit code before
-  flipping clearedSomething.
-- Save-Work ModuleVersion regex now accepts single- or double-quoted
-  version values.
-- Set-Vault now opens a log session, returns a structured object on
-  every path including -WhatIf.
+Tooling
+-------
+- tools/Publish-GitEasy.ps1 - enumerate-then-include staging,
+  manifest revalidation, Pester gate, URI reachability check,
+  dry-run by default. Real publish requires -Publish + -NuGetApiKey.
+- Tests/GitEasy.PublishReadiness.Tests.ps1 - 47 tests verifying
+  every Gallery-surface field (one per playbook checklist row).
 
-Plain-English / no-jargon
--------------------------
-- Show-Change comment-based help describes the -NextSave parameter
-  (1.5.0 rename from -Staged left CBH stale).
-- Search-History return property Hash renamed to Id.
-- Format/GitEasy.format.ps1xml column labels Staged -> Ready,
-  Unstaged -> Pending, Untracked -> New. Property names preserved.
+Docs
+----
+- docs/FOR-GIT-EXPERTS.md - dedicated expert-audience reference
+  covering the underlying git call sequence, scrub rules,
+  return-object schema, scripting patterns, override knobs, and
+  where to fall back to raw Git.
+- docs/PSGALLERY-METADATA-PLAYBOOK.md - pre-publish reference for
+  every Gallery-surfaced metadata field.
+- README + HOW-TO install recipes drop GitEasy into the user-scope
+  PowerShell module folder so Import-Module GitEasy works without a
+  path. The previous C:\Sysadmin\Scripts install path was a BPA
+  artifact.
 
-Cross-platform
---------------
-- Show-Diagnostic platform-detects before Start-Process explorer.exe
-  / Start-Process $logFile. Non-Windows hosts get a path hint.
-
-Full notes and trust-boundary trace:
+Full notes:
 https://github.com/greenmtnsun/GitEasy/blob/main/CHANGELOG.md
-https://github.com/greenmtnsun/GitEasy/blob/main/docs/SECURITY-FINDINGS-2026-05-20.md
 '@
         }
     }

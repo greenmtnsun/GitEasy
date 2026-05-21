@@ -103,6 +103,7 @@ $includeDocs = @(
     'docs\QUICKSTART.md'
     'docs\COMMAND_EXAMPLES.md'
     'docs\GITEASY-VS-RAW-GIT.md'
+    'docs\FOR-GIT-EXPERTS.md'
 )
 
 foreach ($f in $includeFiles) {

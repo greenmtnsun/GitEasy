@@ -4,6 +4,35 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.3] - 2026-05-21
+
+### Added
+
+- **PowerShell Gallery readiness.** Every metadata field surfaced on a Gallery package page is now populated: `Description` (audience-first, under 400 chars), `Tags` (14 entries including `PSEdition_Desktop`, `PSEdition_Core`, `DevOps`, `Automation`, `Bitbucket`, `SourceControl`, `VersionControl`), `CompatiblePSEditions = @('Desktop','Core')`, `IconUri`, in-repo `LicenseUri`, and an inline plaintext `ReleaseNotes` block (PSGallery does not render Markdown). Full mapping in [`docs/PSGALLERY-METADATA-PLAYBOOK.md`](docs/PSGALLERY-METADATA-PLAYBOOK.md).
+- **`tools/Publish-GitEasy.ps1`** — enumerate-then-include staging script. Copies only the user-facing files into a temp folder (manifest, .psm1, Public/, Private/, Format/, Assets/, LICENSE, README, CHANGELOG, four user-facing docs, docs/images/). Runs Test-ModuleManifest on the staged manifest, imports the staged module, verifies function count, runs the Pester suite, and network-checks `LicenseUri` / `ProjectUri` / `IconUri`. Dry-run by default. Real publish requires `-Publish` AND `-NuGetApiKey` (SecureString).
+- **`Tests/GitEasy.PublishReadiness.Tests.ps1`** — 47 Pester 3 tests, one per playbook checklist row. Verifies manifest shape (GUID, version format, Description length/audience hints, exports, PSData fields, here-string vs URL stub `ReleaseNotes`, etc.) plus repo state (LICENSE / README / CHANGELOG presence, `FormatsToProcess` files exist) plus the publish script's parse-cleanness. Network reachability is intentionally left to the publish script so the test suite stays deterministic in CI / on air-gapped machines.
+- **`Assets/icon.png`** — 85x85 transparent placeholder so the Gallery sidebar thumbnail is not a generic "no icon" silhouette. Spec for the final design in [`Assets/ICON-SPEC.md`](Assets/ICON-SPEC.md).
+- **`docs/FOR-GIT-EXPERTS.md`** — dedicated expert-audience reference: what `Save-Work` actually runs (the seven internal `git` calls with exit-code semantics), the half-done-state refusal rules, the credential-scrubbing rules naming `Format-GESafeLogLine` and `Format-GESafeUrl`, the return-object schema, coexistence with `.gitconfig` / `.git/hooks` / GUI tools / LFS / submodules / worktrees, scripting patterns, five entry points for reading the source, override knobs (`$env:GITEASY_LOG_PATH`, `-LogPath`, `-WhatIf`, `-Confirm`, `-NoPush`, `-SetUpstream`, `-Force`, `-BumpVersion`), and where to fall back to raw Git.
+- **`docs/PSGALLERY-METADATA-PLAYBOOK.md`** — pre-publish reference. Tables map every Gallery-surfaced field to its `.psd1` source. Lists proposed tags with justification, icon spec, paste-ready Author/Copyright strings, the inline `ReleaseNotes` template, a 30-item pre-publish checklist, and open questions.
+
+### Changed
+
+- **`Description` rewritten audience-first** — "Plain-English Git for sysadmins, change managers, and compliance teams. Five everyday PowerShell commands…" 286 chars, under the 400-char search-card truncation limit.
+- **`Copyright` tightened** to `(c) 2026 Keith Ramsey. Licensed under MPL-2.0.` (added year + SPDX identifier).
+- **`LicenseUri`** now points at the in-repo LICENSE file (`/blob/main/LICENSE`) rather than the canonical Mozilla URL. Anti-vibe alignment — the displayed license matches the license text shipped in the package.
+- **`Tests/GitEasy.Manifest.Tests.ps1`** exempts `.psd1` from the here-string ban. Here-strings are the natural form for inline `ReleaseNotes`; the ban remains for `.ps1` / `.psm1` line-ending fragility under Pester 3.
+- **Install recipes (README + HOW-TO + QUICKSTART + COMMAND_EXAMPLES)** now drop GitEasy into the user-scope PowerShell module folder so `Import-Module GitEasy` works without a path. The previous machine-specific install path (`C:\Sysadmin\Scripts`) was a BPA artifact.
+- **HOW-TO restructure.** New top-section "Who this is for, and when it's the right tool" with first-time-user / Git-expert framings, an 8-row field-of-use table, and explicit right-fit / wrong-fit lists (ten-people-daily-conflicts case named outright). New mid-section "Why one command instead of four — and what GitEasy guarantees" with the four `git` calls Save-Work runs and a 7-row promises table. New end-section glossary (15 plain-English terms). The top "For Git experts" section now points at `FOR-GIT-EXPERTS.md`; section 9 (under-the-hood) does the same. Three Canva infographics in `docs/images/`.
+- **`docs/GITEASY-VS-RAW-GIT.md`** lost its duplicated under-the-hood section in favour of a pointer to `FOR-GIT-EXPERTS.md`; gained a top "no hidden magic / not losing functionality" trust callout.
+
+### No functional change
+
+- No public-command behavior change. No private-helper signature change. No `format.ps1xml` change. The published `.nupkg` will have the same runtime surface as 1.5.2 — only metadata, docs, and tooling shift.
+
+### Test count
+
+- Empirical total at 1.5.3 is **569** (`tools\Run-GitEasyPester.ps1`, Pester 3.4.0, on PS 7: Passed 569 Failed 0). The 522 baseline at 1.5.2 plus the 47-test `Tests/GitEasy.PublishReadiness.Tests.ps1` suite. Net: +47 tests, 0 deletions.
+
 ## [1.5.2] - 2026-05-20
 
 ### Fixed (security)
