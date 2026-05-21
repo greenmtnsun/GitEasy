@@ -60,7 +60,12 @@ Describe 'GitEasy manifest and command surface' {
             $parseErrors = $null
             [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$parseErrors) | Out-Null
             @($parseErrors).Count | Should Be 0
-            @($tokens | Where-Object { $_.Kind.ToString() -like '*HereString*' }).Count | Should Be 0
+            # Here-strings are banned in .ps1/.psm1 (Pester 3 / line-ending
+            # fragility) but allowed in .psd1, where they are the natural
+            # form for the ReleaseNotes block surfaced on PSGallery.
+            if ($file.Extension -ne '.psd1') {
+                @($tokens | Where-Object { $_.Kind.ToString() -like '*HereString*' }).Count | Should Be 0
+            }
         }
     }
 
