@@ -94,6 +94,146 @@ Message : Remote login/connectivity test passed.
 If you see `Passed : False`, run `Show-Diagnostic` to open the most recent
 **log file (a file that lists what just happened, step by step)**.
 
+### 3.4 Setup recipes for the top 5 Git hosts
+
+**Good news:** the three GitEasy commands you run (`Set-Token`,
+`Set-Vault`, `Test-Login`) are the **same on every host**. The only
+things that change from host to host are:
+
+1. The **shape of the online address (URL)** you give to `Set-Token`.
+2. Where you go on that host's website to make a **password code
+   (personal access token / app password)**.
+
+The login keeper (Git Credential Manager) supports all of these
+out of the box on Windows. You do not need a different `Set-Vault`
+setting for each one.
+
+#### 1. GitHub
+
+The most common host. GitEasy was first tested on GitHub.
+
+```powershell
+Set-Token -RemoteUrl 'https://github.com/<you>/<your-repo>.git'
+Set-Vault  -Helper manager
+Test-Login
+```
+
+- **Address shape:** `https://github.com/<owner>/<repo>.git`
+- **Password code:** a *Personal Access Token (PAT)*. Make one at
+  **github.com → Settings → Developer settings → Personal access
+  tokens**. Give it the `repo` scope.
+- **What you paste:** when Git Credential Manager pops up, use your
+  GitHub user name and **paste the token where it asks for a password**.
+- **Notes:** GitHub no longer accepts your real password for Git over
+  the web. The token is the password now.
+
+#### 2. GitLab (gitlab.com or your own GitLab server)
+
+```powershell
+Set-Token -RemoteUrl 'https://gitlab.com/<you>/<your-repo>.git'
+Set-Vault  -Helper manager
+Test-Login
+```
+
+For a self-hosted GitLab, swap `gitlab.com` for your company host:
+
+```powershell
+Set-Token -RemoteUrl 'https://gitlab.example.com/<group>/<repo>.git'
+```
+
+- **Address shape:** `https://<gitlab-host>/<group-or-user>/<repo>.git`
+- **Password code:** a *Personal Access Token*. Make one at
+  **GitLab → User Settings → Access Tokens**. Give it at least
+  `write_repository` scope.
+- **What you paste:** any user name (or `oauth2`) and the token as the
+  password.
+- **Notes:** Self-hosted GitLab works the same as gitlab.com. Only the
+  host name changes.
+
+#### 3. Bitbucket Cloud (Atlassian)
+
+```powershell
+Set-Token -RemoteUrl 'https://bitbucket.org/<workspace>/<your-repo>.git'
+Set-Vault  -Helper manager
+Test-Login
+```
+
+- **Address shape:** `https://bitbucket.org/<workspace>/<repo>.git`
+  (note: workspace, not user)
+- **Password code:** an *App Password*. Make one at **Bitbucket → Your
+  avatar → Personal settings → App passwords**. Tick the
+  `Repositories: Read` and `Repositories: Write` boxes.
+- **What you paste:** your Bitbucket user name (not your email) and the
+  app password as the password.
+- **Notes:** Bitbucket calls the password code an *App Password*, not a
+  token. Bitbucket has not taken plain account passwords over Git since
+  2022.
+
+#### 4. Azure DevOps (Azure Repos, by Microsoft)
+
+```powershell
+Set-Token -RemoteUrl 'https://dev.azure.com/<org>/<project>/_git/<your-repo>'
+Set-Vault  -Helper manager
+Test-Login
+```
+
+- **Address shape:**
+  `https://dev.azure.com/<org>/<project>/_git/<repo>` — there is **no
+  `.git` on the end** like GitHub, and the path has the extra
+  `<project>/_git/` chunk.
+- **Password code:** a *Personal Access Token (PAT)*. Make one at
+  **Azure DevOps → User Settings (top right) → Personal access tokens**.
+  Give it the **Code (Read & Write)** scope.
+- **What you paste:** any user name (you can leave it blank or type
+  anything) and the PAT as the password.
+- **Notes:** Git Credential Manager has special built-in support for
+  Azure DevOps and will offer to open a browser to sign you in. That is
+  normal.
+
+#### 5. Gitea (the popular self-hosted Git server)
+
+If you (or your company) runs your own Git server, it is most often
+Gitea. The set-up is the same shape as gitlab.com.
+
+```powershell
+Set-Token -RemoteUrl 'https://git.example.com/<you>/<your-repo>.git'
+Set-Vault  -Helper manager
+Test-Login
+```
+
+- **Address shape:** `https://<your-gitea-host>/<owner>/<repo>.git`
+- **Password code:** an *Access Token*. Make one at **Your Gitea
+  site → Settings → Applications → Generate New Token**.
+- **What you paste:** your Gitea user name and the token as the
+  password.
+- **Notes:** Gitea looks like a generic Git host to Git Credential
+  Manager. No special setup is needed.
+
+#### Quick lookup table
+
+| Host | Address shape | Password code is called | Where to make it |
+|---|---|---|---|
+| GitHub | `https://github.com/<owner>/<repo>.git` | Personal Access Token | Settings → Developer settings → Personal access tokens |
+| GitLab | `https://gitlab.com/<owner>/<repo>.git` (or self-host) | Personal Access Token | User Settings → Access Tokens |
+| Bitbucket | `https://bitbucket.org/<workspace>/<repo>.git` | App Password | Personal settings → App passwords |
+| Azure DevOps | `https://dev.azure.com/<org>/<project>/_git/<repo>` | Personal Access Token | User Settings → Personal access tokens |
+| Gitea | `https://<your-host>/<owner>/<repo>.git` | Access Token | Settings → Applications |
+
+#### What does **not** change across hosts
+
+To be very clear about what stays the same:
+
+- The three GitEasy commands (`Set-Token`, `Set-Vault`, `Test-Login`)
+  are exactly the same.
+- The Windows login keeper (`-Helper manager`) is the same.
+- The advice "**never put the password code inside the address**" is
+  the same. `Set-Token` refuses any address with credentials baked in
+  on every host.
+- `Save-Work`, `Find-CodeChange`, `Show-History`, and the rest do not
+  know or care which host you use.
+- The day-to-day pop-up from Git Credential Manager is the same shape:
+  user name on top, password code on the bottom.
+
 ## 4. Your daily steps
 
 ![Daily workflow](images/daily-workflow.png)
