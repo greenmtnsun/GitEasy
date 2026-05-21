@@ -2,9 +2,13 @@
 
 ## Import the module
 
+If you installed GitEasy with the recipe in
+[`HOW-TO-USE-GITEASY.md` section 3](HOW-TO-USE-GITEASY.md#3-install-giteasy)
+or via `Install-Module`, it is on `$env:PSModulePath` and this works
+from anywhere:
+
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasy
-Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
+Import-Module GitEasy
 Get-Command -Module GitEasy
 ```
 

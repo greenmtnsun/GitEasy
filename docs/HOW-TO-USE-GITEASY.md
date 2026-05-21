@@ -31,30 +31,16 @@ tech helper.
 
 ### For Git experts — yes, this is for you too
 
-If you already know Git well, GitEasy is **not** "training wheels you
-grow out of." It is a thin, honest wrapper. You can keep your
-`.gitconfig`, your `.git/hooks`, your aliases, and your editor
-integrations. After any GitEasy command, you can drop into the same
-folder and run `git status`, `git log --oneline`, `git reflog`,
-`git diff HEAD~1` — nothing is hidden, nothing is changed behind your back, the
-`.git` folder is untouched.
+GitEasy is **not** "training wheels you grow out of." It is a thin,
+honest wrapper. Your `.gitconfig`, your `.git/hooks`, your aliases,
+and your editor integrations all keep working. After any GitEasy
+command, raw Git in the same folder still does what it always did.
 
-Three reasons an expert reaches for GitEasy:
-
-- **One fewer chance to misspell.** Four muscle-memory commands collapse
-  into one. Fewer keystrokes, no `git stsatus` retries.
-- **A sanitized log of every Git call.** Every `git` invocation, its exit
-  code, and its (scrubbed) output goes to
-  `%LOCALAPPDATA%\GitEasy\Logs`. When something weird happens, the log
-  answers "what exact Git command ran?" without you having to add
-  `--verbose` flags.
-- **A drop-in tool you can hand to a colleague who is not you.** When you
-  onboard a junior, an analyst, or a sysadmin, you do not have to teach
-  them Git. You teach `Save-Work`, `Find-CodeChange`, `Show-History`.
-  They get the same safety you want for yourself.
-
-If you ever want the raw layer for one operation, GitEasy never gets in
-your way — `git.exe` is still installed and the same folder still works.
+The expert-specific story — what `Save-Work` actually runs, how to
+script around the return objects, the credential-scrubbing rules, how
+GitEasy coexists with hooks and GUI tools — has its own page:
+**[`FOR-GIT-EXPERTS.md`](FOR-GIT-EXPERTS.md)**. Read that instead of
+fighting through the beginner walkthrough below.
 
 ### Fields of work that fit GitEasy well
 
@@ -234,31 +220,49 @@ On Linux, use your distro's package helper (`apt install git`,
 `dnf install git`, etc.). Even with Git installed, the GitEasy commands
 are not tested outside Windows — see section 10.
 
-## 3. Install GitEasy (online and offline)
+## 3. Install GitEasy
 
-GitEasy is a **PowerShell module (a folder with PowerShell files in
-it)**. You install it by putting that folder on your computer.
+GitEasy is a **PowerShell module** — a folder of PowerShell files plus
+a `.psd1` manifest. PowerShell finds modules by name when the folder
+lives anywhere on `$env:PSModulePath`. The cleanest install puts
+GitEasy on `$env:PSModulePath` so you can just type
+`Import-Module GitEasy`.
 
-### 3.1 Online install (you have internet on the target machine)
+### 3.1 Friend-fast online install (30 seconds)
 
-The fastest way is to clone the GitHub project. Pick where you want it
-to live and clone:
+Open PowerShell and paste this. It works on PowerShell 5.1 and
+PowerShell 7, and does not need admin rights.
 
 ```powershell
-New-Item -ItemType Directory -Path 'C:\Sysadmin\Scripts' -Force | Out-Null
-Set-Location 'C:\Sysadmin\Scripts'
-git clone https://github.com/greenmtnsun/GitEasy.git
+$Edition = if ($PSVersionTable.PSEdition -eq 'Core') { 'PowerShell' } else { 'WindowsPowerShell' }
+$ModuleDir = Join-Path $HOME "Documents\$Edition\Modules\GitEasy"
+git clone https://github.com/greenmtnsun/GitEasy.git $ModuleDir
+Import-Module GitEasy
+Get-Command -Module GitEasy
 ```
 
-You should now have a folder at `C:\Sysadmin\Scripts\GitEasy`.
+You should see 21 commands listed. That is it — GitEasy is installed
+into your **user-scope PowerShell module folder**, which is on
+`$env:PSModulePath` by default. From now on, `Import-Module GitEasy`
+works without a path, from anywhere.
 
-Or, if you do not want to use `git clone`, download a zip:
+If `git --version` says command-not-found, install Git first — see
+section 2. If you do not want to use `git clone` (no internet on the
+target machine, or company policy blocks it), see section 3.3.
 
-1. Open https://github.com/greenmtnsun/GitEasy in a browser.
-2. Click the green **Code** button, then **Download ZIP**.
-3. Unzip it to `C:\Sysadmin\Scripts\GitEasy`.
+### 3.2 PowerShell Gallery install (once published)
 
-### 3.2 Offline install (no internet on the target machine)
+When the Gallery release lands, install becomes a one-liner:
+
+```powershell
+Install-Module GitEasy -Scope CurrentUser
+Import-Module GitEasy
+```
+
+`-Scope CurrentUser` does not need admin rights. The module installs
+into your user-scope folder automatically.
+
+### 3.3 Offline install (no internet on the target machine)
 
 Use this when the target machine has no internet at all, or when
 internet is blocked by company policy.
@@ -267,47 +271,58 @@ internet is blocked by company policy.
 
 1. Open https://github.com/greenmtnsun/GitEasy in a browser.
 2. Click the green **Code** button, then **Download ZIP**.
-3. Save the zip file (something like `GitEasy-main.zip`) to a USB stick
-   or a shared folder you can reach from the target machine.
+3. Save the zip (something like `GitEasy-main.zip`) to a USB stick or
+   a shared folder you can reach from the target machine.
 
 **On the target machine (no internet):**
 
-1. Copy the zip from the USB stick to the machine.
-2. Right-click the zip → **Properties** → tick **Unblock** → **OK**.
-   (Windows marks files from the internet as untrusted. This tells it
-   the file is safe.)
-3. Right-click the zip → **Extract All…** → extract to
-   `C:\Sysadmin\Scripts\` so you end up with
-   `C:\Sysadmin\Scripts\GitEasy` (or
-   `C:\Sysadmin\Scripts\GitEasy-main` — rename the folder to
-   `GitEasy`).
-4. Open PowerShell and unblock every file inside the folder:
+1. Find your user-scope PowerShell module folder. Paste this:
 
    ```powershell
-   Get-ChildItem 'C:\Sysadmin\Scripts\GitEasy' -Recurse | Unblock-File
+   $Edition = if ($PSVersionTable.PSEdition -eq 'Core') { 'PowerShell' } else { 'WindowsPowerShell' }
+   $ModuleParent = Join-Path $HOME "Documents\$Edition\Modules"
+   New-Item -ItemType Directory -Path $ModuleParent -Force | Out-Null
+   $ModuleParent
    ```
 
-5. Check that PowerShell will let you run unsigned local files:
+   The last line prints the folder, for example
+   `C:\Users\you\Documents\PowerShell\Modules`.
+
+2. Copy the zip from the USB stick into that folder.
+3. Right-click the zip → **Properties** → tick **Unblock** → **OK**.
+   (Windows marks files from the internet as untrusted; this tells it
+   the file is safe.)
+4. Right-click the zip → **Extract All…** → extract into the same
+   folder. You should end up with `<ModuleParent>\GitEasy` (or
+   `<ModuleParent>\GitEasy-main` — rename the inner folder to
+   `GitEasy`).
+5. Unblock every file inside the extracted folder:
+
+   ```powershell
+   Get-ChildItem (Join-Path $ModuleParent 'GitEasy') -Recurse | Unblock-File
+   ```
+
+6. Check that PowerShell will let you run unsigned local files:
 
    ```powershell
    Get-ExecutionPolicy -Scope CurrentUser
    ```
 
-   If it says `Restricted`, change it to `RemoteSigned` (only your user,
-   not the whole machine):
+   If it says `Restricted`, change it to `RemoteSigned` (only your
+   user, not the whole machine):
 
    ```powershell
    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
    ```
 
-6. Load the tool to be sure it works:
+7. Confirm the load works:
 
    ```powershell
-   Import-Module 'C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1' -Force
+   Import-Module GitEasy
    Get-Command -Module GitEasy
    ```
 
-### 3.3 What works offline and what does not
+### 3.4 What works offline and what does not
 
 GitEasy works fine on a machine with no internet, **as long as** the
 **online home (remote)** you point it at is reachable. That means:
@@ -321,28 +336,50 @@ GitEasy works fine on a machine with no internet, **as long as** the
 | `Test-Login` against a host you cannot reach | **No, it will fail and tell you so.** |
 | `git clone https://github.com/...` on the target machine | **No.** Clone on a connected machine first and copy the project folder over. |
 
-### 3.4 Where to put the GitEasy folder
+### 3.5 Where else can GitEasy live?
 
-Anywhere is fine, as long as you give that path to `Import-Module`. The
-common choices are:
+The recipes above install GitEasy to your user-scope PowerShell module
+folder. PowerShell finds it there automatically.
 
-- `C:\Sysadmin\Scripts\GitEasy` — a normal place for admin tools.
-- One of your **PowerShell module paths** (so you can `Import-Module
-  GitEasy` without typing the full path). To see those, run
-  `$env:PSModulePath -split ';'`.
-
-## 4. Load the tool (import the module)
-
-Open PowerShell and run:
+If you have a reason to put it somewhere else (a shared drive, a
+portable USB drive, a custom tools folder), that's fine — just give
+the full path to `Import-Module`:
 
 ```powershell
-Import-Module 'C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1' -Force
-Get-Command -Module GitEasy
+Import-Module 'D:\OtherPath\GitEasy\GitEasy.psd1' -Force
 ```
 
-The first line **loads (imports)** GitEasy so you can use it. `-Force`
-means "reload it even if it is already there." The second line shows
-every command GitEasy gives you so you can be sure it worked.
+The default PowerShell-native module paths, on `$env:PSModulePath`
+out of the box:
+
+| Scope | PS 7 / Core | PS 5.1 / Desktop |
+|---|---|---|
+| Current user | `$HOME\Documents\PowerShell\Modules\GitEasy` | `$HOME\Documents\WindowsPowerShell\Modules\GitEasy` |
+| All users (needs admin) | `$env:ProgramFiles\PowerShell\Modules\GitEasy` | `$env:ProgramFiles\WindowsPowerShell\Modules\GitEasy` |
+
+To see all module paths PowerShell currently searches, run:
+
+```powershell
+$env:PSModulePath -split [System.IO.Path]::PathSeparator
+```
+
+## 4. Load GitEasy
+
+If you installed GitEasy with one of the recipes in section 3, it is
+already on `$env:PSModulePath` and you can just:
+
+```powershell
+Import-Module GitEasy
+```
+
+If you put it somewhere else, give the full path to the `.psd1`:
+
+```powershell
+Import-Module 'D:\OtherPath\GitEasy\GitEasy.psd1' -Force
+```
+
+`-Force` reloads the module even if it is already loaded. Useful after
+you pull updates.
 
 ## 5. First-time setup
 
@@ -796,85 +833,25 @@ Logs older than 30 days delete themselves.
 
 ## 9. Under the hood: where to inspect what GitEasy did
 
-GitEasy is built for non-tech users, but everything it does is still
-plain Git. If you know Git and you want to inspect what GitEasy did, you
-have a few places to look. (See also the "For Git experts" framing
-near the top of this guide for *why* you would want to use GitEasy at
-all, even as an expert.)
+If you know Git, this whole topic — the diagnostic log layout, how to
+read the per-command `git` call list, override knobs like
+`$env:GITEASY_LOG_PATH`, the credential-scrubbing rules, how to drop
+into raw Git in the same folder, and `-WhatIf` / `-Confirm` patterns —
+has a dedicated page:
 
-### 9.1 The diagnostic log files
+**[`FOR-GIT-EXPERTS.md`](FOR-GIT-EXPERTS.md)**
 
-```powershell
-# Open the most recent log:
-Show-Diagnostic
-
-# Or jump straight to the folder:
-explorer $env:LOCALAPPDATA\GitEasy\Logs
-```
-
-Each log is a single text file for one command run. Inside you will see:
-
-- The command that was run and its parameters.
-- Every `git` call GitEasy made, in order, with the exit code.
-- Sanitized output. **Usernames, tokens, and IP addresses are removed
-  before they are written to disk.**
-- The final result the command returned.
-
-This is the fastest way for a Git expert to answer "what did GitEasy
-actually do?"
-
-You can also point GitEasy at a different log folder for one run:
+The thirty-second version for everyone else:
 
 ```powershell
-Save-Work 'test save' -LogPath 'C:\Temp\GitEasyLogs'
+Show-Diagnostic     # open the most recent log
 ```
 
-Or change it system-wide with the `GITEASY_LOG_PATH` environment
-variable.
-
-### 9.2 Read the source
-
-Every public command is one PowerShell file:
-
-```text
-GitEasy/
-  Public/                # every user-facing command
-  Private/               # internal helpers, including Invoke-GEGit
-```
-
-`Private/Invoke-GEGit.ps1` is the single place that runs `git.exe`.
-If you want to know "what exact `git` command did GitEasy run?", search
-the `Public/*.ps1` file for the command name and look at every
-`Invoke-GEGit -ArgumentList @(...)` call.
-
-For a side-by-side mapping of every GitEasy command to its real Git
-commands, see [`GITEASY-VS-RAW-GIT.md`](GITEASY-VS-RAW-GIT.md).
-
-### 9.3 Run Git directly in the same folder
-
-GitEasy never hides the underlying repository. After any GitEasy command
-you can run normal Git inside the same folder:
-
-```powershell
-git status
-git log --oneline -n 10
-git reflog
-git diff HEAD~1
-```
-
-The `.git` folder is untouched. There is nothing magic on disk.
-
-### 9.4 Test what GitEasy is about to do without changing anything
-
-Most commands support PowerShell's `-WhatIf` and `-Confirm` because they
-use `[CmdletBinding(SupportsShouldProcess)]`:
-
-```powershell
-Save-Work 'try this out' -WhatIf
-Undo-Changes -WhatIf
-```
-
-`-WhatIf` shows you what would happen without doing it.
+Each log is one text file per command run, in
+`%LOCALAPPDATA%\GitEasy\Logs`. It lists every internal `git` call with
+its exit code and sanitized output. Tokens, usernames, and IP addresses
+are stripped before anything is written to disk. Logs older than 30
+days delete themselves.
 
 ## 10. Limitations
 
@@ -916,9 +893,13 @@ Things GitEasy is **not** good for, on purpose:
 ## 11. A full example session
 
 ```powershell
-# Load the tool.
-Set-Location C:\Sysadmin\Scripts\GitEasy
-Import-Module .\GitEasy.psd1 -Force
+# Load the tool. (If GitEasy is on $env:PSModulePath, this works
+# from anywhere. Otherwise, cd into the GitEasy folder first.)
+Import-Module GitEasy
+
+# Change into the PROJECT folder you want to work on - the one with
+# the .git directory inside it.
+Set-Location C:\Path\To\Your\Project
 
 # What did I change today?
 Find-CodeChange

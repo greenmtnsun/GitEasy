@@ -1,32 +1,33 @@
-# GitEasy V2 Quickstart
+# GitEasy Quickstart
 
 ## Goal
 
-GitEasy keeps Git commands friendly while the private engine does the careful checks.
+GitEasy keeps Git commands friendly while the private engine does the
+careful checks. Use GitEasy from inside a Git repository.
 
-Use GitEasy from inside a Git repository.
-
-Current working project:
-
-```powershell
-C:\Sysadmin\Scripts\GitEasy
-```
+If you have not installed GitEasy yet, see [section 3 of the full
+how-to](HOW-TO-USE-GITEASY.md#3-install-giteasy) — the 30-second
+recipe drops it on your `$env:PSModulePath` so `Import-Module GitEasy`
+works without a path.
 
 ## First thing every time
 
 Run the state check example first:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Sysadmin\Scripts\GitEasy\Examples\00-State-Check.ps1
+Import-Module GitEasy
+$gee = (Get-Module GitEasy).ModuleBase
+& "$gee\Examples\00-State-Check.ps1"
 ```
 
-That tells you whether the module imports, whether Git sees a repository, whether the working tree is clean, and whether the remote is configured.
+That tells you whether the module imports, whether Git sees a
+repository, whether the working tree is clean, and whether the remote
+is configured.
 
 ## Daily workflow
 
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasy
-Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
+Import-Module GitEasy
 Find-CodeChange
 Save-Work "describe what changed" -NoPush
 Show-History -Count 5
@@ -39,8 +40,7 @@ Use normal push only after `Test-Login` passes.
 ## Check GitHub access
 
 ```powershell
-Set-Location C:\Sysadmin\Scripts\GitEasy
-Import-Module C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1 -Force
+Import-Module GitEasy
 Get-VaultStatus
 Show-Remote
 Test-Login
@@ -60,7 +60,8 @@ Set-Token -RemoteUrl "https://github.com/greenmtnsun/GitEasy.git"
 Test-Login
 ```
 
-Do not put a token in the URL. Git Credential Manager should handle credentials.
+Do not put a token in the URL. Git Credential Manager should handle
+credentials.
 
 ## Save safely
 
@@ -94,11 +95,14 @@ Save-Work "updated docs"
 - Show-Remote
 - Show-History
 - Find-CodeChange
-
-## Commands still intentionally stubbed
-
 - New-WorkBranch
 - Switch-Work
 - Undo-Changes
 - Restore-File
 - Clear-Junk
+- Show-Diagnostic
+- Show-Change
+- Search-History
+- New-Release
+- Show-Releases
+- Get-Updates

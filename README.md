@@ -17,10 +17,25 @@ When something goes wrong, you get a plain-English message and a path to a self-
 
 ## Install
 
-This module is local-install for now (no PowerShell Gallery release yet). Clone or copy it somewhere on your `$env:PSModulePath`, or import directly:
+Friend-fast install (PS 5.1 and PS 7, no admin needed):
 
 ```powershell
-Import-Module 'C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1' -Force
+$Edition = if ($PSVersionTable.PSEdition -eq 'Core') { 'PowerShell' } else { 'WindowsPowerShell' }
+$ModuleDir = Join-Path $HOME "Documents\$Edition\Modules\GitEasy"
+git clone https://github.com/greenmtnsun/GitEasy.git $ModuleDir
+Import-Module GitEasy
+```
+
+That drops GitEasy into your user-scope PowerShell module folder
+(which is on `$env:PSModulePath` by default), so
+`Import-Module GitEasy` works from anywhere. See
+[`docs/HOW-TO-USE-GITEASY.md`](docs/HOW-TO-USE-GITEASY.md) for the
+offline-install path and all-users scope.
+
+Once a PowerShell Gallery release lands, the install becomes:
+
+```powershell
+Install-Module GitEasy -Scope CurrentUser
 ```
 
 ## Quickstart

@@ -312,64 +312,13 @@ That wrapper is GitEasy.
 
 ## For Git experts: where to look under the hood
 
-If you know Git and you want to inspect what GitEasy is doing, here is
-where to look.
+The expert-specific story — log layout, how to read the per-command
+`git` call list, override knobs like `$env:GITEASY_LOG_PATH`, the
+credential-scrubbing rules, raw-Git fallback patterns, scripting with
+the return objects, and how GitEasy coexists with `.gitconfig` and
+hooks — has a dedicated page:
 
-### Read the log files
-
-```powershell
-Show-Diagnostic                                    # open the most recent log
-Show-Diagnostic -List                              # list recent logs
-explorer $env:LOCALAPPDATA\GitEasy\Logs            # open the logs folder
-```
-
-Each log is one text file for one command run. Inside you will see the
-parameters you ran, every `git` call made, the exit code for each,
-sanitized output, and the final result. Tokens, usernames, and IPs are
-redacted before they are written.
-
-Point one run at a custom folder:
-
-```powershell
-Save-Work 'test save' -LogPath 'C:\Temp\GitEasyLogs'
-```
-
-Or set it system-wide with `GITEASY_LOG_PATH`.
-
-### Read the source
-
-The mapping is one-to-one and lives in the repo:
-
-```text
-Public/                # every user-facing command, one file each
-Private/Invoke-GEGit.ps1   # the single place that runs git.exe
-```
-
-To answer "what exact Git command did GitEasy run?", open the matching
-`Public/<Command>.ps1` and grep for `Invoke-GEGit -ArgumentList @(...)`.
-
-### Run Git directly in the same folder
-
-GitEasy never hides the underlying repository. After any GitEasy command
-you can run normal Git:
-
-```powershell
-git status
-git log --oneline -n 10
-git reflog
-git diff HEAD~1
-```
-
-The `.git` folder is untouched. There is no hidden state.
-
-### Preview without changing anything
-
-Most commands support `-WhatIf` and `-Confirm`:
-
-```powershell
-Save-Work 'try this out' -WhatIf
-Undo-Changes -WhatIf
-```
+**[`FOR-GIT-EXPERTS.md`](FOR-GIT-EXPERTS.md)**
 
 ---
 
