@@ -12,17 +12,111 @@ share with a tech helper.
 
 ---
 
-## Pictures that go with this guide
+## Who this is for, and when it's the right tool
 
-I made three pictures in Canva to go with this guide. The links open the
-pictures in Canva. To make them show up inside this page, save each one
-as a PNG file and put it in the `docs/images/` folder.
+GitEasy is for people who need to **check in code** but do not want to
+make Git their second job. That covers a lot more roles than "software
+developer." This section is about whether GitEasy is the right tool for
+you and what kinds of work it fits best.
 
-| Picture | What it shows | Canva link | File name |
-|---|---|---|---|
-| 1 | First-time setup | https://www.canva.com/d/ZeajQux9lX2yMKP | `docs/images/first-time-setup.png` |
-| 2 | Your daily steps | https://www.canva.com/d/lzVDVWdVfdDutV4 | `docs/images/daily-workflow.png` |
-| 3 | Quick command card | https://www.canva.com/d/TYMcRP3_CVNpmwL | `docs/images/command-reference.png` |
+### For first-time Git users
+
+The first time you tried Git, you probably hit a wall of words: *stage,
+commit, push, pull, fetch, rebase, upstream, HEAD, origin, branch, merge,
+conflict, reflog*. GitEasy hides all of that. You learn five short
+commands in plain English and that is enough to do real work. You will
+never see a raw Git error message in GitEasy output. If something is
+wrong, you get a one-line note and a path to a log file you can hand to a
+tech helper.
+
+### For Git experts — yes, this is for you too
+
+If you already know Git well, GitEasy is **not** "training wheels you
+grow out of." It is a thin, honest wrapper. You can keep your
+`.gitconfig`, your `.git/hooks`, your aliases, and your editor
+integrations. After any GitEasy command, you can drop into the same
+folder and run `git status`, `git log --oneline`, `git reflog`,
+`git diff HEAD~1` — nothing is hidden, nothing is changed behind your back, the
+`.git` folder is untouched.
+
+Three reasons an expert reaches for GitEasy:
+
+- **One fewer chance to misspell.** Four muscle-memory commands collapse
+  into one. Fewer keystrokes, no `git stsatus` retries.
+- **A sanitized log of every Git call.** Every `git` invocation, its exit
+  code, and its (scrubbed) output goes to
+  `%LOCALAPPDATA%\GitEasy\Logs`. When something weird happens, the log
+  answers "what exact Git command ran?" without you having to add
+  `--verbose` flags.
+- **A drop-in tool you can hand to a colleague who is not you.** When you
+  onboard a junior, an analyst, or a sysadmin, you do not have to teach
+  them Git. You teach `Save-Work`, `Find-CodeChange`, `Show-History`.
+  They get the same safety you want for yourself.
+
+If you ever want the raw layer for one operation, GitEasy never gets in
+your way — `git.exe` is still installed and the same folder still works.
+
+### Fields of work that fit GitEasy well
+
+If you write or maintain files that change over time and you want a
+trail of what changed and why, you can use GitEasy. A few concrete fits:
+
+| Field | What you check in | Why GitEasy helps |
+|---|---|---|
+| **Sysadmin / IT operations** | PowerShell scripts, automation playbooks, scheduled-task definitions | One-command save before a risky change; rollback with `Restore-File`. |
+| **Database administrator** | SQL migration scripts, stored procedures, backup-validation queries | Audit trail of what ran when, without learning rebase. |
+| **DevOps / SRE** | Ansible roles, Terraform modules, CI YAML, runbooks | Solo or pair work where the simple flow saves time and the log file helps post-mortems. |
+| **Compliance / audit** | Hardening evidence, control matrices, change attestations | Tamper-evident history; `Show-History -Count 30` answers "who changed what in the last month." |
+| **Change manager / CAB chair** | Change request templates, post-implementation reviews, release notes | One folder, one history, simple read-only commands for evidence collection. |
+| **Technical writer** | Knowledge-base articles, runbooks, training material | Drafting in plain Markdown with `Save-Work` gives you peer review for free. |
+| **Power BI / Tableau developer** | DAX files, dataset metadata exports, dashboard JSON | Long sessions benefit from snapshot saves before each big change. |
+| **Network engineer** | Router configs (Cisco IOS, FortiOS), firewall rule exports | A diff between versions answers "what changed in the firewall last Tuesday?" |
+
+This is not the full list. The general principle: **if the file lives
+on a filesystem and you want versioning plus an audit trail, GitEasy is
+in scope.** It is only the wrong tool if your workflow lands on the
+"unhappy path" below.
+
+### Where GitEasy is the right fit
+
+GitEasy is the right tool when most of these are true:
+
+- You are working **solo or on a small team** (one to five people).
+- Merge conflicts happen **sometimes**, not every day.
+- You want **simple, append-only history** — saves stack on top of
+  saves; you do not need to rewrite the past.
+- You push to **one online home** (named `origin`).
+- You are on **Windows** with PowerShell 5.1 or 7+.
+- You want **a log of every Git call** without writing your own wrapper.
+
+### Where GitEasy is the wrong fit
+
+Honestly: there are workflows GitEasy will frustrate you on. Use a
+different tool (or raw Git plus a Git GUI) if any of these describe
+your day:
+
+- **Ten or more people in the same folders with merge conflicts every
+  day.** GitEasy stops on a conflict and asks a person to fix it. If
+  five teammates every morning need to untangle yesterday's tree, you
+  want a workflow with feature branches, pull requests, code review,
+  and CI — none of which GitEasy automates. You can still *use* GitEasy
+  on a busy team, but you lose its main payoff (one command does the
+  right thing).
+- **You need to rewrite history.** No rebase, no amend, no squash, no
+  cherry-pick. If your team requires squash-on-merge or interactive
+  rebase before push, GitEasy is the wrong layer.
+- **Monorepo with submodules, worktrees, or sparse checkouts.** GitEasy
+  does not know any of these are happening. Use raw Git for the
+  structural commands; GitEasy is still fine for everyday saves *inside*
+  a single worktree.
+- **Large File Storage (LFS) or signed commits.** Not supported.
+- **Multiple remotes.** GitEasy assumes one online home named `origin`.
+  If you push to two different forges, do those pushes by hand.
+- **Mac or Linux.** GitEasy is Windows-only today.
+
+If two or more of those describe your day, GitEasy is a sidekick at
+best. If none describe your day, GitEasy is probably the only Git tool
+you need to teach a teammate.
 
 ---
 
@@ -519,6 +613,93 @@ Show-History -Count 5
 Shows the last five saved points with the date, who saved them, and the
 short note. Change `-Count` to see more.
 
+---
+
+## Why one command instead of four — and what GitEasy guarantees
+
+You have now run `Save-Work` once. Without `-NoPush`, it did four jobs in
+one command:
+
+1. Marked every changed file to be saved (`git add --all`).
+2. Recorded a saved point (`git commit -m "your note"`).
+3. Pulled down any new work from teammates (`git pull --rebase`).
+4. Sent your work to the online home (`git push`).
+
+If you came from raw Git, the natural question is: **am I losing
+anything by letting one command do all four?**
+
+The honest answer is **no**, and this section explains why.
+
+### The thesis
+
+Saving work to an online home is a *recipe*, not a choice. You almost
+always want all four steps to happen, in that order, with sane defaults.
+Raw Git makes you type each one because Git is a low-level tool that
+does not assume what you want. GitEasy makes the safe assumption for
+you.
+
+What GitEasy does **not** do is hide the steps from you or change what
+Git does underneath. Every one of the four `git` calls is logged,
+exit-coded, and scrubbed of credentials in
+`%LOCALAPPDATA%\GitEasy\Logs`. You can read exactly what ran, in what
+order, with what arguments. Nothing is secret.
+
+### What you get that raw Git does not give you for free
+
+If you wrote your own wrapper around those four `git` calls, you would
+also need to handle:
+
+- **A half-done state.** What if a previous `git pull --rebase` left a
+  half-resolved conflict and you forgot? Raw Git lets you stack a
+  commit on top of that mess. GitEasy refuses to run and tells you to
+  finish the rebase first.
+- **A bad commit message.** Empty? All whitespace? Too long? GitEasy
+  checks before it commits. Raw Git just commits.
+- **A token in the URL.** If you set up a remote with
+  `https://ghp_xxxxxx@github.com/...`, raw Git happily writes that into
+  `.git/config` where it stays forever. GitEasy refuses any URL with
+  credentials embedded.
+- **A sanitized log.** Raw Git's output can include IPs, usernames, and
+  (depending on the credential helper) sometimes tokens. GitEasy strips
+  those before they are written to disk.
+- **A clean return value.** Raw Git output is for humans. GitEasy
+  returns a `[pscustomobject]` with `Passed`, `Pushed`, `BranchName`,
+  `CommitMessage` that another script can consume.
+
+All of that, in one command. That is the trade.
+
+### "What if I want to do those steps separately?"
+
+You still can. GitEasy never hides Git. After any GitEasy command, run
+any normal Git inside the same folder:
+
+```powershell
+git add specific-file.ps1
+git commit --amend
+git push --force-with-lease
+```
+
+GitEasy is one wrapper layer; raw Git is still your friend underneath.
+The two coexist. You can save with `Save-Work` on Monday and amend with
+raw `git commit --amend` on Tuesday — same `.git/` folder, no conflict.
+
+### What GitEasy promises you
+
+Here is the explicit list of guarantees. If any of these break, that is
+a bug — file it.
+
+| Promise | What it means |
+|---|---|
+| **No data loss without your consent.** | Destructive commands (`Undo-Changes`, `Clear-Junk -Force`) require `-Force` or `-Confirm`. |
+| **No secrets in logs.** | Tokens, passwords, usernames, and IPs are stripped from log lines before they are written to disk. |
+| **No silent state changes.** | A half-done merge or rebase blocks GitEasy from running. You see the block. |
+| **No surprises in `.git/config`.** | URLs with embedded credentials are refused. The on-disk config stays clean. |
+| **No history rewrites.** | Saves are append-only. GitEasy never offers to rebase, squash, or amend. |
+| **Same folder, same Git.** | The `.git/` folder is untouched. Raw Git commands work side-by-side. |
+| **Every Git call is logged.** | One log file per command run. 30-day auto-cleanup. |
+
+---
+
 ## 7. Command list
 
 ![Command reference card](images/command-reference.png)
@@ -765,3 +946,27 @@ Show-History -Count 3
 - `Get-Help <Command> -Full` — built-in help for any command.
 - [GitEasy Wiki](https://github.com/greenmtnsun/GitEasy/wiki) — long
   reference, one page per command.
+
+## 13. A short plain-English glossary
+
+These are the Git words that show up most often in places GitEasy cannot
+hide them (error messages, log files, the section above for experts).
+Skim this once and you will be set.
+
+| Word | What it means in plain English |
+|---|---|
+| **branch** | A working area inside a project. You can have several. GitEasy calls them "working areas." |
+| **commit** | A saved point. A snapshot of your project at one moment, with a note attached. |
+| **conflict** | Two saves disagree about the same line. A person has to pick which line stays. |
+| **HEAD** | Git's name for the most recent saved point you are sitting on. |
+| **log** | A list of recent saved points, newest first. |
+| **origin** | The default name for your online home (your project's address on GitHub, GitLab, etc.). |
+| **pull** | Bring down new work from teammates into your folder. |
+| **push** | Send your saved work up to the online home. |
+| **rebase** | Move your saves on top of a teammate's saves. GitEasy does the safe version of this for you (`pull --rebase`); it never asks you to drive it by hand. |
+| **remote** | The online home of your project. GitEasy uses "online home" everywhere. |
+| **repository (repo)** | A folder with a hidden `.git` inside it. Your project folder. |
+| **stage** | Mark a changed file as "I want this to be in the next save." GitEasy does this for you on `Save-Work`. |
+| **amend / squash / cherry-pick** | Three ways to **rewrite history** in raw Git. GitEasy does **not** do these on purpose — saves are append-only. |
+| **upstream** | The link between your working area and the online home. GitEasy sets this up with `Save-Work -SetUpstream` the first time you publish. |
+| **submodule / worktree / sparse checkout / LFS** | Advanced Git features GitEasy does not support. If you do not know what these are, you do not need them. |

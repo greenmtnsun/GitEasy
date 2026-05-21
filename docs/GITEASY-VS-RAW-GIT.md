@@ -8,11 +8,12 @@ GitEasy turns 2 to 5 careful Git steps into one easy command.
 > for you under the hood. Nothing is made up. These are the commands you
 > would have to type yourself if GitEasy did not exist.
 
-A picture version of this guide lives in Canva:
-**https://www.canva.com/d/2KuZnXt2Wo9RJ3D**
-
-Save it as a PNG and put it at `docs/images/giteasy-vs-raw-git.png` to
-show it inside this page.
+> **What this side-by-side proves.** The point of this page is *no
+> hidden magic*. Every GitEasy command on the left is the exact set of
+> `git` calls on the right. If you ever want to drop down to raw Git for
+> one operation, the same folder, the same `.git/`, and the same login
+> work fine. GitEasy is a wrapper, not a fork of Git — you are not
+> losing functionality by using it.
 
 ---
 
