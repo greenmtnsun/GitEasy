@@ -532,7 +532,9 @@ To be very clear about what stays the same:
 
 ![Daily workflow](images/daily-workflow.png)
 
-This is the small loop you do every day. Five commands, in order.
+This is the small loop you do every day. **Five distinct commands**
+walked through in six steps below — `Save-Work` shows up twice, once
+for save-only (6.2) and once for save-and-publish (6.5).
 
 ### 6.1 See what you changed
 
@@ -792,11 +794,13 @@ Show-Diagnostic -All    # open the logs folder
 
 Logs older than 30 days delete themselves.
 
-## 9. For Git experts: where to look under the hood
+## 9. Under the hood: where to inspect what GitEasy did
 
 GitEasy is built for non-tech users, but everything it does is still
 plain Git. If you know Git and you want to inspect what GitEasy did, you
-have a few places to look.
+have a few places to look. (See also the "For Git experts" framing
+near the top of this guide for *why* you would want to use GitEasy at
+all, even as an expert.)
 
 ### 9.1 The diagnostic log files
 
