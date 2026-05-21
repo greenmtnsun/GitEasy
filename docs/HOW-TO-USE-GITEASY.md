@@ -33,11 +33,211 @@ You need:
 - **Windows PowerShell 5.1** or **PowerShell 7+** (the blue or black
   PowerShell window).
 - **Git** put on your computer. Type `git --version` to check. If you
-  see a version number, you are good.
+  see a version number, you are good. If not, see section 2.
 - A folder that is already a **project folder (a Git repository)**.
   An easy way to tell: it has a hidden folder named `.git` inside it.
 
-## 2. Load the tool (import the module)
+## 2. Install Git on your computer (five ways)
+
+GitEasy needs the **`git` program** on your computer. There are five
+common ways to put it there on Windows. Pick **one**. They all give you
+the same `git` underneath.
+
+After any of them, open a fresh PowerShell window and run:
+
+```powershell
+git --version
+```
+
+You should see a version number like `git version 2.45.2.windows.1`. If
+you see "command not found," restart PowerShell so it sees the new
+`PATH`. If you still cannot see it, your PC's `PATH` is missing the Git
+folder.
+
+### 2.1 The official installer (recommended for most people)
+
+The simplest way. Includes Git, the **login keeper (Git Credential
+Manager)**, and a friendly setup wizard.
+
+1. Open https://git-scm.com/download/win in a web browser.
+2. Click the "64-bit Git for Windows Setup" link.
+3. Run the downloaded `.exe`.
+4. Click "Next" on every screen unless you have a reason to change a
+   setting.
+5. Reopen PowerShell. Run `git --version`.
+
+### 2.2 winget (built into Windows 10 and 11)
+
+If your PC has Windows 10 (newer) or Windows 11, **winget** is already
+there. One line:
+
+```powershell
+winget install --id Git.Git -e --source winget
+```
+
+`-e` means "exact name." `--source winget` makes sure it pulls from the
+official Microsoft list, not a side store.
+
+### 2.3 Chocolatey (a Windows package helper)
+
+If your machine already has **Chocolatey** (a tool that installs other
+tools), this is the shortest path:
+
+```powershell
+choco install git -y
+```
+
+`-y` means "yes to all questions." If your machine does **not** have
+Chocolatey, see https://chocolatey.org/install — but most people should
+just use winget (section 2.2) instead.
+
+### 2.4 Scoop (a per-user package helper)
+
+**Scoop** installs tools into your own user folder. It needs no admin
+rights. Good for locked-down work laptops.
+
+```powershell
+scoop install git
+```
+
+If you do not already have Scoop, see https://scoop.sh — again, most
+people should use winget.
+
+### 2.5 MinGit (the small, portable Git)
+
+**MinGit** is a tiny zip-only build of Git. No installer. Just unzip
+and use. Great for **air-gapped machines (computers with no internet)**
+and locked-down work laptops where you cannot run installers.
+
+1. On a connected machine, open
+   https://github.com/git-for-windows/git/releases/latest in a browser.
+2. Download the asset whose name starts with `MinGit-` and ends with
+   `-64-bit.zip` (about 50 MB).
+3. Copy the zip to the target machine on a USB stick or share.
+4. Unzip it to a folder, for example `C:\Tools\MinGit`.
+5. Add `C:\Tools\MinGit\cmd` to your `PATH`:
+
+   ```powershell
+   [Environment]::SetEnvironmentVariable(
+     'Path',
+     "$([Environment]::GetEnvironmentVariable('Path','User'));C:\Tools\MinGit\cmd",
+     'User')
+   ```
+
+6. Open a new PowerShell window. Run `git --version`.
+
+> MinGit does **not** include Git Credential Manager. For Git Credential
+> Manager on an offline machine, download
+> `gcm-win-x86_64-<version>.zip` from
+> https://github.com/git-ecosystem/git-credential-manager/releases on a
+> connected machine, copy it over, and unzip alongside MinGit.
+
+### 2.6 What about Mac or Linux?
+
+GitEasy is Windows-only today, so the steps above are Windows-only too.
+On Mac, the normal way to put Git on the machine is `brew install git`.
+On Linux, use your distro's package helper (`apt install git`,
+`dnf install git`, etc.). Even with Git installed, the GitEasy commands
+are not tested outside Windows — see section 10.
+
+## 3. Install GitEasy (online and offline)
+
+GitEasy is a **PowerShell module (a folder with PowerShell files in
+it)**. You install it by putting that folder on your computer.
+
+### 3.1 Online install (you have internet on the target machine)
+
+The fastest way is to clone the GitHub project. Pick where you want it
+to live and clone:
+
+```powershell
+New-Item -ItemType Directory -Path 'C:\Sysadmin\Scripts' -Force | Out-Null
+Set-Location 'C:\Sysadmin\Scripts'
+git clone https://github.com/greenmtnsun/GitEasy.git
+```
+
+You should now have a folder at `C:\Sysadmin\Scripts\GitEasy`.
+
+Or, if you do not want to use `git clone`, download a zip:
+
+1. Open https://github.com/greenmtnsun/GitEasy in a browser.
+2. Click the green **Code** button, then **Download ZIP**.
+3. Unzip it to `C:\Sysadmin\Scripts\GitEasy`.
+
+### 3.2 Offline install (no internet on the target machine)
+
+Use this when the target machine has no internet at all, or when
+internet is blocked by company policy.
+
+**On a machine that has internet:**
+
+1. Open https://github.com/greenmtnsun/GitEasy in a browser.
+2. Click the green **Code** button, then **Download ZIP**.
+3. Save the zip file (something like `GitEasy-main.zip`) to a USB stick
+   or a shared folder you can reach from the target machine.
+
+**On the target machine (no internet):**
+
+1. Copy the zip from the USB stick to the machine.
+2. Right-click the zip → **Properties** → tick **Unblock** → **OK**.
+   (Windows marks files from the internet as untrusted. This tells it
+   the file is safe.)
+3. Right-click the zip → **Extract All…** → extract to
+   `C:\Sysadmin\Scripts\` so you end up with
+   `C:\Sysadmin\Scripts\GitEasy` (or
+   `C:\Sysadmin\Scripts\GitEasy-main` — rename the folder to
+   `GitEasy`).
+4. Open PowerShell and unblock every file inside the folder:
+
+   ```powershell
+   Get-ChildItem 'C:\Sysadmin\Scripts\GitEasy' -Recurse | Unblock-File
+   ```
+
+5. Check that PowerShell will let you run unsigned local files:
+
+   ```powershell
+   Get-ExecutionPolicy -Scope CurrentUser
+   ```
+
+   If it says `Restricted`, change it to `RemoteSigned` (only your user,
+   not the whole machine):
+
+   ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+   ```
+
+6. Load the tool to be sure it works:
+
+   ```powershell
+   Import-Module 'C:\Sysadmin\Scripts\GitEasy\GitEasy.psd1' -Force
+   Get-Command -Module GitEasy
+   ```
+
+### 3.3 What works offline and what does not
+
+GitEasy works fine on a machine with no internet, **as long as** the
+**online home (remote)** you point it at is reachable. That means:
+
+| Setup | Works offline? |
+|---|---|
+| Saving locally with `Save-Work -NoPush` | **Yes.** |
+| `Find-CodeChange`, `Show-History`, `Show-Remote` | **Yes.** |
+| Pushing to an **internal** Git server (e.g., company-hosted GitLab, Gitea, or Azure DevOps Server on the same network) | **Yes.** |
+| Pushing to `github.com`, `gitlab.com`, `bitbucket.org`, `dev.azure.com` | **No, you need internet for these.** |
+| `Test-Login` against a host you cannot reach | **No, it will fail and tell you so.** |
+| `git clone https://github.com/...` on the target machine | **No.** Clone on a connected machine first and copy the project folder over. |
+
+### 3.4 Where to put the GitEasy folder
+
+Anywhere is fine, as long as you give that path to `Import-Module`. The
+common choices are:
+
+- `C:\Sysadmin\Scripts\GitEasy` — a normal place for admin tools.
+- One of your **PowerShell module paths** (so you can `Import-Module
+  GitEasy` without typing the full path). To see those, run
+  `$env:PSModulePath -split ';'`.
+
+## 4. Load the tool (import the module)
 
 Open PowerShell and run:
 
@@ -50,14 +250,14 @@ The first line **loads (imports)** GitEasy so you can use it. `-Force`
 means "reload it even if it is already there." The second line shows
 every command GitEasy gives you so you can be sure it worked.
 
-## 3. First-time setup
+## 5. First-time setup
 
 ![First-time setup](images/first-time-setup.png)
 
 Do these three things in order the first time you point GitEasy at a
 project folder.
 
-### 3.1 Tell GitEasy where your project lives online (set the remote)
+### 5.1 Tell GitEasy where your project lives online (set the remote)
 
 ```powershell
 Set-Token -RemoteUrl 'https://github.com/<you>/<your-repo>.git'
@@ -67,7 +267,7 @@ This tells GitEasy the **online home (remote)** of your project. **Do not
 put a password inside the address.** A safe helper on your computer (Git
 Credential Manager) will ask you for your password when it needs it.
 
-### 3.2 Pick where your login is kept (credential helper)
+### 5.2 Pick where your login is kept (credential helper)
 
 ```powershell
 Set-Vault -Helper manager
@@ -78,7 +278,7 @@ Get-VaultStatus
 (Git Credential Manager)**. `Get-VaultStatus` shows which helper is
 picked.
 
-### 3.3 Make sure your login works (test access)
+### 5.3 Make sure your login works (test access)
 
 ```powershell
 Test-Login
@@ -94,7 +294,7 @@ Message : Remote login/connectivity test passed.
 If you see `Passed : False`, run `Show-Diagnostic` to open the most recent
 **log file (a file that lists what just happened, step by step)**.
 
-### 3.4 Setup recipes for the top 5 Git hosts
+### 5.4 Setup recipes for the top 5 Git hosts
 
 **Good news:** the three GitEasy commands you run (`Set-Token`,
 `Set-Vault`, `Test-Login`) are the **same on every host**. The only
@@ -234,13 +434,13 @@ To be very clear about what stays the same:
 - The day-to-day pop-up from Git Credential Manager is the same shape:
   user name on top, password code on the bottom.
 
-## 4. Your daily steps
+## 6. Your daily steps
 
 ![Daily workflow](images/daily-workflow.png)
 
 This is the small loop you do every day. Five commands, in order.
 
-### 4.1 See what you changed
+### 6.1 See what you changed
 
 ```powershell
 Find-CodeChange
@@ -249,7 +449,7 @@ Find-CodeChange
 Lists every file you changed, added, or have not yet saved. Run this
 before you save so you know what is about to be saved.
 
-### 4.2 Save a copy on your own computer (no online publish)
+### 6.2 Save a copy on your own computer (no online publish)
 
 ```powershell
 Save-Work 'short note about what you did' -NoPush
@@ -259,7 +459,7 @@ Save-Work 'short note about what you did' -NoPush
 middle of a task and want a **safe rollback point (a checkpoint)**
 before you go on.
 
-### 4.3 See where your work will go online
+### 6.3 See where your work will go online
 
 ```powershell
 Show-Remote
@@ -269,7 +469,7 @@ Shows the online home of your project and which **working area (branch)**
 you are on. Run this if you are not sure where your save is about to be
 sent.
 
-### 4.4 Check that your login still works
+### 6.4 Check that your login still works
 
 ```powershell
 Test-Login
@@ -278,7 +478,7 @@ Test-Login
 A quick check before you publish. Cheaper than finding out your password
 is out of date in the middle of a save.
 
-### 4.5 Save and publish
+### 6.5 Save and publish
 
 ```powershell
 Save-Work 'short note about what you did'
@@ -310,7 +510,7 @@ Bumps the version number in your `.psd1` **file (a small file that
 describes a PowerShell module)** and puts the new number at the start of
 your saved-point note.
 
-### 4.6 Look back at your recent saves
+### 6.6 Look back at your recent saves
 
 ```powershell
 Show-History -Count 5
@@ -319,7 +519,7 @@ Show-History -Count 5
 Shows the last five saved points with the date, who saved them, and the
 short note. Change `-Count` to see more.
 
-## 5. Command list
+## 7. Command list
 
 ![Command reference card](images/command-reference.png)
 
@@ -349,9 +549,9 @@ Get-Help Save-Work -Full
 Get-Help Save-Work -Examples
 ```
 
-## 6. When something goes wrong
+## 8. When something goes wrong
 
-### 6.1 Bring back one file
+### 8.1 Bring back one file
 
 ```powershell
 Restore-File README.md
@@ -360,7 +560,7 @@ Restore-File README.md
 Puts a single file back to the way it was at the last save. Your other
 changed files are not touched.
 
-### 6.2 Throw away every unsaved change
+### 8.2 Throw away every unsaved change
 
 ```powershell
 Undo-Changes -Force
@@ -369,14 +569,14 @@ Undo-Changes -Force
 Deletes every change you have not saved. `-Force` is needed because this
 cannot be undone. Use `-Confirm` if you want to be asked first.
 
-### 6.3 Clean up junk files
+### 8.3 Clean up junk files
 
 ```powershell
 Clear-Junk        # show what would be deleted
 Clear-Junk -Force # actually delete
 ```
 
-### 6.4 Fix a bad saved login
+### 8.4 Fix a bad saved login
 
 ```powershell
 Reset-Login
@@ -386,7 +586,7 @@ Test-Login
 `Reset-Login` tells the Windows password vault to forget your saved login
 so it will ask you again next time.
 
-### 6.5 Switch your project to use key-based login (SSH)
+### 8.5 Switch your project to use key-based login (SSH)
 
 ```powershell
 Set-Ssh
@@ -397,7 +597,7 @@ Test-Login
 Only use this if you have already set up an **SSH key (a digital key
 file)** with GitHub.
 
-### 6.6 Open the log files
+### 8.6 Open the log files
 
 Every command writes a small log file (a record) at
 `%LOCALAPPDATA%\GitEasy\Logs`. If a command worked, the log is silent. If
@@ -411,13 +611,13 @@ Show-Diagnostic -All    # open the logs folder
 
 Logs older than 30 days delete themselves.
 
-## 7. For Git experts: where to look under the hood
+## 9. For Git experts: where to look under the hood
 
 GitEasy is built for non-tech users, but everything it does is still
 plain Git. If you know Git and you want to inspect what GitEasy did, you
 have a few places to look.
 
-### 7.1 The diagnostic log files
+### 9.1 The diagnostic log files
 
 ```powershell
 # Open the most recent log:
@@ -447,7 +647,7 @@ Save-Work 'test save' -LogPath 'C:\Temp\GitEasyLogs'
 Or change it system-wide with the `GITEASY_LOG_PATH` environment
 variable.
 
-### 7.2 Read the source
+### 9.2 Read the source
 
 Every public command is one PowerShell file:
 
@@ -465,7 +665,7 @@ the `Public/*.ps1` file for the command name and look at every
 For a side-by-side mapping of every GitEasy command to its real Git
 commands, see [`GITEASY-VS-RAW-GIT.md`](GITEASY-VS-RAW-GIT.md).
 
-### 7.3 Run Git directly in the same folder
+### 9.3 Run Git directly in the same folder
 
 GitEasy never hides the underlying repository. After any GitEasy command
 you can run normal Git inside the same folder:
@@ -479,7 +679,7 @@ git diff HEAD~1
 
 The `.git` folder is untouched. There is nothing magic on disk.
 
-### 7.4 Test what GitEasy is about to do without changing anything
+### 9.4 Test what GitEasy is about to do without changing anything
 
 Most commands support PowerShell's `-WhatIf` and `-Confirm` because they
 use `[CmdletBinding(SupportsShouldProcess)]`:
@@ -491,7 +691,7 @@ Undo-Changes -WhatIf
 
 `-WhatIf` shows you what would happen without doing it.
 
-## 8. Limitations
+## 10. Limitations
 
 Things GitEasy is **not** good for, on purpose:
 
@@ -500,6 +700,7 @@ Things GitEasy is **not** good for, on purpose:
   but is not tested.
 - **It does not run on machines without Git.** Git must already be on
   your computer and on `PATH`. GitEasy will not install Git for you.
+  (See section 2 for how to install Git, including an offline option.)
 - **It does not solve merge conflicts for you.** If two saves change the
   same line, GitEasy stops and tells you a plain-English message. You
   (or a tech helper) must open the file and fix the conflict before
@@ -518,12 +719,16 @@ Things GitEasy is **not** good for, on purpose:
 - **Not on PowerShell Gallery yet.** You install GitEasy by copying or
   cloning the folder yourself. There is no `Install-Module` from the
   online gallery yet.
+- **Offline use needs an offline online home.** GitEasy works fine on a
+  machine with no internet, but `Save-Work` (without `-NoPush`) needs to
+  be able to reach the online home you pointed it at. A real offline
+  setup is an internal company Git server, not "no server at all."
 - **English only.** Every message is in English.
 - **Windows credential helpers only.** The login helpers GitEasy
   understands are the ones that ship with Git for Windows. On Mac or
   Linux you must set up your own helper.
 
-## 9. A full example session
+## 11. A full example session
 
 ```powershell
 # Load the tool.
@@ -550,7 +755,7 @@ Save-Work 'Tidy up the public commands'
 Show-History -Count 3
 ```
 
-## 10. Where to go next
+## 12. Where to go next
 
 - `docs/QUICKSTART.md` — the shortest start.
 - `docs/COMMAND_EXAMPLES.md` — one example per command.
