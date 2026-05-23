@@ -14,9 +14,9 @@ For a long time, we managed to avoid it. But eventually, the mandate came down: 
 
 Enter GitEasy. Just five simple commands. No confusing raw Git text. One log file per action. It's a frictionless wrapper—if you know Git, you can bypass it anytime. If you don't, you'll never need to see the scary stuff.
 
-One important note: I'm holding off on accepting pull requests for now. Setting up a contributor agreement involves legal fees, and I'd rather invest my time and resources into writing code. It's not a permanent stance; I'm just taking it slow. But rest assured, GitEasy is licensed under MPL 2.0. Anyone is free to fork it, so the project's survival doesn't depend on me.
+One important note: for now, I'm the only one making changes to GitEasy. Setting up the right legal paperwork to accept code changes from other people involves a lawyer, and I'd rather put my time and money into shipping more useful code than into legal forms I might have to redo. It's not a permanent stance; I'm just taking it slow. But rest assured, GitEasy is licensed under MPL 2.0, which means anyone is free to pick up the code and continue with it on their own. The project's survival doesn't depend on me.
 
-I completely understand if the lack of PRs gives you pause. I'm just a guy figuring out the open-source world one step at a time. The door isn't bolted, it's just closed for today. However, I am fully open to bug reports and feature ideas. Open an [Issue](https://github.com/greenmtnsun/GitEasy/issues), tell me what you need, and I'll read it—no code necessary. If you want to chat, I'm [@greenmtnsun](https://github.com/greenmtnsun) on GitHub.
+I completely understand if that decision gives you pause. I'm just a guy figuring out the open-source world one step at a time. The door isn't bolted, it's just closed for today. I am fully open to bug reports and feature ideas — head to the GitHub project and open an [Issue](https://github.com/greenmtnsun/GitEasy/issues), tell me what you need, and I'll read it. No code necessary. If you want to chat, find me at [@greenmtnsun](https://github.com/greenmtnsun) on GitHub.
 
 > *If you've ever closed PowerShell because the Git error message felt scarier than the change you were trying to save: this was built for you. I hope it brings some relief — and that you enjoy using it. Take care.*
 
