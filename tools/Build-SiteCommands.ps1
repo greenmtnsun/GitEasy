@@ -131,7 +131,6 @@ $htmlTemplate = @'
       <a href="../how.html">How it works</a>
       <a href="../who.html">Who it's for</a>
       <a href="index.html"{{COMMANDS_ACTIVE}}>Commands</a>
-      <a href="../wall.html">The wall</a>
       <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
     </nav>
   </div>
@@ -144,7 +143,8 @@ $htmlTemplate = @'
 
 <footer>
   <div class="footer-inner">
-    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under <a href="https://github.com/greenmtnsun/GitEasy/blob/main/LICENSE">MPL 2.0</a>.<br>
+    Provided as-is. No warranty. Use at your own risk.<br>
     <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
     <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
     <a href="../index.html">Home</a>
@@ -240,7 +240,6 @@ $indexHtml = @"
       <a href="../how.html">How it works</a>
       <a href="../who.html">Who it's for</a>
       <a href="index.html" class="active">Commands</a>
-      <a href="../wall.html">The wall</a>
       <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
     </nav>
   </div>
@@ -270,7 +269,8 @@ $cardLinks
 
 <footer>
   <div class="footer-inner">
-    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under <a href="https://github.com/greenmtnsun/GitEasy/blob/main/LICENSE">MPL 2.0</a>.<br>
+    Provided as-is. No warranty. Use at your own risk.<br>
     <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
     <a href="../index.html">Home</a>
   </div>

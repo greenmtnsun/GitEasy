@@ -1,10 +1,39 @@
 <!DOCTYPE html>
+<!--
+  =============================================================================
+  INTENTIONAL ORPHAN PAGE - DO NOT ADD NAV LINKS BACK TO THIS FILE.
+  =============================================================================
+
+  This page exists on disk and is hosted, but NO other page on the site
+  links to it. It is reachable only by typing the URL directly
+  (git-easy.com/wall.html) or by Keith manually sharing the link with
+  someone in a conversation.
+
+  Why orphaned:
+  - The audience wall is already the homepage hero. A nav link to a
+    standalone wall page would be "click here for the same thing you're
+    already looking at" - confusing UX.
+  - But the standalone page has real value: a single-purpose URL Keith
+    can drop into a Slack DM / email / tweet when he wants to share
+    JUST the wall, without the surrounding marketing content.
+  - Keep the page; remove the navigation.
+
+  If you (future Keith, or someone helping Keith) think "this page is
+  orphaned, let me link to it" - read this comment first. The orphan
+  status is the feature, not a bug.
+
+  Last decision: 2026-05-22 - Keith kept the wall here intentionally
+  for manual-share use; nav entries removed from index.html, who.html,
+  how.html, and the command-page template in tools/Build-SiteCommands.ps1.
+  =============================================================================
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The wall — every user GitEasy was built for</title>
   <meta name="description" content="A wall of GitEasy users rendered as overlapping street-pole flyers. 31 user types, plus a few brand stickers, plus space for you.">
+  <meta name="robots" content="noindex, follow">
   <link rel="stylesheet" href="style.css">
   <style>
     /* Wall-page specific - keeps the wall as the dominant element */
@@ -61,7 +90,6 @@
       <a href="how.html">How it works</a>
       <a href="who.html">Who it's for</a>
       <a href="commands/index.html">Commands</a>
-      <a href="wall.html" class="active">The wall</a>
       <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
     </nav>
   </div>
@@ -194,7 +222,8 @@
 
 <footer>
   <div class="footer-inner">
-    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under <a href="https://github.com/greenmtnsun/GitEasy/blob/main/LICENSE">MPL 2.0</a>.<br>
+    Provided as-is. No warranty. Use at your own risk.<br>
     <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;·&nbsp;
     <a href="index.html">Home</a> &nbsp;·&nbsp;
     <a href="who.html">Who it's for</a>
