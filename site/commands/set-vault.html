@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set-Vault - GitEasy</title>
+  <meta name="description" content="Choose where saved logins are stored, and optionally write a starter ignore list.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Set-Vault</span>
+<span class="tagline">Choose where saved logins are stored, and optionally write a starter ignore list.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-write">Read / Write</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Set-Vault tells the system which credential storage to use for saved logins. The default (manager) is appropriate for most modern Windows installs. Use this when first setting up GitEasy on a new machine, or when moving between credential storage backends.</p>
+<p>With -WriteIgnoreList, Set-Vault also writes a starter .gitignore file in the active project folder, populated with patterns common to PowerShell, .NET, and SQL/SSIS projects (build artifacts, IDE leftovers, log files, secret files, etc.). Existing .gitignore content is preserved; the starter patterns are appended only if missing.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Set-Vault
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Set-Vault -Helper wincred
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 3</span>
+<div class="va-recipe-intent">EXAMPLE 3</div>
+<pre><code class="language-powershell">Set-Vault -Helper manager -WriteIgnoreList
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Safety:</p>
+<ul>
+<li>Never store secrets in plain-text files. Pick a storage backend that the operating system protects.</li>
+<li>Use Get-VaultStatus to confirm the choice without exposing any secret values.</li>
+<li>-WriteIgnoreList never overwrites your existing patterns; it only appends what is missing.</li>
+</ul>
+<h2 id="parameters">Parameters</h2>
+<div class="va-param-card" markdown>
+<span class="pname">-Helper</span> <span class="chip optional">optional</span> <span class="chip type">String</span>
+<div class="pdesc">The credential storage name. One of: manager, manager-core, wincred, cache.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-WriteIgnoreList</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+<div class="pdesc">Also write a starter .gitignore in the active project folder. Adds common junk patterns; preserves anything already in the file.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-LogPath</span> <span class="chip optional">optional</span> <span class="chip type">String</span>
+<div class="pdesc">Override the directory where the diagnostic log for this run is written.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-WhatIf</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Confirm</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Set-Vault%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

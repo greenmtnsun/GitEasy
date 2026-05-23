@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search-History - GitEasy</title>
+  <meta name="description" content="Search saved-point history for a specific text.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Search-History</span>
+<span class="tagline">Search saved-point history for a specific text.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-only">Read-Only</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Search-History finds every saved point in the active project that added or removed the text you give it. Useful for forensic questions like &quot;when did the connection string change?&quot; or &quot;when was that function name dropped?&quot;</p>
+<p>By default, Search-History returns structured objects (one per matching saved point), so you can pipe and filter. With -Patch, it includes the actual change text alongside each result.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Search-History -Pattern 'DROP TABLE'
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Search-History -Pattern 'connection string' -Count 10
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 3</span>
+<div class="va-recipe-intent">EXAMPLE 3</div>
+<pre><code class="language-powershell">Search-History -Pattern 'old-function-name' -Patch
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Search-History looks at every saved point in history, not just recent ones, so it can be slow on very large projects. Use -Count to limit how many results to return.</p>
+<h2 id="parameters">Parameters</h2>
+<div class="va-param-card" markdown>
+<span class="pname">-Pattern</span> <span class="chip required">required</span> <span class="chip type">String</span>
+<div class="pdesc">The text to search for in the saved-point history. Plain text, not a regular expression.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Count</span> <span class="chip optional">optional</span> <span class="chip type">Int32</span>
+<div class="pdesc">The maximum number of matching saved points to return. Defaults to 50. Validated to the range 1-500.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Patch</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+<div class="pdesc">Include the change text (the lines that were added or removed) for each matching saved point.</div>
+</div>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Search-History%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

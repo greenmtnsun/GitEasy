@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restore-File - GitEasy</title>
+  <meta name="description" content="Restore a single file to its last saved state without touching anything else.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Restore-File</span>
+<span class="tagline">Restore a single file to its last saved state without touching anything else.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-write">Read / Write</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Restore-File is the targeted GitEasy restore. It resets one file to its last saved version while leaving every other change in the active working area alone.</p>
+<p>Use it when you want a precise rollback of one file - for example, a generated file you accidentally edited, or a configuration file you want to revert without abandoning the rest of your work.</p>
+<p>Each invocation writes a self-contained diagnostic log file. Successful runs log silently; failures throw a plain-English message and point at the log file with the technical detail.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Restore-File -Path README.md
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Find-CodeChange; Restore-File -Path Public\Save-Work.ps1; Find-CodeChange
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Safety:</p>
+<ul>
+<li>Refuses to run during an unfinished merge, rebase, cherry-pick, revert, or bisect.</li>
+<li>Refuses to run while there are unfinished conflicts.</li>
+<li>Refuses to operate on a file that does not exist or is not tracked.</li>
+<li>Run Save-Work -NoPush first if you might want the discarded edits later.</li>
+</ul>
+<h2 id="parameters">Parameters</h2>
+<div class="va-param-card" markdown>
+<span class="pname">-Path</span> <span class="chip required">required</span> <span class="chip type">String</span>
+<div class="pdesc">Path to the file to restore. Can be relative to the current location or absolute. Must be a tracked file in the active project.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-LogPath</span> <span class="chip optional">optional</span> <span class="chip type">String</span>
+<div class="pdesc">Override the directory where the diagnostic log for this run is written.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-WhatIf</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Confirm</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Restore-File%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

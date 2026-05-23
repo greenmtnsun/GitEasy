@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Undo-Changes - GitEasy</title>
+  <meta name="description" content="Throw away unsaved changes and return the working area to its last saved state.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Undo-Changes</span>
+<span class="tagline">Throw away unsaved changes and return the working area to its last saved state.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-write">Read / Write</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Undo-Changes is the GitEasy-first way to abandon every unsaved edit. Because the operation is destructive, the command refuses to run without explicit confirmation: pass -Force, or accept the standard PowerShell -Confirm prompt.</p>
+<p>For a softer alternative, Save-Work -NoPush will save the current state locally first, so you can recover later if you change your mind.</p>
+<p>Each invocation writes a self-contained diagnostic log file. Successful runs log silently; failures throw a plain-English message and point at the log file with the technical detail.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Find-CodeChange; Undo-Changes -Force
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Save-Work 'checkpoint before undo' -NoPush; Undo-Changes -Force
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Safety:</p>
+<ul>
+<li>Always run Find-CodeChange first to see what will be discarded.</li>
+<li>Use Save-Work -NoPush for a recoverable checkpoint before undoing.</li>
+<li>Refuses to run during an unfinished merge, rebase, cherry-pick, revert, or bisect.</li>
+<li>Refuses to run while there are unfinished conflicts.</li>
+</ul>
+<h2 id="parameters">Parameters</h2>
+<div class="va-param-card" markdown>
+<span class="pname">-Force</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+<div class="pdesc">Skip the confirmation prompt and discard unsaved changes immediately.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-LogPath</span> <span class="chip optional">optional</span> <span class="chip type">String</span>
+<div class="pdesc">Override the directory where the diagnostic log for this run is written.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-WhatIf</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Confirm</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+</div>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Undo-Changes%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

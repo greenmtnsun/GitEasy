@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show-Remote - GitEasy</title>
+  <meta name="description" content="Show where the active project folder is published.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Show-Remote</span>
+<span class="tagline">Show where the active project folder is published.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-only">Read-Only</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Show-Remote reports the published locations configured for the active project folder, including the kind of provider (GitHub, GitLab, or Other) and whether it is used for fetching, publishing, or both. Run it before publishing when you want to confirm the project folder is connected to the right place.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Show-Remote
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Find-CodeChange; Show-Remote
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Mismatched published locations should be treated as a stop-and-investigate signal before saving or publishing. If the listed URL is not what you expected, do not save until you understand why.</p>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Show-Remote%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

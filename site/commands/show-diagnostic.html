@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show-Diagnostic - GitEasy</title>
+  <meta name="description" content="Open or list the diagnostic log files written by GitEasy.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="../index.html">Home</a>
+      <a href="../how.html">How it works</a>
+      <a href="../who.html">Who it's for</a>
+      <a href="index.html">Commands</a>
+      <a href="../wall.html">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <p class="muted"><a href="index.html">&laquo; All commands</a></p>
+<div class="va-hero" markdown>
+<p><span class="cmdlet-name">Show-Diagnostic</span>
+<span class="tagline">Open or list the diagnostic log files written by GitEasy.</span></p>
+<div class="va-meta-row">
+<span class="risk-pill read-only">Read-Only</span>
+<span class="chip type">GitEasy v1.5.3</span>
+</div>
+</div>
+<h2 id="description">Description</h2>
+<p>Every GitEasy command writes a small log file describing exactly what happened during that run. Show-Diagnostic gives you a friendly way to find and open those logs without knowing where they live.</p>
+<p>With no parameters, Show-Diagnostic opens the most recent log in the default editor. With -List, it prints a table of recent logs with timestamps and sizes. With -All, it opens the logs folder in Explorer.</p>
+<h2 id="recipes">Recipes</h2>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 1</span>
+<div class="va-recipe-intent">EXAMPLE 1</div>
+<pre><code class="language-powershell">Show-Diagnostic
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 2</span>
+<div class="va-recipe-intent">EXAMPLE 2</div>
+<pre><code class="language-powershell">Show-Diagnostic -List
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 3</span>
+<div class="va-recipe-intent">EXAMPLE 3</div>
+<pre><code class="language-powershell">Show-Diagnostic -List -Count 5
+</code></pre>
+</div>
+<div class="va-recipe" markdown>
+<span class="va-recipe-num">Recipe 4</span>
+<div class="va-recipe-intent">EXAMPLE 4</div>
+<pre><code class="language-powershell">Show-Diagnostic -All
+</code></pre>
+</div>
+<h2 id="notes">Notes</h2>
+<p>Logs older than 30 days are automatically pruned each time a new log is written. To send a log to a colleague, attach the file directly - it is self-contained.</p>
+<h2 id="parameters">Parameters</h2>
+<div class="va-param-card" markdown>
+<span class="pname">-List</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+<div class="pdesc">Print a table of recent logs. Use with -Count to control how many.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-All</span> <span class="chip optional">optional</span> <span class="chip type">SwitchParameter</span>
+<div class="pdesc">Open the logs folder in Explorer.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-Count</span> <span class="chip optional">optional</span> <span class="chip type">Int32</span>
+<div class="pdesc">With -List, the maximum number of log entries to print. Defaults to 10.</div>
+</div>
+<div class="va-param-card" markdown>
+<span class="pname">-LogPath</span> <span class="chip optional">optional</span> <span class="chip type">String</span>
+<div class="pdesc">Override the directory to look in. Defaults to %LOCALAPPDATA%\GitEasy\Logs and can be overridden site-wide through the GITEASY_LOG_PATH environment variable.</div>
+</div>
+<hr />
+<p><strong>Was this page helpful?</strong> <a href="https://github.com/greenmtnsun/PS-Wiki-Central/issues/new?title=Feedback%3A%20Show-Diagnostic%20%28GitEasy%29&amp;labels=docs-feedback">Report an issue or suggest an improvement →</a></p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;&middot;&nbsp;
+    <a href="index.html">All commands</a> &nbsp;&middot;&nbsp;
+    <a href="../index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>
