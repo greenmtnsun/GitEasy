@@ -34,7 +34,8 @@
       max-width: 1240px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05);
     }
-    .wall-frame img {
+    .wall-frame img,
+    .wall-frame svg {
       display: block;
       width: 100%;
       height: auto;
@@ -77,9 +78,103 @@
     </p>
   </div>
 
-  <div class="wall-frame">
-    <img src="images/audience-wall.svg"
-         alt="A wall of 31 GitEasy user types rendered as overlapping street-pole flyers: sysadmins, database admins, change managers, compliance, DevOps, technical writers, network engineers, security engineers, cloud engineers, data scientists, data analysts, BI developers, researchers, bioinformaticians, statisticians, engineers, scientists, biologists, students, educators, tinkerers, beginner developers, hardware makers, Salesforce admins, ServiceNow admins, pen testers, forensic analysts, QA/test engineers, auditors, power users, system integrators. Plus three brand stickers reading PLAIN ENGLISH, SAVE-WORK, and + YOU?">
+  <div class="wall-frame" role="img" aria-label="A wall of 31 GitEasy user types rendered as overlapping street-pole flyers: sysadmins, database admins, change managers, compliance, DevOps, technical writers, network engineers, security engineers, cloud engineers, data scientists, data analysts, BI developers, researchers, bioinformaticians, statisticians, engineers, scientists, biologists, students, educators, tinkerers, beginner developers, hardware makers, Salesforce admins, ServiceNow admins, pen testers, forensic analysts, QA/test engineers, auditors, power users, system integrators. Plus three brand stickers: PLAIN ENGLISH, SAVE-WORK, and + YOU?">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <pattern id="grit" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="0.6" fill="#999" fill-opacity="0.18"/>
+      <circle cx="5" cy="4" r="0.4" fill="#aaa" fill-opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="760" fill="#ece7dc"/>
+  <rect width="1200" height="760" fill="url(#grit)"/>
+
+  <rect x="0" y="680" width="1200" height="80" fill="#9a958a"/>
+  <line x1="0" y1="680" x2="1200" y2="680" stroke="#5a564f" stroke-width="2"/>
+
+  <g>
+    <rect x="170" y="40" width="22" height="660" fill="#5a544a"/>
+    <rect x="170" y="40" width="6" height="660" fill="#3a352d"/>
+    <rect x="440" y="40" width="22" height="660" fill="#5a544a"/>
+    <rect x="440" y="40" width="6" height="660" fill="#3a352d"/>
+    <rect x="710" y="40" width="22" height="660" fill="#5a544a"/>
+    <rect x="710" y="40" width="6" height="660" fill="#3a352d"/>
+    <rect x="980" y="40" width="22" height="660" fill="#5a544a"/>
+    <rect x="980" y="40" width="6" height="660" fill="#3a352d"/>
+  </g>
+
+  <g transform="translate(90,80) rotate(-7)"><rect width="190" height="80" fill="#ffd166" stroke="#1a1a1a" stroke-width="1.5"/><rect width="190" height="80" fill="url(#grit)"/><text x="95" y="36" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a1a" letter-spacing="0.5">SYSADMINS</text><text x="95" y="58" text-anchor="middle" font-size="11" fill="#3a352d">scripts &middot; playbooks &middot; jobs</text><circle cx="10" cy="10" r="2.5" fill="#1a1a1a"/><circle cx="180" cy="10" r="2.5" fill="#1a1a1a"/></g>
+
+  <g transform="translate(70,170) rotate(4)"><rect width="220" height="70" fill="#06d6a0" stroke="#1a1a1a" stroke-width="1.5"/><text x="110" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a1a">DATABASE ADMINS</text><text x="110" y="52" text-anchor="middle" font-size="11" fill="#0a3a2a">migrations &middot; stored procs</text><circle cx="10" cy="10" r="2.5" fill="#1a1a1a"/><circle cx="210" cy="10" r="2.5" fill="#1a1a1a"/></g>
+
+  <g transform="translate(95,260) rotate(-10)"><rect width="180" height="60" fill="#ef476f" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff" letter-spacing="0.5">CHANGE MANAGERS</text><text x="90" y="46" text-anchor="middle" font-size="10" fill="#ffe1e8">CAB chairs &middot; CRs</text></g>
+
+  <g transform="translate(110,340) rotate(8)"><rect width="170" height="60" fill="#118ab2" stroke="#1a1a1a" stroke-width="1.5"/><text x="85" y="30" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">COMPLIANCE</text><text x="85" y="48" text-anchor="middle" font-size="10" fill="#cfeaf2">audit &middot; controls</text></g>
+
+  <g transform="translate(70,420) rotate(-5)"><rect width="200" height="68" fill="#ffe66d" stroke="#1a1a1a" stroke-width="1.5"/><text x="100" y="30" text-anchor="middle" font-size="14" font-weight="800" fill="#1a1a1a">DEVOPS / SRE</text><text x="100" y="50" text-anchor="middle" font-size="10" fill="#4a3a00">terraform &middot; CI YAML</text></g>
+
+  <g transform="translate(95,510) rotate(11)"><rect width="180" height="56" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">TECHNICAL WRITERS</text><text x="90" y="44" text-anchor="middle" font-size="10" fill="#555">runbooks &middot; KB articles</text></g>
+
+  <g transform="translate(80,590) rotate(-3)"><rect width="210" height="64" fill="#a786df" stroke="#1a1a1a" stroke-width="1.5"/><text x="105" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">NETWORK ENGINEERS</text><text x="105" y="46" text-anchor="middle" font-size="10" fill="#efe8ff">router configs &middot; firewall</text></g>
+
+  <g transform="translate(350,60) rotate(6)"><rect width="200" height="74" fill="#ff6b6b" stroke="#1a1a1a" stroke-width="1.5"/><text x="100" y="32" text-anchor="middle" font-size="14" font-weight="800" fill="#ffffff">SECURITY ENGINEERS</text><text x="100" y="52" text-anchor="middle" font-size="10" fill="#ffe5e5">hardening &middot; IR runbooks</text><circle cx="10" cy="10" r="2.5" fill="#1a1a1a"/><circle cx="190" cy="10" r="2.5" fill="#1a1a1a"/></g>
+
+  <g transform="translate(370,150) rotate(-9)"><rect width="180" height="60" fill="#4ecdc4" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">CLOUD ENGINEERS</text><text x="90" y="46" text-anchor="middle" font-size="10" fill="#0a4a44">terraform &middot; bicep &middot; K8s</text></g>
+
+  <g transform="translate(340,230) rotate(3)"><rect width="220" height="70" fill="#ffd166" stroke="#1a1a1a" stroke-width="1.5"/><text x="110" y="32" text-anchor="middle" font-size="14" font-weight="800" fill="#1a1a1a">DATA SCIENTISTS</text><text x="110" y="52" text-anchor="middle" font-size="10" fill="#4a3a00">notebooks &middot; model code</text></g>
+
+  <g transform="translate(380,320) rotate(-6)"><rect width="160" height="56" fill="#f4a261" stroke="#1a1a1a" stroke-width="1.5"/><text x="80" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">SCIENTISTS</text><text x="80" y="44" text-anchor="middle" font-size="10" fill="#4a2a00">analysis &middot; simulations</text></g>
+
+  <g transform="translate(355,395) rotate(10)"><rect width="200" height="60" fill="#06d6a0" stroke="#1a1a1a" stroke-width="1.5"/><text x="100" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">BIOLOGISTS</text><text x="100" y="46" text-anchor="middle" font-size="10" fill="#0a3a2a">protocols &middot; lab notebooks</text></g>
+
+  <g transform="translate(350,490) rotate(-7)"><rect width="180" height="56" fill="#118ab2" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">RESEARCHERS</text><text x="90" y="44" text-anchor="middle" font-size="10" fill="#cfeaf2">paper drafts &middot; datasets</text></g>
+
+  <g transform="translate(370,560) rotate(5)"><rect width="190" height="60" fill="#ffd1dc" stroke="#1a1a1a" stroke-width="1.5"/><text x="95" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">BIOINFORMATICIANS</text><text x="95" y="46" text-anchor="middle" font-size="10" fill="#5a3540">pipelines &middot; nextflow</text></g>
+
+  <g transform="translate(355,635) rotate(-4)"><rect width="190" height="48" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.5"/><text x="95" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#ffd166">STATISTICIANS</text><text x="95" y="38" text-anchor="middle" font-size="10" fill="#aaa">R &middot; Stata &middot; analysis</text></g>
+
+  <g transform="translate(620,90) rotate(-8)"><rect width="210" height="72" fill="#ffe66d" stroke="#1a1a1a" stroke-width="1.5"/><text x="105" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="#1a1a1a">ENGINEERS</text><text x="105" y="52" text-anchor="middle" font-size="10" fill="#4a3a00">designs &middot; specs &middot; calcs</text><circle cx="10" cy="10" r="2.5" fill="#1a1a1a"/><circle cx="200" cy="10" r="2.5" fill="#1a1a1a"/></g>
+
+  <g transform="translate(640,180) rotate(7)"><rect width="180" height="60" fill="#ef476f" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">DATA ANALYSTS</text><text x="90" y="46" text-anchor="middle" font-size="10" fill="#ffe1e8">SQL &middot; dashboards</text></g>
+
+  <g transform="translate(610,265) rotate(-3)"><rect width="220" height="64" fill="#4ecdc4" stroke="#1a1a1a" stroke-width="1.5"/><text x="110" y="30" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">BI DEVELOPERS</text><text x="110" y="48" text-anchor="middle" font-size="10" fill="#0a4a44">DAX &middot; Power BI &middot; Tableau</text></g>
+
+  <g transform="translate(640,345) rotate(11)"><rect width="170" height="56" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/><text x="85" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">STUDENTS</text><text x="85" y="44" text-anchor="middle" font-size="10" fill="#555">coursework &middot; capstones</text></g>
+
+  <g transform="translate(615,425) rotate(-7)"><rect width="190" height="60" fill="#a786df" stroke="#1a1a1a" stroke-width="1.5"/><text x="95" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">EDUCATORS</text><text x="95" y="46" text-anchor="middle" font-size="10" fill="#efe8ff">course material &middot; slides</text></g>
+
+  <g transform="translate(640,510) rotate(4)"><rect width="180" height="56" fill="#f4a261" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">TINKERERS</text><text x="90" y="44" text-anchor="middle" font-size="10" fill="#4a2a00">side projects &middot; dotfiles</text></g>
+
+  <g transform="translate(610,585) rotate(-5)"><rect width="210" height="58" fill="#ffd1dc" stroke="#1a1a1a" stroke-width="1.5"/><text x="105" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">BEGINNER DEVELOPERS</text><text x="105" y="44" text-anchor="middle" font-size="10" fill="#5a3540">learning &middot; safe save habits</text></g>
+
+  <g transform="translate(630,650) rotate(8)"><rect width="180" height="44" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="20" text-anchor="middle" font-size="12" font-weight="800" fill="#06d6a0">HARDWARE MAKERS</text><text x="90" y="36" text-anchor="middle" font-size="9" fill="#aaa">arduino &middot; 3D printer</text></g>
+
+  <g transform="translate(890,70) rotate(5)"><rect width="220" height="74" fill="#06d6a0" stroke="#1a1a1a" stroke-width="1.5"/><text x="110" y="32" text-anchor="middle" font-size="14" font-weight="800" fill="#1a1a1a">SALESFORCE ADMINS</text><text x="110" y="52" text-anchor="middle" font-size="10" fill="#0a3a2a">flows &middot; metadata &middot; rules</text><circle cx="10" cy="10" r="2.5" fill="#1a1a1a"/><circle cx="210" cy="10" r="2.5" fill="#1a1a1a"/></g>
+
+  <g transform="translate(905,165) rotate(-9)"><rect width="200" height="62" fill="#ffd166" stroke="#1a1a1a" stroke-width="1.5"/><text x="100" y="30" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">SERVICENOW ADMINS</text><text x="100" y="48" text-anchor="middle" font-size="10" fill="#4a3a00">update sets &middot; scripts</text></g>
+
+  <g transform="translate(875,250) rotate(7)"><rect width="190" height="58" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.5"/><text x="95" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#ff6b6b" letter-spacing="0.5">PEN TESTERS</text><text x="95" y="44" text-anchor="middle" font-size="10" fill="#bbb">exploit scripts &middot; reports</text></g>
+
+  <g transform="translate(910,325) rotate(-4)"><rect width="180" height="58" fill="#118ab2" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">FORENSIC ANALYSTS</text><text x="90" y="44" text-anchor="middle" font-size="10" fill="#cfeaf2">evidence &middot; case notes</text></g>
+
+  <g transform="translate(880,405) rotate(9)"><rect width="210" height="62" fill="#ef476f" stroke="#1a1a1a" stroke-width="1.5"/><text x="105" y="30" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">QA / TEST ENGINEERS</text><text x="105" y="48" text-anchor="middle" font-size="10" fill="#ffe1e8">test plans &middot; regressions</text></g>
+
+  <g transform="translate(905,495) rotate(-7)"><rect width="180" height="54" fill="#ffe66d" stroke="#1a1a1a" stroke-width="1.5"/><text x="90" y="24" text-anchor="middle" font-size="13" font-weight="800" fill="#1a1a1a">AUDITORS</text><text x="90" y="42" text-anchor="middle" font-size="10" fill="#4a3a00">programs &middot; matrices</text></g>
+
+  <g transform="translate(875,565) rotate(4)"><rect width="210" height="60" fill="#a786df" stroke="#1a1a1a" stroke-width="1.5"/><text x="105" y="28" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">POWER USERS</text><text x="105" y="46" text-anchor="middle" font-size="10" fill="#efe8ff">VBA macros &middot; spreadsheets</text></g>
+
+  <g transform="translate(900,645) rotate(-6)"><rect width="190" height="42" fill="#4ecdc4" stroke="#1a1a1a" stroke-width="1.5"/><text x="95" y="19" text-anchor="middle" font-size="12" font-weight="800" fill="#1a1a1a">SYSTEM INTEGRATORS</text><text x="95" y="34" text-anchor="middle" font-size="9" fill="#0a4a44">orchestration &middot; ETL</text></g>
+
+  <g transform="translate(265,300) rotate(15)" opacity="0.92"><rect width="130" height="40" fill="#ffd1dc" stroke="#1a1a1a" stroke-width="1.2"/><text x="65" y="25" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1a1a">+ YOU?</text></g>
+
+  <g transform="translate(530,460) rotate(-13)" opacity="0.94"><rect width="140" height="44" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/><text x="70" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1a1a">PLAIN ENGLISH</text><text x="70" y="36" text-anchor="middle" font-size="9" fill="#555">no jargon, ever</text></g>
+
+  <g transform="translate(810,440) rotate(14)" opacity="0.92"><rect width="120" height="36" fill="#ffd166" stroke="#1a1a1a" stroke-width="1.2"/><text x="60" y="22" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1a1a">SAVE-WORK</text></g>
+
+  <g transform="translate(40,720)"><text x="0" y="0" font-size="11" font-style="italic" fill="#555">GitEasy &mdash; for everyone on this wall and the next.</text></g>
+</svg>
+
   </div>
 
   <div class="wall-actions">
