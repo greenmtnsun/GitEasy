@@ -315,6 +315,39 @@ footer .footer-inner {
   margin: 0 auto;
 }
 
+/* ---------- homepage wall hero ---------- */
+main.homepage { max-width: 1280px; }
+.hero-wall {
+  background: #ece7dc;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 14px;
+  margin: 0 0 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05);
+}
+.hero-wall svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+.hero-caption {
+  max-width: 880px;
+  margin: 0 auto 36px;
+  text-align: center;
+}
+.hero-caption h1 {
+  font-size: 38px;
+  margin-bottom: 10px;
+}
+.hero-caption p {
+  font-size: 19px;
+  color: var(--text-soft);
+  margin: 0 auto 18px;
+  max-width: 720px;
+}
+.hero-caption .cta-row { justify-content: center; }
+
 /* ---------- callout / closing-quote ---------- */
 .callout {
   background: white;
