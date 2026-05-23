@@ -93,8 +93,17 @@ Describe 'GitEasy publish readiness - exports' {
         ($manifest.VariablesToExport.Count -eq 0) | Should Be $true
     }
 
-    It 'AliasesToExport is an empty array, not a wildcard' {
-        ($manifest.AliasesToExport.Count -eq 0) | Should Be $true
+    It 'AliasesToExport contains the three documented singular-form aliases' {
+        # Plural cmdlet names are a brand choice (see site/who.html#naming);
+        # singular aliases are exported so PowerShell convention-followers
+        # can also type Get-Update / Show-Release / Undo-Change.
+        $expected = @('Get-Update', 'Show-Release', 'Undo-Change') | Sort-Object
+        $actual   = @($manifest.AliasesToExport | Sort-Object)
+        ($actual -join '|') | Should Be ($expected -join '|')
+    }
+
+    It 'AliasesToExport contains no wildcards' {
+        ($manifest.AliasesToExport -join ',') | Should Not Match '\*'
     }
 
     It 'FunctionsToExport contains no wildcards' {

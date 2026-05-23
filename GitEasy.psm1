@@ -25,4 +25,8 @@ Export-ModuleMember -Function @(
     'Switch-Work',
     'Test-Login',
     'Undo-Changes'
+) -Alias @(
+    'Get-Update',
+    'Show-Release',
+    'Undo-Change'
 )

@@ -30,7 +30,12 @@ function Show-Releases {
     .LINK
     Show-History
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseSingularNouns', '',
+        Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
+    )]
     [CmdletBinding()]
+    [Alias('Show-Release')]
     param(
         [string]$Pattern = '',
 
@@ -40,7 +45,7 @@ function Show-Releases {
 
     $root = Get-GERepoRoot
 
-    $args = @(
+    $gitArgs = @(
         'for-each-ref',
         '--format=%(refname:short)%09%(taggerdate:short)%09%(subject)',
         "--count=$Count",
@@ -48,13 +53,13 @@ function Show-Releases {
     )
 
     if ([string]::IsNullOrWhiteSpace($Pattern)) {
-        $args += 'refs/tags/'
+        $gitArgs += 'refs/tags/'
     }
     else {
-        $args += "refs/tags/$Pattern"
+        $gitArgs += "refs/tags/$Pattern"
     }
 
-    $r = Invoke-GEGit -ArgumentList $args -WorkingDirectory $root -AllowFailure
+    $r = Invoke-GEGit -ArgumentList $gitArgs -WorkingDirectory $root -AllowFailure
 
     if ($r.ExitCode -ne 0) {
         return @()

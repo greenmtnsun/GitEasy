@@ -32,7 +32,12 @@ function Get-Updates {
     .LINK
     Test-Login
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseSingularNouns', '',
+        Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
+    )]
     [CmdletBinding()]
+    [Alias('Get-Update')]
     param(
         [Parameter()]
         [string]$RemoteName = 'origin',

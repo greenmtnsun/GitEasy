@@ -34,7 +34,11 @@
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()
-    AliasesToExport      = @()
+    AliasesToExport      = @(
+        'Get-Update'
+        'Show-Release'
+        'Undo-Change'
+    )
     PrivateData          = @{
         PSData = @{
             Tags         = @(

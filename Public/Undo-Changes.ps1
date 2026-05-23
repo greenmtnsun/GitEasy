@@ -38,7 +38,12 @@ function Undo-Changes {
     .LINK
     Save-Work
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseSingularNouns', '',
+        Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
+    )]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [Alias('Undo-Change')]
     param(
         [Parameter()]
         [switch]$Force,
