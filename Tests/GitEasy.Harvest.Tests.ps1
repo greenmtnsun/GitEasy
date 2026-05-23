@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -48,6 +49,7 @@ function New-TestRepositoryWithCommit {
         Pop-Location
     }
 }
+}
 
 Describe 'Search-History' {
     BeforeAll {
@@ -79,28 +81,28 @@ Describe 'Search-History' {
 
     It 'finds saved points that touched a string' {
         $hits = @(Search-History -Pattern 'DROP TABLE Foo')
-        $hits.Count -gt 0 | Should Be $true
+        $hits.Count -gt 0 | Should -Be $true
     }
 
     It 'returns objects with Id, Date, Author, Message' {
         $hits = @(Search-History -Pattern 'CREATE TABLE Foo')
         $first = $hits | Select-Object -First 1
-        ($first.PSObject.Properties.Name -contains 'Id')      | Should Be $true
-        ($first.PSObject.Properties.Name -contains 'Date')    | Should Be $true
-        ($first.PSObject.Properties.Name -contains 'Author')  | Should Be $true
-        ($first.PSObject.Properties.Name -contains 'Message') | Should Be $true
+        ($first.PSObject.Properties.Name -contains 'Id')      | Should -Be $true
+        ($first.PSObject.Properties.Name -contains 'Date')    | Should -Be $true
+        ($first.PSObject.Properties.Name -contains 'Author')  | Should -Be $true
+        ($first.PSObject.Properties.Name -contains 'Message') | Should -Be $true
     }
 
     It '-Patch adds a Change property with the diff text' {
         $hits = @(Search-History -Pattern 'DROP TABLE Foo' -Patch)
         $first = $hits | Select-Object -First 1
-        ($first.PSObject.Properties.Name -contains 'Change') | Should Be $true
-        $first.Change | Should Match 'DROP TABLE Foo'
+        ($first.PSObject.Properties.Name -contains 'Change') | Should -Be $true
+        $first.Change | Should -Match 'DROP TABLE Foo'
     }
 
     It 'returns empty when no saved point touched the pattern' {
         $hits = @(Search-History -Pattern 'NonExistentString12345')
-        $hits.Count | Should Be 0
+        $hits.Count | Should -Be 0
     }
 }
 
@@ -126,7 +128,7 @@ Describe 'Show-History -Graph' {
     It 'does not throw when -Graph is supplied' {
         $thrown = $null
         try { Show-History -Graph } catch { $thrown = $_ }
-        $thrown | Should BeNullOrEmpty
+        $thrown | Should -BeNullOrEmpty
     }
 }
 
@@ -166,7 +168,7 @@ Describe 'Save-Work -BumpVersion' {
         Save-Work 'change' -NoPush -BumpVersion
 
         $manifest = Import-PowerShellDataFile -LiteralPath (Join-Path $script:TempRepo 'TestModule.psd1')
-        $manifest.ModuleVersion | Should Be '1.2.4'
+        $manifest.ModuleVersion | Should -Be '1.2.4'
     }
 
     It 'bumps the Minor segment when -BumpKind Minor is supplied' {
@@ -174,7 +176,7 @@ Describe 'Save-Work -BumpVersion' {
         Save-Work 'change' -NoPush -BumpVersion -BumpKind Minor
 
         $manifest = Import-PowerShellDataFile -LiteralPath (Join-Path $script:TempRepo 'TestModule.psd1')
-        $manifest.ModuleVersion | Should Be '1.3.0'
+        $manifest.ModuleVersion | Should -Be '1.3.0'
     }
 
     It 'bumps the Major segment when -BumpKind Major is supplied' {
@@ -182,7 +184,7 @@ Describe 'Save-Work -BumpVersion' {
         Save-Work 'change' -NoPush -BumpVersion -BumpKind Major
 
         $manifest = Import-PowerShellDataFile -LiteralPath (Join-Path $script:TempRepo 'TestModule.psd1')
-        $manifest.ModuleVersion | Should Be '2.0.0'
+        $manifest.ModuleVersion | Should -Be '2.0.0'
     }
 
     It 'prefixes the saved-point message with the new version' {
@@ -190,7 +192,7 @@ Describe 'Save-Work -BumpVersion' {
         Save-Work 'fix the thing' -NoPush -BumpVersion -BumpKind Minor
 
         $log = Invoke-TestGit -ArgumentList @('log', '-1', '--pretty=%s')
-        ($log.Output -join '') | Should Match '^\[v1\.3\.0\] fix the thing$'
+        ($log.Output -join '') | Should -Match '^\[v1\.3\.0\] fix the thing$'
     }
 
     It 'finds and bumps a manifest in the conventional <ModuleName>\<ModuleName>.psd1 nested layout' {
@@ -214,7 +216,7 @@ Describe 'Save-Work -BumpVersion' {
 
         # The nested manifest should be bumped (1.2.3 -> 2.6.0 since both manifests exist; conventional preference picks the nested one)
         $nestedManifest = Import-PowerShellDataFile -LiteralPath (Join-Path $nested 'NestedModule.psd1')
-        $nestedManifest.ModuleVersion | Should Be '2.6.0'
+        $nestedManifest.ModuleVersion | Should -Be '2.6.0'
     }
 }
 
@@ -256,12 +258,12 @@ Describe 'Set-Vault -WriteIgnoreList' {
         Set-Vault -WriteIgnoreList | Out-Null
 
         $ignorePath = Join-Path $script:TempRepo '.gitignore'
-        Test-Path -LiteralPath $ignorePath | Should Be $true
+        Test-Path -LiteralPath $ignorePath | Should -Be $true
 
         $body = Get-Content -LiteralPath $ignorePath -Raw
-        $body | Should Match '\*\.bak'
-        $body | Should Match 'bin/'
-        $body | Should Match 'obj/'
+        $body | Should -Match '\*\.bak'
+        $body | Should -Match 'bin/'
+        $body | Should -Match 'obj/'
     }
 
     It 'preserves existing .gitignore content and only appends missing patterns' {
@@ -271,14 +273,14 @@ Describe 'Set-Vault -WriteIgnoreList' {
         Set-Vault -WriteIgnoreList | Out-Null
 
         $body = Get-Content -LiteralPath $ignorePath -Raw
-        $body | Should Match 'my-custom-pattern'
-        $body | Should Match '\*\.bak'
+        $body | Should -Match 'my-custom-pattern'
+        $body | Should -Match '\*\.bak'
     }
 
     It 'reports how many patterns were added' {
         $result = Set-Vault -WriteIgnoreList
 
-        $result.IgnoreList | Should Not BeNullOrEmpty
-        ($result.IgnoreList.PSObject.Properties.Name -contains 'Added') | Should Be $true
+        $result.IgnoreList | Should -Not -BeNullOrEmpty
+        ($result.IgnoreList.PSObject.Properties.Name -contains 'Added') | Should -Be $true
     }
 }

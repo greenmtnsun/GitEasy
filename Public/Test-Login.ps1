@@ -33,6 +33,7 @@
     Show-Remote
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param(
         [string]$RemoteName = 'origin'
     )

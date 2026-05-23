@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -48,6 +49,7 @@ function New-TestRepositoryWithCommit {
         Pop-Location
     }
 }
+}
 
 Describe 'Show-Change' {
     BeforeAll {
@@ -76,7 +78,7 @@ Describe 'Show-Change' {
                 if (-not [string]::IsNullOrWhiteSpace($entry.Diff)) { $hasContent = $true }
             }
         }
-        $hasContent | Should Be $false
+        $hasContent | Should -Be $false
     }
 
     It 'reports unstaged changes as structured objects with Path and Diff' {
@@ -84,12 +86,12 @@ Describe 'Show-Change' {
         Set-Content -LiteralPath $target -Value "baseline content`r`nadded line" -Encoding UTF8
 
         $r = @(Show-Change)
-        $r.Count -gt 0 | Should Be $true
+        $r.Count -gt 0 | Should -Be $true
         $entry = $r | Select-Object -First 1
-        ($entry.PSObject.Properties.Name -contains 'Path') | Should Be $true
-        ($entry.PSObject.Properties.Name -contains 'Diff') | Should Be $true
-        $entry.Path | Should Match 'README\.md'
-        $entry.Diff | Should Match 'added line'
+        ($entry.PSObject.Properties.Name -contains 'Path') | Should -Be $true
+        ($entry.PSObject.Properties.Name -contains 'Diff') | Should -Be $true
+        $entry.Path | Should -Match 'README\.md'
+        $entry.Diff | Should -Match 'added line'
     }
 
     It 'filters by -Path' {
@@ -102,8 +104,8 @@ Describe 'Show-Change' {
         Set-Content -LiteralPath (Join-Path $script:TempRepo 'b.txt') -Value 'b edited' -Encoding UTF8
 
         $r = @(Show-Change -Path 'a.txt')
-        $r.Count | Should Be 1
-        $r[0].Path | Should Match 'a\.txt'
+        $r.Count | Should -Be 1
+        $r[0].Path | Should -Match 'a\.txt'
     }
 
     It '-NextSave shows changes already prepared for the next saved point' {
@@ -114,9 +116,9 @@ Describe 'Show-Change' {
         $unprepared = @(Show-Change)
         $prepared   = @(Show-Change -NextSave)
 
-        $unprepared.Count | Should Be 0
-        $prepared.Count -gt 0 | Should Be $true
-        ($prepared | Select-Object -First 1).Diff | Should Match 'prepared change'
+        $unprepared.Count | Should -Be 0
+        $prepared.Count -gt 0 | Should -Be $true
+        ($prepared | Select-Object -First 1).Diff | Should -Match 'prepared change'
     }
 
     It '-Compact returns short summary instead of full diff' {
@@ -124,9 +126,9 @@ Describe 'Show-Change' {
         Set-Content -LiteralPath $target -Value "baseline content`r`nshort change" -Encoding UTF8
 
         $r = Show-Change -Compact
-        $r | Should Not BeNullOrEmpty
-        ($r.PSObject.Properties.Name -contains 'Summary') | Should Be $true
-        $r.Summary | Should Match 'README\.md'
+        $r | Should -Not -BeNullOrEmpty
+        ($r.PSObject.Properties.Name -contains 'Summary') | Should -Be $true
+        $r.Summary | Should -Match 'README\.md'
     }
 
     It 'plain-English error when not inside a project folder' {
@@ -145,7 +147,7 @@ Describe 'Show-Change' {
         Pop-Location
         Remove-Item -LiteralPath $outside -Recurse -Force -ErrorAction SilentlyContinue
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -203,8 +205,8 @@ Describe 'Get-Updates' {
         Push-Location -LiteralPath $script:TempB
         try {
             $r = Get-Updates
-            $r | Should Not BeNullOrEmpty
-            $r.NewSavedPoints | Should Be 0
+            $r | Should -Not -BeNullOrEmpty
+            $r.NewSavedPoints | Should -Be 0
         }
         finally {
             Pop-Location
@@ -224,7 +226,7 @@ Describe 'Get-Updates' {
         Push-Location -LiteralPath $script:TempB
         try {
             $r = Get-Updates
-            $r.NewSavedPoints | Should Be 1
+            $r.NewSavedPoints | Should -Be 1
         }
         finally {
             Pop-Location
@@ -235,10 +237,10 @@ Describe 'Get-Updates' {
         Push-Location -LiteralPath $script:TempB
         try {
             $r = Get-Updates
-            ($r.PSObject.Properties.Name -contains 'Repository')      | Should Be $true
-            ($r.PSObject.Properties.Name -contains 'Remote')          | Should Be $true
-            ($r.PSObject.Properties.Name -contains 'NewSavedPoints')  | Should Be $true
-            ($r.PSObject.Properties.Name -contains 'Message')         | Should Be $true
+            ($r.PSObject.Properties.Name -contains 'Repository')      | Should -Be $true
+            ($r.PSObject.Properties.Name -contains 'Remote')          | Should -Be $true
+            ($r.PSObject.Properties.Name -contains 'NewSavedPoints')  | Should -Be $true
+            ($r.PSObject.Properties.Name -contains 'Message')         | Should -Be $true
         }
         finally {
             Pop-Location
@@ -255,9 +257,9 @@ Describe 'Get-Updates' {
         }
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Get-Updates-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
         $body = Get-Content -LiteralPath ($logs | Sort-Object LastWriteTime | Select-Object -Last 1).FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Outcome: SUCCESS'
     }
 
     It 'plain-English error when no published location is configured' {
@@ -269,10 +271,10 @@ Describe 'Get-Updates' {
             $thrown = $null
             try { Get-Updates } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
+            $thrown | Should -Not -BeNullOrEmpty
             $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-            $userMessage | Should Not Match '(?i)\bupstream\b'
-            $userMessage | Should Not Match '(?i)\bHEAD\b'
+            $userMessage | Should -Not -Match '(?i)\bupstream\b'
+            $userMessage | Should -Not -Match '(?i)\bHEAD\b'
         }
         finally {
             Pop-Location

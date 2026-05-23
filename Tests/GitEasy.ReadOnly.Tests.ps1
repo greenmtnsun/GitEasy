@@ -1,4 +1,5 @@
-﻿$ProjectRoot = Split-Path -Parent $PSScriptRoot
+BeforeAll {
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath = Join-Path $ProjectRoot 'GitEasy.psd1'
 
 function Invoke-TestGit {
@@ -49,6 +50,7 @@ function New-TestRepositoryWithCommit {
         Pop-Location
     }
 }
+}
 
 Describe 'read-only GitEasy commands' {
     BeforeAll {
@@ -69,33 +71,33 @@ Describe 'read-only GitEasy commands' {
 
     It 'Show-Remote reports origin fetch and push remotes' {
         $remotes = @(Show-Remote)
-        $remotes.Count | Should Be 2
-        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'fetch' }).Count | Should Be 1
-        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'push' }).Count | Should Be 1
-        (@($remotes | Select-Object -ExpandProperty Provider -Unique) -contains 'GitHub') | Should Be $true
+        $remotes.Count | Should -Be 2
+        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'fetch' }).Count | Should -Be 1
+        @($remotes | Where-Object { $_.Remote -eq 'origin' -and $_.Purpose -eq 'push' }).Count | Should -Be 1
+        (@($remotes | Select-Object -ExpandProperty Provider -Unique) -contains 'GitHub') | Should -Be $true
     }
 
     It 'Show-History returns recent commits' {
         $history = @(Show-History -Count 5)
-        ($history.Count -gt 0) | Should Be $true
-        ($history | Select-Object -First 1).Message | Should Be 'read only baseline'
+        ($history.Count -gt 0) | Should -Be $true
+        ($history | Select-Object -First 1).Message | Should -Be 'read only baseline'
     }
 
     It 'Find-CodeChange reports a clean tree and then a dirty tree' {
         $clean = Find-CodeChange
-        $clean.IsClean | Should Be $true
+        $clean.IsClean | Should -Be $true
 
         Set-Content -LiteralPath (Join-Path $script:TempRepo 'change.txt') -Value 'pending change' -Encoding UTF8
         $dirty = Find-CodeChange
 
-        $dirty.IsClean | Should Be $false
-        ($dirty.ChangeCount -gt 0) | Should Be $true
-        ($dirty.UntrackedCount -gt 0) | Should Be $true
+        $dirty.IsClean | Should -Be $false
+        ($dirty.ChangeCount -gt 0) | Should -Be $true
+        ($dirty.UntrackedCount -gt 0) | Should -Be $true
     }
 
     It 'Find-CodeChange returns an object with PSTypeName GitEasy.CodeChange' {
         $r = Find-CodeChange
-        ($r.PSObject.TypeNames -contains 'GitEasy.CodeChange') | Should Be $true
+        ($r.PSObject.TypeNames -contains 'GitEasy.CodeChange') | Should -Be $true
     }
 
     It 'Find-CodeChange counts an untracked directory as 1 entry, not one per file inside' {
@@ -106,7 +108,7 @@ Describe 'read-only GitEasy commands' {
         Set-Content -LiteralPath (Join-Path $dir 'c.txt') -Value 'c' -Encoding UTF8
 
         $r = Find-CodeChange
-        $r.UntrackedCount | Should Be 1
+        $r.UntrackedCount | Should -Be 1
     }
 }
 

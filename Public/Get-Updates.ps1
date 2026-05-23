@@ -37,6 +37,7 @@ function Get-Updates {
         Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
     )]
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     [Alias('Get-Update')]
     param(
         [Parameter()]

@@ -1,4 +1,4 @@
-function Reset-Login {
+﻿function Reset-Login {
     <#
     .SYNOPSIS
     Forget any saved login for the active project folder so it can be set up again.
@@ -38,6 +38,7 @@ function Reset-Login {
     Test-Login
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [string]$RemoteName = 'origin',
         [string]$LogPath = ''
@@ -118,7 +119,9 @@ function Reset-Login {
             }
         }
         catch {
-            # Erase is best-effort - reject above is the primary path
+            # Erase is best-effort - reject above is the primary path.
+            # Swallow intentionally; surface to verbose stream for diagnosis.
+            Write-Verbose "credential-manager erase suppressed: $_"
         }
 
         # Step 3: remove matching cmdkey entries on Windows. Only set

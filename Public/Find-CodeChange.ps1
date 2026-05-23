@@ -27,6 +27,7 @@ function Find-CodeChange {
     Show-Remote
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param()
 
     return Get-GECodeChange

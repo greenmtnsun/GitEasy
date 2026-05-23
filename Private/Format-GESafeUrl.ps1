@@ -1,4 +1,4 @@
-function Format-GESafeUrl {
+﻿function Format-GESafeUrl {
     <#
     .SYNOPSIS
     Return a remote URL with any embedded credentials stripped, safe for display or logging.

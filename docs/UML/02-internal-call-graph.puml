@@ -13,7 +13,7 @@ component "Add-GELogStep" <<helper>> as AddLog
 component "Get-GELogPath" <<helper>> as LogPath
 component "Remove-GEOldLog" <<helper>> as Prune
 component "Assert-GESafeSave" <<helper>> as Safe
-component "Repo-state checks\nTest-GERepositoryBusy,\nGet-GEConflictFiles, Get-GERepoRoot" <<helper>> as RepoChk
+component "Repo-state checks\nTest-GERepositoryBusy,\nGet-GEConflictFile, Get-GERepoRoot" <<helper>> as RepoChk
 component "Query helpers\nGet-GEBranchName, Get-GERemoteUrl,\nGet-GEProviderName, Get-GERemoteSummary,\nGet-GEHistory, Get-GECodeChange" <<helper>> as QHelp
 component "Credential surface safety\nTest-GERemoteUrlSafe (input guard),\nConvert-GERemoteToSsh (input transform),\nFormat-GESafeUrl (output sanitiser),\nFormat-GESafeLogLine (output sanitiser)" <<helper>> as UrlSafe
 component "Invoke-GEGit" <<engine>> as Engine

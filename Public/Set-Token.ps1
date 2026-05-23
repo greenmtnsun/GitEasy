@@ -40,6 +40,7 @@ function Set-Token {
     Reset-Login
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter(Mandatory)] [string]$RemoteUrl,
         [string]$RemoteName = 'origin',

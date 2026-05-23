@@ -35,6 +35,7 @@ function Show-Releases {
         Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
     )]
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
     [Alias('Show-Release')]
     param(
         [string]$Pattern = '',

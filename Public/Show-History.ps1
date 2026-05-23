@@ -39,6 +39,7 @@ function Show-History {
     Search-History
     #>
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
     param(
         [ValidateRange(1, 200)]
         [int]$Count = 20,

@@ -42,6 +42,7 @@ function Show-Diagnostic {
     Test-Login
     #>
     [CmdletBinding(DefaultParameterSetName = 'Open')]
+    [OutputType([System.Void])]
     param(
         [Parameter(ParameterSetName = 'List')]
         [switch]$List,

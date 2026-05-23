@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -62,6 +63,7 @@ function New-TestBareRemote {
         Pop-Location
     }
 }
+}
 
 Describe 'Test-Login' {
     BeforeAll {
@@ -88,26 +90,26 @@ Describe 'Test-Login' {
 
     It 'reports Passed=false when no remote is configured' {
         $result = Test-Login
-        $result.Passed | Should Be $false
+        $result.Passed | Should -Be $false
     }
 
     It 'returns an object with the expected shape' {
         $result = Test-Login
 
-        ($result.PSObject.Properties.Name -contains 'Repository') | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Branch')     | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Remote')     | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Provider')   | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Url')        | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Passed')     | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Message')    | Should Be $true
+        ($result.PSObject.Properties.Name -contains 'Repository') | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Branch')     | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Remote')     | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Provider')   | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Url')        | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Passed')     | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Message')    | Should -Be $true
     }
 
     It 'reports Passed=true when the remote is reachable' {
         Invoke-TestGit -ArgumentList @('remote', 'add', 'origin', $script:TempBare) | Out-Null
 
         $result = Test-Login
-        $result.Passed | Should Be $true
+        $result.Passed | Should -Be $true
     }
 
     It 'reports Passed=false when the remote URL is bogus' {
@@ -115,7 +117,7 @@ Describe 'Test-Login' {
         Invoke-TestGit -ArgumentList @('remote', 'add', 'origin', $bogus) | Out-Null
 
         $result = Test-Login
-        $result.Passed | Should Be $false
+        $result.Passed | Should -Be $false
     }
 }
 
@@ -144,21 +146,21 @@ Describe 'Set-Vault' {
         Set-Vault -Helper 'manager' | Out-Null
 
         $r = Invoke-TestGit -ArgumentList @('config', '--global', '--get', 'credential.helper') -AllowFailure
-        $r.ExitCode | Should Be 0
-        ($r.Output | Select-Object -First 1) | Should Be 'manager'
+        $r.ExitCode | Should -Be 0
+        ($r.Output | Select-Object -First 1) | Should -Be 'manager'
     }
 
     It 'returns an object describing the configured helper' {
         $result = Set-Vault -Helper 'wincred'
 
-        $result | Should Not BeNullOrEmpty
-        $result.CredentialHelper | Should Be 'wincred'
+        $result | Should -Not -BeNullOrEmpty
+        $result.CredentialHelper | Should -Be 'wincred'
     }
 
     It 'rejects helper values outside the validate set' {
         $caught = $null
         try { Set-Vault -Helper 'bogus' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -192,11 +194,11 @@ Describe 'Reset-Login' {
         $thrown = $null
         try { Reset-Login } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bgit\b'
+        $userMessage | Should -Not -Match '(?i)\bgit\b'
     }
 
     It 'refuses non-HTTPS remotes plainly' {
@@ -205,12 +207,12 @@ Describe 'Reset-Login' {
         $thrown = $null
         try { Reset-Login } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bupstream\b'
-        $userMessage | Should Not Match '(?i)\bHEAD\b'
-        $userMessage | Should Not Match '(?i)\brefspec\b'
+        $userMessage | Should -Not -Match '(?i)\bupstream\b'
+        $userMessage | Should -Not -Match '(?i)\bHEAD\b'
+        $userMessage | Should -Not -Match '(?i)\brefspec\b'
     }
 
     It 'every invocation writes a log file' {
@@ -220,9 +222,9 @@ Describe 'Reset-Login' {
         $thrown = $null
         try { Reset-Login } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Reset-Login-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
     }
 }

@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -71,6 +72,7 @@ function Get-TestCurrentBranch {
         Pop-Location
     }
 }
+}
 
 Describe 'Save-Work — new contract' {
     BeforeAll {
@@ -108,10 +110,10 @@ Describe 'Save-Work — new contract' {
         Save-Work 'initial commit' -NoPush
 
         $log = Invoke-TestGit -ArgumentList @('log', '--oneline', '-1')
-        ($log.Output -join ' ') | Should Match 'initial commit'
+        ($log.Output -join ' ') | Should -Match 'initial commit'
 
         $status = Invoke-TestGit -ArgumentList @('status', '--porcelain=v1')
-        @($status.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should Be 0
+        @($status.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should -Be 0
     }
 
     It 'reports nothing to save when working tree is clean and branch is up to date' {
@@ -122,8 +124,8 @@ Describe 'Save-Work — new contract' {
         $messages = & { Save-Work 'should-noop' -NoPush } *>&1
         $after = (Invoke-TestGit -ArgumentList @('rev-parse', 'HEAD')).Output | Select-Object -First 1
 
-        $after | Should Be $before
-        ($messages -join ' ') | Should Match 'No changes to save'
+        $after | Should -Be $before
+        ($messages -join ' ') | Should -Match 'No changes to save'
     }
 
     It 'publishes a clean branch that is ahead of the remote' {
@@ -138,7 +140,7 @@ Describe 'Save-Work — new contract' {
         Save-Work
 
         $remoteRefs = Invoke-TestGit -ArgumentList @('ls-remote', $script:TempBare)
-        @($remoteRefs.Output | Where-Object { $_ -match 'refs/heads/' }).Count -gt 0 | Should Be $true
+        @($remoteRefs.Output | Where-Object { $_ -match 'refs/heads/' }).Count -gt 0 | Should -Be $true
     }
 
     It 'first save with no upstream auto-publishes when a remote exists' {
@@ -148,7 +150,7 @@ Describe 'Save-Work — new contract' {
         Save-Work 'auto-publish first save'
 
         $remoteRefs = Invoke-TestGit -ArgumentList @('ls-remote', $script:TempBare)
-        @($remoteRefs.Output | Where-Object { $_ -match 'refs/heads/' }).Count -gt 0 | Should Be $true
+        @($remoteRefs.Output | Where-Object { $_ -match 'refs/heads/' }).Count -gt 0 | Should -Be $true
     }
 
     It 'NoPush leaves work local even when a remote is configured' {
@@ -158,7 +160,7 @@ Describe 'Save-Work — new contract' {
         Save-Work 'local only' -NoPush
 
         $remoteRefs = Invoke-TestGit -ArgumentList @('ls-remote', $script:TempBare)
-        @($remoteRefs.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should Be 0
+        @($remoteRefs.Output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }).Count | Should -Be 0
     }
 
     It 'commit messages have no UTF-8 BOM' {
@@ -176,10 +178,10 @@ Describe 'Save-Work — new contract' {
         $messageStart = if ($blankIndex -ge 0) { $blankIndex + 1 } else { 0 }
         $message = ($cat.Output[$messageStart..($cat.Output.Count - 1)] -join "`n").Trim()
 
-        $message | Should Be 'bom-free message'
+        $message | Should -Be 'bom-free message'
 
         $bytes = [System.Text.Encoding]::UTF8.GetBytes($message)
-        ($bytes.Count -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) | Should Be $false
+        ($bytes.Count -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) | Should -Be $false
     }
 
     It 'LF-only files do not block save when autocrlf is enabled' {
@@ -190,7 +192,7 @@ Describe 'Save-Work — new contract' {
 
         $thrown = $null
         try { Save-Work 'lf-warning test' -NoPush } catch { $thrown = $_ }
-        $thrown | Should BeNullOrEmpty
+        $thrown | Should -BeNullOrEmpty
     }
 
     It 'real merge conflicts block save with a plain-English message' {
@@ -209,13 +211,13 @@ Describe 'Save-Work — new contract' {
 
         $merge = Invoke-TestGit -ArgumentList @('merge', 'feature') -AllowFailure
 
-        @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should Be $true
+        @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should -Be $true
 
         $thrown = $null
         try { Save-Work 'attempt save during conflict' -NoPush } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Not Match '(?i)\bgit\b'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Not -Match '(?i)\bgit\b'
     }
 
     It 'every save invocation writes a log file with SUCCESS outcome' {
@@ -223,11 +225,11 @@ Describe 'Save-Work — new contract' {
         Save-Work 'logs-success' -NoPush
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Save-Work-*.log' -File)
-        $logs.Count | Should Be 1
+        $logs.Count | Should -Be 1
 
         $body = Get-Content -LiteralPath $logs[0].FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
-        $body | Should Match 'Command:\s*Save-Work'
+        $body | Should -Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Command:\s*Save-Work'
     }
 
     It 'logs failures and surfaces the path in the thrown message' {
@@ -242,14 +244,14 @@ Describe 'Save-Work — new contract' {
         $thrown = $null
         try { Save-Work 'will-fail-on-publish' } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Save-Work-*.log' -File | Sort-Object LastWriteTime)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
 
         $body = Get-Content -LiteralPath $logs[-1].FullName -Raw
-        $body | Should Match 'Outcome: FAILURE'
+        $body | Should -Match 'Outcome: FAILURE'
     }
 
     It 'plain-English error message does not contain the word git' {
@@ -264,13 +266,13 @@ Describe 'Save-Work — new contract' {
         $thrown = $null
         try { Save-Work 'will-fail-plain' } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bgit\b'
-        $userMessage | Should Not Match '(?i)\bupstream\b'
-        $userMessage | Should Not Match '(?i)\bHEAD\b'
-        $userMessage | Should Not Match '(?i)\brefspec\b'
+        $userMessage | Should -Not -Match '(?i)\bgit\b'
+        $userMessage | Should -Not -Match '(?i)\bupstream\b'
+        $userMessage | Should -Not -Match '(?i)\bHEAD\b'
+        $userMessage | Should -Not -Match '(?i)\brefspec\b'
     }
 
     It 'busy repo state (active merge) blocks save with a plain-English message' {
@@ -288,11 +290,11 @@ Describe 'Save-Work — new contract' {
         Save-Work 'base busy change' -NoPush
 
         $merge = Invoke-TestGit -ArgumentList @('merge', 'busyfeat') -AllowFailure
-        @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should Be $true
+        @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should -Be $true
 
         $thrown = $null
         try { Save-Work 'attempt during busy' -NoPush } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
     }
 }

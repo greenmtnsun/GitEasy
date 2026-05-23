@@ -39,6 +39,7 @@ function Switch-Work {
     Save-Work
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter(Mandatory, Position = 0)]
         [string]$Name,

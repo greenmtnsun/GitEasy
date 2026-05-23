@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -62,6 +63,7 @@ function New-TestBareRemote {
         Pop-Location
     }
 }
+}
 
 Describe 'New-Release' {
     BeforeAll {
@@ -96,22 +98,22 @@ Describe 'New-Release' {
         New-Release -Version v1.0.0 -Note 'first release' -NoPush
 
         $tags = Invoke-TestGit -ArgumentList @('tag', '--list')
-        ($tags.Output -join "`n") | Should Match 'v1\.0\.0'
+        ($tags.Output -join "`n") | Should -Match 'v1\.0\.0'
     }
 
     It 'records the note as the release annotation' {
         New-Release -Version v1.1.0 -Note 'phase 15 complete' -NoPush
 
         $msg = Invoke-TestGit -ArgumentList @('tag', '-l', '--format=%(subject)', 'v1.1.0')
-        ($msg.Output -join '') | Should Be 'phase 15 complete'
+        ($msg.Output -join '') | Should -Be 'phase 15 complete'
     }
 
     It 'returns a structured object describing the release' {
         $result = New-Release -Version v0.2.0 -Note 'beta' -NoPush
 
-        $result | Should Not BeNullOrEmpty
-        $result.Version | Should Be 'v0.2.0'
-        $result.Note    | Should Be 'beta'
+        $result | Should -Not -BeNullOrEmpty
+        $result.Version | Should -Be 'v0.2.0'
+        $result.Note    | Should -Be 'beta'
     }
 
     It 'publishes the release marker when a remote is configured' {
@@ -120,7 +122,7 @@ Describe 'New-Release' {
         New-Release -Version v3.0.0 -Note 'with publish'
 
         $remoteRefs = Invoke-TestGit -ArgumentList @('ls-remote', '--tags', $script:TempBare)
-        ($remoteRefs.Output -join "`n") | Should Match 'refs/tags/v3\.0\.0'
+        ($remoteRefs.Output -join "`n") | Should -Match 'refs/tags/v3\.0\.0'
     }
 
     It 'NoPush keeps the release marker local even when a remote is configured' {
@@ -129,7 +131,7 @@ Describe 'New-Release' {
         New-Release -Version v4.0.0 -Note 'local only' -NoPush
 
         $remoteRefs = Invoke-TestGit -ArgumentList @('ls-remote', '--tags', $script:TempBare)
-        @($remoteRefs.Output | Where-Object { $_ -match 'v4\.0\.0' }).Count | Should Be 0
+        @($remoteRefs.Output | Where-Object { $_ -match 'v4\.0\.0' }).Count | Should -Be 0
     }
 
     It 'refuses to overwrite an existing release without -Force' {
@@ -138,11 +140,11 @@ Describe 'New-Release' {
         $thrown = $null
         try { New-Release -Version v5.0.0 -Note 'duplicate' -NoPush } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bupstream\b'
+        $userMessage | Should -Not -Match '(?i)\bupstream\b'
     }
 
     It 'overwrites an existing release with -Force' {
@@ -150,16 +152,16 @@ Describe 'New-Release' {
         New-Release -Version v6.0.0 -Note 'replacement note' -NoPush -Force
 
         $msg = Invoke-TestGit -ArgumentList @('tag', '-l', '--format=%(subject)', 'v6.0.0')
-        ($msg.Output -join '') | Should Be 'replacement note'
+        ($msg.Output -join '') | Should -Be 'replacement note'
     }
 
     It 'every invocation writes a log file' {
         New-Release -Version v7.0.0 -Note 'log test' -NoPush
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'New-Release-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
         $body = Get-Content -LiteralPath ($logs | Sort-Object LastWriteTime | Select-Object -Last 1).FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Outcome: SUCCESS'
     }
 }
 
@@ -184,7 +186,7 @@ Describe 'Show-Releases' {
 
     It 'returns empty when there are no releases' {
         $r = @(Show-Releases)
-        $r.Count | Should Be 0
+        $r.Count | Should -Be 0
     }
 
     It 'lists every release with Version, Date, Note' {
@@ -192,11 +194,11 @@ Describe 'Show-Releases' {
         New-Release -Version v1.1.0 -Note 'second' -NoPush | Out-Null
 
         $r = @(Show-Releases)
-        $r.Count | Should Be 2
+        $r.Count | Should -Be 2
         $first = $r | Select-Object -First 1
-        ($first.PSObject.Properties.Name -contains 'Version') | Should Be $true
-        ($first.PSObject.Properties.Name -contains 'Date')    | Should Be $true
-        ($first.PSObject.Properties.Name -contains 'Note')    | Should Be $true
+        ($first.PSObject.Properties.Name -contains 'Version') | Should -Be $true
+        ($first.PSObject.Properties.Name -contains 'Date')    | Should -Be $true
+        ($first.PSObject.Properties.Name -contains 'Note')    | Should -Be $true
     }
 
     It 'filters by -Pattern' {
@@ -205,6 +207,6 @@ Describe 'Show-Releases' {
         New-Release -Version beta-1 -Note 'beta tag'  -NoPush | Out-Null
 
         $r = @(Show-Releases -Pattern 'v*')
-        $r.Count | Should Be 2
+        $r.Count | Should -Be 2
     }
 }

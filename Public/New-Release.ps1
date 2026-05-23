@@ -51,6 +51,7 @@ function New-Release {
     Show-History
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter(Mandatory, Position = 0)]
         [string]$Version,

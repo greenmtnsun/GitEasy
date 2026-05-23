@@ -25,6 +25,7 @@
     Test-Login
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param()
 
     Test-GEGitInstalled | Out-Null

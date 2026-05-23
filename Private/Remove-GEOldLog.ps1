@@ -21,7 +21,7 @@ function Remove-GEOldLog {
     .LINK
     Start-GELogSession
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
     param(
         [Parameter(Mandatory)]
         [string]$Directory,
@@ -45,6 +45,8 @@ function Remove-GEOldLog {
     )
 
     foreach ($file in $oldFiles) {
-        Remove-Item -LiteralPath $file.FullName -Force -ErrorAction SilentlyContinue
+        if ($PSCmdlet.ShouldProcess($file.FullName, 'Remove old log file')) {
+            Remove-Item -LiteralPath $file.FullName -Force -ErrorAction SilentlyContinue
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿$ProjectRoot = Split-Path -Parent $PSScriptRoot
+BeforeAll {
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath = Join-Path $ProjectRoot 'GitEasy.psd1'
 $ExpectedPublicCommands = @(
     'Clear-Junk',
@@ -23,6 +24,7 @@ $ExpectedPublicCommands = @(
     'Test-Login',
     'Undo-Changes'
 )
+}
 
 Describe 'GitEasy manifest and command surface' {
     BeforeAll {
@@ -31,20 +33,20 @@ Describe 'GitEasy manifest and command surface' {
     }
 
     It 'imports the module' {
-        @(Get-Module GitEasy).Count | Should Not Be 0
+        @(Get-Module GitEasy).Count | Should -Not -Be 0
     }
 
     It 'exports exactly the classic public commands' {
         $actual = @(Get-Command -Module GitEasy -CommandType Function | Select-Object -ExpandProperty Name | Sort-Object)
         $expected = @($ExpectedPublicCommands | Sort-Object)
-        ($actual -join '|') | Should Be ($expected -join '|')
+        ($actual -join '|') | Should -Be ($expected -join '|')
     }
 
     It 'manifest FunctionsToExport matches the classic public commands' {
         $manifest = Import-PowerShellDataFile -LiteralPath $ModulePath
         $actual = @($manifest.FunctionsToExport | Sort-Object)
         $expected = @($ExpectedPublicCommands | Sort-Object)
-        ($actual -join '|') | Should Be ($expected -join '|')
+        ($actual -join '|') | Should -Be ($expected -join '|')
     }
 
     It 'has no parse errors or here-strings in module files' {
@@ -59,12 +61,12 @@ Describe 'GitEasy manifest and command surface' {
             $tokens = $null
             $parseErrors = $null
             [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$parseErrors) | Out-Null
-            @($parseErrors).Count | Should Be 0
+            @($parseErrors).Count | Should -Be 0
             # Here-strings are banned in .ps1/.psm1 (Pester 3 / line-ending
             # fragility) but allowed in .psd1, where they are the natural
             # form for the ReleaseNotes block surfaced on PSGallery.
             if ($file.Extension -ne '.psd1') {
-                @($tokens | Where-Object { $_.Kind.ToString() -like '*HereString*' }).Count | Should Be 0
+                @($tokens | Where-Object { $_.Kind.ToString() -like '*HereString*' }).Count | Should -Be 0
             }
         }
     }
@@ -76,7 +78,7 @@ Describe 'GitEasy manifest and command surface' {
             $tokens = $null
             $parseErrors = $null
             $ast = [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$parseErrors)
-            @($parseErrors).Count | Should Be 0
+            @($parseErrors).Count | Should -Be 0
 
             $functions = @($ast.FindAll({
                 param($node)
@@ -84,7 +86,7 @@ Describe 'GitEasy manifest and command surface' {
             }, $true))
 
             foreach ($function in $functions) {
-                $function.Name | Should Match '^[A-Za-z]+-GE[A-Za-z0-9]+$'
+                $function.Name | Should -Match '^[A-Za-z]+-GE[A-Za-z0-9]+$'
             }
         }
     }
@@ -115,7 +117,7 @@ Describe 'GitEasy manifest and command surface' {
         foreach ($command in $implemented) {
             $path = Join-Path $ProjectRoot "Public\$command.ps1"
             $content = Get-Content -LiteralPath $path -Raw
-            $content | Should Not Match 'not wired yet'
+            $content | Should -Not -Match 'not wired yet'
         }
     }
 }

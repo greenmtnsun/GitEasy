@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $CommandWikiScript = Join-Path $ProjectRoot 'Update-GitEasyCommandWiki.ps1'
 $PrivateWikiScript = Join-Path $ProjectRoot 'Update-GitEasyPrivateWiki.ps1'
@@ -66,6 +67,7 @@ function New-EmptyWikiFixture {
     New-Item -Path $Path -ItemType Directory -Force | Out-Null
     New-Item -Path (Join-Path $Path '.git') -ItemType Directory -Force | Out-Null
 }
+}
 
 Describe 'Update-GitEasyCommandWiki.ps1' {
     BeforeEach {
@@ -85,41 +87,41 @@ Describe 'Update-GitEasyCommandWiki.ps1' {
     It 'parses without errors' {
         $tokens = $null; $errors = $null
         [System.Management.Automation.Language.Parser]::ParseFile($CommandWikiScript, [ref]$tokens, [ref]$errors) | Out-Null
-        @($errors).Count | Should Be 0
+        @($errors).Count | Should -Be 0
     }
 
     It 'creates a public-command page from CBH' {
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
         $page = Join-Path $script:FakeWiki 'Public-Sample-Cmd.md'
-        Test-Path -LiteralPath $page | Should Be $true
+        Test-Path -LiteralPath $page | Should -Be $true
 
         $body = Get-Content -LiteralPath $page -Raw
-        $body | Should Match 'A sample command for testing.'
-        $body | Should Match '## Summary'
-        $body | Should Match '## Description'
-        $body | Should Match '## Parameters'
-        $body | Should Match '## Examples'
+        $body | Should -Match 'A sample command for testing.'
+        $body | Should -Match '## Summary'
+        $body | Should -Match '## Description'
+        $body | Should -Match '## Parameters'
+        $body | Should -Match '## Examples'
     }
 
     It 'embeds the source-hash watermark on each page' {
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
         $body = Get-Content -LiteralPath (Join-Path $script:FakeWiki 'Public-Sample-Cmd.md') -Raw
-        $body | Should Match 'ge-source-sha256:'
+        $body | Should -Match 'ge-source-sha256:'
     }
 
     It 'embeds the module-version watermark in the index' {
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
         $body = Get-Content -LiteralPath (Join-Path $script:FakeWiki 'Public-Commands.md') -Raw
-        $body | Should Match 'ge-module-version:\s*0\.0\.1'
+        $body | Should -Match 'ge-module-version:\s*0\.0\.1'
     }
 
     It '-DryRun writes no files' {
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki -DryRun | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Public-Sample-Cmd.md') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Public-Sample-Cmd.md') | Should -Be $false
     }
 
     It 'removes orphan pages whose source command no longer exists' {
@@ -127,7 +129,7 @@ Describe 'Update-GitEasyCommandWiki.ps1' {
 
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Public-Stranger.md') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Public-Stranger.md') | Should -Be $false
     }
 
     It 'is idempotent when run twice' {
@@ -137,7 +139,7 @@ Describe 'Update-GitEasyCommandWiki.ps1' {
         & $CommandWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
         $second = (Get-Item -LiteralPath (Join-Path $script:FakeWiki 'Public-Sample-Cmd.md')).Length
 
-        $second | Should Be $first
+        $second | Should -Be $first
     }
 }
 
@@ -159,36 +161,36 @@ Describe 'Update-GitEasyPrivateWiki.ps1' {
     It 'parses without errors' {
         $tokens = $null; $errors = $null
         [System.Management.Automation.Language.Parser]::ParseFile($PrivateWikiScript, [ref]$tokens, [ref]$errors) | Out-Null
-        @($errors).Count | Should Be 0
+        @($errors).Count | Should -Be 0
     }
 
     It 'creates a private helper page with the required sections' {
         & $PrivateWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
         $page = Join-Path $script:FakeWiki 'Private-Get-GESample.md'
-        Test-Path -LiteralPath $page | Should Be $true
+        Test-Path -LiteralPath $page | Should -Be $true
 
         $body = Get-Content -LiteralPath $page -Raw
-        $body | Should Match '## Summary'
-        $body | Should Match '## Description'
-        $body | Should Match '## Internal Usage'
-        $body | Should Match '## Parameters'
-        $body | Should Match '## Internal Examples'
-        $body | Should Match '## Safety Notes'
-        $body | Should Match '## Related Public Commands'
-        $body | Should Match '## Source File'
-        $body | Should Match '## Source'
-        $body | Should Match '## Related Pages'
+        $body | Should -Match '## Summary'
+        $body | Should -Match '## Description'
+        $body | Should -Match '## Internal Usage'
+        $body | Should -Match '## Parameters'
+        $body | Should -Match '## Internal Examples'
+        $body | Should -Match '## Safety Notes'
+        $body | Should -Match '## Related Public Commands'
+        $body | Should -Match '## Source File'
+        $body | Should -Match '## Source'
+        $body | Should -Match '## Related Pages'
     }
 
     It 'creates a Private-Helpers index page' {
         & $PrivateWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
         $index = Join-Path $script:FakeWiki 'Private-Helpers.md'
-        Test-Path -LiteralPath $index | Should Be $true
+        Test-Path -LiteralPath $index | Should -Be $true
 
         $body = Get-Content -LiteralPath $index -Raw
-        $body | Should Match 'Get-GESample'
+        $body | Should -Match 'Get-GESample'
     }
 
     It 'removes orphan pages whose helper no longer exists' {
@@ -196,7 +198,7 @@ Describe 'Update-GitEasyPrivateWiki.ps1' {
 
         & $PrivateWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Private-Stranger.md') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:FakeWiki 'Private-Stranger.md') | Should -Be $false
     }
 
     It 'is idempotent when run twice' {
@@ -206,6 +208,6 @@ Describe 'Update-GitEasyPrivateWiki.ps1' {
         & $PrivateWikiScript -ProjectRoot $script:FakeRoot -WikiRoot $script:FakeWiki | Out-Null
         $second = (Get-Item -LiteralPath (Join-Path $script:FakeWiki 'Private-Get-GESample.md')).Length
 
-        $second | Should Be $first
+        $second | Should -Be $first
     }
 }

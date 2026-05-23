@@ -37,6 +37,7 @@ function Set-Ssh {
     Reset-Login
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [string]$RemoteName = 'origin',
         [string]$RemoteUrl,

@@ -42,6 +42,7 @@ function Set-Vault {
     Test-Login
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [ValidateSet('manager', 'manager-core', 'wincred', 'cache')]
         [string]$Helper = 'manager',

@@ -48,6 +48,7 @@ function Clear-Junk {
     Undo-Changes
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter()]
         [switch]$Force,

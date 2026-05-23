@@ -318,6 +318,11 @@ function Get-SafetyNotes {
 }
 
 function New-PrivateWikiPage {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions', '',
+        Justification = 'New-PrivateWikiPage is pure: it builds and returns a Markdown string with no side effects. The actual file write happens in Write-WikiFile. ShouldProcess belongs on the writer, not the formatter.'
+    )]
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory)][object]$Record,
         [Parameter(Mandatory)][hashtable]$CallIndex

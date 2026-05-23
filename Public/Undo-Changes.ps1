@@ -43,6 +43,7 @@ function Undo-Changes {
         Justification = 'GitEasy uses plain-English plural names as a brand choice; singular form is exported as an alias.'
     )]
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([PSCustomObject])]
     [Alias('Undo-Change')]
     param(
         [Parameter()]

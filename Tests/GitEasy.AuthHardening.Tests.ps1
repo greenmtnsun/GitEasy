@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -41,6 +42,7 @@ function New-TestRepository {
         Pop-Location
     }
 }
+}
 
 Describe 'Credential-surface hardening' {
 
@@ -57,37 +59,37 @@ Describe 'Credential-surface hardening' {
 
         It 'strips user:token@ from an https authority' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://x-access-token:ghp_REALSECRET@github.com/o/r.git' }
-            $r | Should Be 'https://github.com/o/r.git'
+            $r | Should -Be 'https://github.com/o/r.git'
         }
 
         It 'strips a bare user@ from an https authority' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://alice@github.com/o/r.git' }
-            $r | Should Be 'https://github.com/o/r.git'
+            $r | Should -Be 'https://github.com/o/r.git'
         }
 
         It 'leaves a clean https URL unchanged' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://github.com/o/r.git' }
-            $r | Should Be 'https://github.com/o/r.git'
+            $r | Should -Be 'https://github.com/o/r.git'
         }
 
         It 'leaves scp-like SSH (git@host:path) unchanged - that git@ is not a secret' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'git@github.com:o/r.git' }
-            $r | Should Be 'git@github.com:o/r.git'
+            $r | Should -Be 'git@github.com:o/r.git'
         }
 
         It 'does not strip an @ that appears later in the path' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://github.com/o/a@b.git' }
-            $r | Should Be 'https://github.com/o/a@b.git'
+            $r | Should -Be 'https://github.com/o/a@b.git'
         }
 
         It 'passes through empty/whitespace unchanged' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url '   ' }
-            $r | Should Be '   '
+            $r | Should -Be '   '
         }
 
         It 'the redacted result never contains the secret token' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://u:ghp_DEADBEEF@example.com/x.git' }
-            $r | Should Not Match 'ghp_DEADBEEF'
+            $r | Should -Not -Match 'ghp_DEADBEEF'
         }
     }
 
@@ -99,29 +101,29 @@ Describe 'Credential-surface hardening' {
 
         It 'redacts a password= value but keeps the key' {
             $r = InModuleScope GitEasy { 'password=ghp_SECRET' | Format-GESafeLogLine }
-            $r | Should Be 'password=[redacted]'
+            $r | Should -Be 'password=[redacted]'
         }
 
         It 'redacts secret=, token=, bearer=, and Authorization:' {
             $r = InModuleScope GitEasy {
                 @('secret=abc','token=def','bearer=ghi','Authorization: Bearer zzz') | Format-GESafeLogLine
             }
-            ($r -join '|') | Should Be 'secret=[redacted]|token=[redacted]|bearer=[redacted]|Authorization: [redacted]'
+            ($r -join '|') | Should -Be 'secret=[redacted]|token=[redacted]|bearer=[redacted]|Authorization: [redacted]'
         }
 
         It 'is case-insensitive on the key' {
             $r = InModuleScope GitEasy { 'PASSWORD=ghp_X' | Format-GESafeLogLine }
-            $r | Should Be 'PASSWORD=[redacted]'
+            $r | Should -Be 'PASSWORD=[redacted]'
         }
 
         It 'leaves non-sensitive protocol lines unchanged' {
             $r = InModuleScope GitEasy { @('protocol=https','host=github.com') | Format-GESafeLogLine }
-            ($r -join '|') | Should Be 'protocol=https|host=github.com'
+            ($r -join '|') | Should -Be 'protocol=https|host=github.com'
         }
 
         It 'the sanitised output never contains the secret value' {
             $r = InModuleScope GitEasy { 'password=ghp_DEADBEEF' | Format-GESafeLogLine }
-            $r | Should Not Match 'ghp_DEADBEEF'
+            $r | Should -Not -Match 'ghp_DEADBEEF'
         }
     }
 
@@ -149,11 +151,11 @@ Describe 'Credential-surface hardening' {
 
             $r = @(Show-Remote)
 
-            $r.Count -gt 0 | Should Be $true
+            $r.Count -gt 0 | Should -Be $true
             foreach ($entry in $r) {
-                $entry.Url | Should Not Match 'ghp_REALSECRET'
-                $entry.Url | Should Not Match 'x-access-token'
-                $entry.Url | Should Be 'https://github.com/o/r.git'
+                $entry.Url | Should -Not -Match 'ghp_REALSECRET'
+                $entry.Url | Should -Not -Match 'x-access-token'
+                $entry.Url | Should -Be 'https://github.com/o/r.git'
             }
         }
 
@@ -162,13 +164,13 @@ Describe 'Credential-surface hardening' {
 
             $r = @(Show-Remote)
 
-            @($r | Where-Object { $_.Provider -eq 'GitHub' }).Count -gt 0 | Should Be $true
+            @($r | Where-Object { $_.Provider -eq 'GitHub' }).Count -gt 0 | Should -Be $true
         }
 
         It 'reports Provider None when no remote is configured' {
             $r = Show-Remote
-            $r.Provider | Should Be 'None'
-            $r.Url | Should BeNullOrEmpty
+            $r.Provider | Should -Be 'None'
+            $r.Url | Should -BeNullOrEmpty
         }
 
         It 'returns one object per fetch/push entry for a clean remote' {
@@ -176,9 +178,9 @@ Describe 'Credential-surface hardening' {
 
             $r = @(Show-Remote)
 
-            $r.Count | Should Be 2
-            @($r | Where-Object { $_.Purpose -eq 'fetch' }).Count | Should Be 1
-            @($r | Where-Object { $_.Purpose -eq 'push' }).Count  | Should Be 1
+            $r.Count | Should -Be 2
+            @($r | Where-Object { $_.Purpose -eq 'fetch' }).Count | Should -Be 1
+            @($r | Where-Object { $_.Purpose -eq 'push' }).Count  | Should -Be 1
         }
     }
 
@@ -212,10 +214,10 @@ Describe 'Credential-surface hardening' {
             $thrown = $null
             try { Reset-Login } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Match '(?i)HTTPS'
-            $thrown.Exception.Message | Should Not Match 'ghp_REALSECRET'
-            $thrown.Exception.Message | Should Not Match 'user:'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Match '(?i)HTTPS'
+            $thrown.Exception.Message | Should -Not -Match 'ghp_REALSECRET'
+            $thrown.Exception.Message | Should -Not -Match 'user:'
         }
 
         It 'the failure log for a non-HTTPS embedded-cred remote contains no secret (F-01)' {
@@ -224,9 +226,9 @@ Describe 'Credential-surface hardening' {
             try { Reset-Login } catch { }
 
             $logs = @(Get-ChildItem -LiteralPath $script:Logs -Filter 'Reset-Login-*.log' -File)
-            $logs.Count -gt 0 | Should Be $true
+            $logs.Count -gt 0 | Should -Be $true
             $body = Get-Content -LiteralPath $logs[-1].FullName -Raw
-            $body | Should Not Match 'ghp_REALSECRET'
+            $body | Should -Not -Match 'ghp_REALSECRET'
         }
 
         It 'the [uri] parse the F-02 fix relies on yields the bare host, not user:token@host' {
@@ -238,18 +240,18 @@ Describe 'Credential-surface hardening' {
             # host *value* on the success path is review-verified, not run here.
             $parsed = InModuleScope GitEasy { 'https://user:ghp_REALSECRET@github.example/o/r.git' -as [uri] }
 
-            $parsed.Scheme | Should Be 'https'
-            $parsed.Host   | Should Be 'github.example'
-            $parsed.Host   | Should Not Match 'ghp_REALSECRET'
-            $parsed.Host   | Should Not Match 'user:'
+            $parsed.Scheme | Should -Be 'https'
+            $parsed.Host   | Should -Be 'github.example'
+            $parsed.Host   | Should -Not -Match 'ghp_REALSECRET'
+            $parsed.Host   | Should -Not -Match 'user:'
         }
 
         It 'plainly reports when no remote is configured' {
             $thrown = $null
             try { Reset-Login } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Not Match '(?i)\bgit\b'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Not -Match '(?i)\bgit\b'
         }
     }
 
@@ -265,40 +267,40 @@ Describe 'Credential-surface hardening' {
             $r = InModuleScope GitEasy {
                 Format-GESafeUrl -Url "fatal: unable to access 'https://x:tok@github.com/o/r.git/': SSL"
             }
-            $r | Should Be "fatal: unable to access 'https://github.com/o/r.git/': SSL"
-            $r | Should Not Match 'x:tok'
+            $r | Should -Be "fatal: unable to access 'https://github.com/o/r.git/': SSL"
+            $r | Should -Not -Match 'x:tok'
         }
 
         It 'strips userinfo from an ssh:// scheme URL' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'ssh://user:pw@host/path' }
-            $r | Should Be 'ssh://host/path'
+            $r | Should -Be 'ssh://host/path'
         }
 
         It 'strips userinfo from a git+ssh:// scheme URL' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'git+ssh://user:pw@host/path' }
-            $r | Should Be 'git+ssh://host/path'
+            $r | Should -Be 'git+ssh://host/path'
         }
 
         It 'leaves an IPv6 literal host untouched when no userinfo is present' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://[::1]/o/r.git' }
-            $r | Should Be 'https://[::1]/o/r.git'
+            $r | Should -Be 'https://[::1]/o/r.git'
         }
 
         It 'strips userinfo from an IPv6 literal host URL' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://u:tok@[::1]/o/r.git' }
-            $r | Should Be 'https://[::1]/o/r.git'
+            $r | Should -Be 'https://[::1]/o/r.git'
         }
 
         It 'handles multiple URLs in the same string' {
             $r = InModuleScope GitEasy {
                 Format-GESafeUrl -Url 'a https://u:t@x.com b https://u:t@y.com c'
             }
-            $r | Should Be 'a https://x.com b https://y.com c'
+            $r | Should -Be 'a https://x.com b https://y.com c'
         }
 
         It 'leaves "%40" alone (percent-encoded @ is data, not the auth boundary)' {
             $r = InModuleScope GitEasy { Format-GESafeUrl -Url 'https://github.com/o/a%40b.git' }
-            $r | Should Be 'https://github.com/o/a%40b.git'
+            $r | Should -Be 'https://github.com/o/a%40b.git'
         }
     }
 
@@ -312,17 +314,17 @@ Describe 'Credential-surface hardening' {
 
         It 'redacts a Proxy-Authorization header' {
             $r = InModuleScope GitEasy { 'Proxy-Authorization: Bearer abc' | Format-GESafeLogLine }
-            $r | Should Be 'Proxy-Authorization: [redacted]'
+            $r | Should -Be 'Proxy-Authorization: [redacted]'
         }
 
         It 'redacts Proxy-Authorization case-insensitively' {
             $r = InModuleScope GitEasy { 'PROXY-AUTHORIZATION: Bearer xyz' | Format-GESafeLogLine }
-            $r | Should Be 'PROXY-AUTHORIZATION: [redacted]'
+            $r | Should -Be 'PROXY-AUTHORIZATION: [redacted]'
         }
 
         It 'leaves a mid-sentence "password=" alone (line-shape intent lock)' {
             $r = InModuleScope GitEasy { 'Operator said password=foo on the phone' | Format-GESafeLogLine }
-            $r | Should Be 'Operator said password=foo on the phone'
+            $r | Should -Be 'Operator said password=foo on the phone'
         }
     }
 
@@ -336,12 +338,12 @@ Describe 'Credential-surface hardening' {
 
         It 'converts a clean HTTPS URL to its SSH form' {
             $r = InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'https://github.com/o/r.git' }
-            $r | Should Be 'git@github.com:o/r.git'
+            $r | Should -Be 'git@github.com:o/r.git'
         }
 
         It 'returns an already-SSH URL unchanged' {
             $r = InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'git@github.com:o/r.git' }
-            $r | Should Be 'git@github.com:o/r.git'
+            $r | Should -Be 'git@github.com:o/r.git'
         }
 
         It 'throws when the URL embeds credentials in userinfo' {
@@ -349,9 +351,9 @@ Describe 'Credential-surface hardening' {
             try {
                 InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'https://x:ghp_REALSECRET@github.com/o/r.git' }
             } catch { $thrown = $_ }
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Match '(?i)embed|password|token'
-            $thrown.Exception.Message | Should Not Match 'ghp_REALSECRET'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Match '(?i)embed|password|token'
+            $thrown.Exception.Message | Should -Not -Match 'ghp_REALSECRET'
         }
 
         It 'throws on a non-HTTPS URL' {
@@ -359,13 +361,13 @@ Describe 'Credential-surface hardening' {
             try {
                 InModuleScope GitEasy { Convert-GERemoteToSsh -RemoteUrl 'ftp://host/path' }
             } catch { $thrown = $_ }
-            $thrown | Should Not BeNullOrEmpty
+            $thrown | Should -Not -BeNullOrEmpty
         }
 
         It 'the [uri] parse the F-04 fix relies on isolates UserInfo from Host' {
             $parsed = InModuleScope GitEasy { 'https://x:ghp_REALSECRET@github.example/o/r.git' -as [uri] }
-            $parsed.Host | Should Be 'github.example'
-            $parsed.UserInfo | Should Be 'x:ghp_REALSECRET'
+            $parsed.Host | Should -Be 'github.example'
+            $parsed.UserInfo | Should -Be 'x:ghp_REALSECRET'
         }
     }
 
@@ -379,18 +381,22 @@ Describe 'Credential-surface hardening' {
 
         It 'punycode IDN host is preserved verbatim' {
             $parsed = 'https://xn--80akhbyknj4f.example/o/r.git' -as [uri]
-            $parsed.Host | Should Be 'xn--80akhbyknj4f.example'
+            $parsed.Host | Should -Be 'xn--80akhbyknj4f.example'
         }
 
-        It 'IPv6 literal host is preserved (.NET strips the brackets on .Host)' {
+        It 'IPv6 literal host is preserved as a bracketed literal' {
+            # PS 7 returns '[::1]'; PS 5.1's older .NET returns the expanded
+            # '[0000:0000:0000:0000:0000:0000:0000:0001]'. Both are valid
+            # IPv6 representations of the same address and both round-trip
+            # through .NET Uri unambiguously, so the assertion accepts both.
             $parsed = 'https://[::1]/o/r.git' -as [uri]
-            $parsed.Host | Should Be '[::1]'
+            $parsed.Host | Should -Match '^\[[0-9a-f:]+\]$'
         }
 
         It 'port in authority is split out from .Host' {
             $parsed = 'https://github.example:8443/o/r.git' -as [uri]
-            $parsed.Host | Should Be 'github.example'
-            $parsed.Port | Should Be 8443
+            $parsed.Host | Should -Be 'github.example'
+            $parsed.Port | Should -Be 8443
         }
     }
 
@@ -419,9 +425,9 @@ Describe 'Credential-surface hardening' {
 
             $r = Test-Login
 
-            $r.Url | Should Not Match 'ghp_REALSECRET'
-            $r.Url | Should Not Match 'x-access-token'
-            $r.Url | Should Be 'https://github.invalid/o/r.git'
+            $r.Url | Should -Not -Match 'ghp_REALSECRET'
+            $r.Url | Should -Not -Match 'x-access-token'
+            $r.Url | Should -Be 'https://github.invalid/o/r.git'
         }
 
         It 'redacts an embedded token from any URL quoted in the Message field' {
@@ -429,8 +435,8 @@ Describe 'Credential-surface hardening' {
 
             $r = Test-Login
 
-            $r.Passed | Should Be $false
-            $r.Message | Should Not Match 'ghp_REALSECRET'
+            $r.Passed | Should -Be $false
+            $r.Message | Should -Not -Match 'ghp_REALSECRET'
         }
     }
 
@@ -464,9 +470,9 @@ Describe 'Credential-surface hardening' {
                 } $repoPath
             } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Not Match 'ghp_REALSECRET'
-            $thrown.Exception.Message | Should Not Match 'x:'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Not -Match 'ghp_REALSECRET'
+            $thrown.Exception.Message | Should -Not -Match 'x:'
         }
     }
 
@@ -479,12 +485,12 @@ Describe 'Credential-surface hardening' {
 
         It 'accepts a clean https URL' {
             $r = InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'https://github.com/o/r.git' }
-            $r | Should Be $true
+            $r | Should -Be $true
         }
 
         It 'accepts the scp-style SSH form' {
             $r = InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'git@github.com:o/r.git' }
-            $r | Should Be $true
+            $r | Should -Be $true
         }
 
         It 'rejects an embedded-cred https URL' {
@@ -492,8 +498,8 @@ Describe 'Credential-surface hardening' {
             try {
                 InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'https://x:tok@github.com/o/r.git' }
             } catch { $thrown = $_ }
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Match '(?i)embed|password|token'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Match '(?i)embed|password|token'
         }
 
         It 'rejects a non-HTTPS, non-SSH URL' {
@@ -501,7 +507,7 @@ Describe 'Credential-surface hardening' {
             try {
                 InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl 'ftp://host/path' }
             } catch { $thrown = $_ }
-            $thrown | Should Not BeNullOrEmpty
+            $thrown | Should -Not -BeNullOrEmpty
         }
 
         It 'rejects empty/whitespace input' {
@@ -509,7 +515,7 @@ Describe 'Credential-surface hardening' {
             try {
                 InModuleScope GitEasy { Test-GERemoteUrlSafe -RemoteUrl '   ' }
             } catch { $thrown = $_ }
-            $thrown | Should Not BeNullOrEmpty
+            $thrown | Should -Not -BeNullOrEmpty
         }
     }
 }

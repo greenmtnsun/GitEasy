@@ -39,6 +39,7 @@ function Search-History {
     Save-Work
     #>
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
     param(
         [Parameter(Mandatory, Position = 0)]
         [string]$Pattern,

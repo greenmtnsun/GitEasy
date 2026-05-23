@@ -45,6 +45,7 @@ function Show-Change {
     Show-History
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter()]
         [string]$Path = '',

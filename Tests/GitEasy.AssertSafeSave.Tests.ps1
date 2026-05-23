@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -82,6 +83,7 @@ function Get-TestCurrentBranch {
         Pop-Location
     }
 }
+}
 
 Describe 'Assert-GESafeSave — behavioral contract' {
 
@@ -113,7 +115,7 @@ Describe 'Assert-GESafeSave — behavioral contract' {
 
             $result = InModuleScope GitEasy { Assert-GESafeSave }
 
-            $result | Should Be $true
+            $result | Should -Be $true
         }
 
         It 'returns $true when called from a subdirectory of the repo' {
@@ -129,7 +131,7 @@ Describe 'Assert-GESafeSave — behavioral contract' {
                 Pop-Location
             }
 
-            $result | Should Be $true
+            $result | Should -Be $true
         }
 
         It 'returns exactly the Boolean $true, not a richer object' {
@@ -137,8 +139,8 @@ Describe 'Assert-GESafeSave — behavioral contract' {
 
             $result = InModuleScope GitEasy { Assert-GESafeSave }
 
-            ($result -is [bool]) | Should Be $true
-            $result | Should Be $true
+            ($result -is [bool]) | Should -Be $true
+            $result | Should -Be $true
         }
     }
 
@@ -162,8 +164,8 @@ Describe 'Assert-GESafeSave — behavioral contract' {
                 Remove-Item -LiteralPath $nonRepo -Recurse -Force -ErrorAction SilentlyContinue
             }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Match 'saveable workspace'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Match 'saveable workspace'
         }
 
         It 'the not-a-workspace message contains no raw git jargon' {
@@ -180,8 +182,8 @@ Describe 'Assert-GESafeSave — behavioral contract' {
                 Remove-Item -LiteralPath $nonRepo -Recurse -Force -ErrorAction SilentlyContinue
             }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Not Match '(?i)\bgit\b'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Not -Match '(?i)\bgit\b'
         }
 
         It 'throws the workspace message when the repo root resolves empty' {
@@ -194,7 +196,7 @@ Describe 'Assert-GESafeSave — behavioral contract' {
             }
             catch { $msg = $_.Exception.Message }
 
-            $msg | Should Match 'saveable workspace'
+            $msg | Should -Match 'saveable workspace'
         }
     }
 
@@ -215,13 +217,13 @@ Describe 'Assert-GESafeSave — behavioral contract' {
             Add-TestCommit -Repo $script:TempRepo -FileName 'shared.txt' -Content "C`n" -Message 'base2'
 
             $merge = Invoke-TestGit -ArgumentList @('merge', 'feature') -AllowFailure
-            @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should Be $true
+            @($merge.Output | Where-Object { $_ -match 'CONFLICT' }).Count -gt 0 | Should -Be $true
 
             $thrown = $null
             try { InModuleScope GitEasy { Assert-GESafeSave } } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Match 'in progress'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Match 'in progress'
         }
 
         It 'the busy message contains no raw git jargon' {
@@ -239,8 +241,8 @@ Describe 'Assert-GESafeSave — behavioral contract' {
             $thrown = $null
             try { InModuleScope GitEasy { Assert-GESafeSave } } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
-            $thrown.Exception.Message | Should Not Match '(?i)\bgit\b'
+            $thrown | Should -Not -BeNullOrEmpty
+            $thrown.Exception.Message | Should -Not -Match '(?i)\bgit\b'
         }
     }
 
@@ -257,15 +259,15 @@ Describe 'Assert-GESafeSave — behavioral contract' {
                 InModuleScope GitEasy {
                     Mock Get-GERepoRoot        { 'C:\fake-root' }
                     Mock Test-GERepositoryBusy { [PSCustomObject]@{ IsBusy = $false; Operations = @() } }
-                    Mock Get-GEConflictFiles   { @('conflicted.txt', 'src/Other.cs') }
+                    Mock Get-GEConflictFile   { @('conflicted.txt', 'src/Other.cs') }
                     Assert-GESafeSave -Path 'C:\fake-root'
                 }
             }
             catch { $msg = $_.Exception.Message }
 
-            $msg | Should Match 'unfinished conflicts'
-            $msg | Should Match 'conflicted\.txt'
-            $msg | Should Match 'Other\.cs'
+            $msg | Should -Match 'unfinished conflicts'
+            $msg | Should -Match 'conflicted\.txt'
+            $msg | Should -Match 'Other\.cs'
         }
 
         It 'the conflict message contains no raw git jargon' {
@@ -274,14 +276,14 @@ Describe 'Assert-GESafeSave — behavioral contract' {
                 InModuleScope GitEasy {
                     Mock Get-GERepoRoot        { 'C:\fake-root' }
                     Mock Test-GERepositoryBusy { [PSCustomObject]@{ IsBusy = $false; Operations = @() } }
-                    Mock Get-GEConflictFiles   { @('conflicted.txt') }
+                    Mock Get-GEConflictFile   { @('conflicted.txt') }
                     Assert-GESafeSave -Path 'C:\fake-root'
                 }
             }
             catch { $msg = $_.Exception.Message }
 
-            $msg | Should Not BeNullOrEmpty
-            $msg | Should Not Match '(?i)\bgit\b'
+            $msg | Should -Not -BeNullOrEmpty
+            $msg | Should -Not -Match '(?i)\bgit\b'
         }
     }
 }

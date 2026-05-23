@@ -36,7 +36,7 @@ function Start-GELogSession {
     .LINK
     Show-Diagnostic
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -81,11 +81,13 @@ function Start-GELogSession {
         ''
     )
 
-    [System.IO.File]::WriteAllLines(
-        $filePath,
-        $headerLines,
-        [System.Text.UTF8Encoding]::new($false)
-    )
+    if ($PSCmdlet.ShouldProcess($filePath, 'Create diagnostic log session file')) {
+        [System.IO.File]::WriteAllLines(
+            $filePath,
+            $headerLines,
+            [System.Text.UTF8Encoding]::new($false)
+        )
+    }
 
     return [PSCustomObject]@{
         Path     = $filePath

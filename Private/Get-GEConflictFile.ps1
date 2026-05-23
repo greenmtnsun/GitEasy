@@ -1,4 +1,4 @@
-function Get-GEConflictFiles {
+function Get-GEConflictFile {
     <#
     .SYNOPSIS
     Return the list of files with unresolved merge conflicts.
@@ -13,7 +13,7 @@ function Get-GEConflictFiles {
     Optional diagnostic log path.
 
     .EXAMPLE
-    $conflicts = Get-GEConflictFiles
+    $conflicts = Get-GEConflictFile
     if ($conflicts.Count -gt 0) { ... }
 
     .NOTES

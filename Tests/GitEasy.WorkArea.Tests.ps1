@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -60,6 +61,7 @@ function Get-TestCurrentBranch {
         Pop-Location
     }
 }
+}
 
 Describe 'New-WorkBranch' {
     BeforeAll {
@@ -92,14 +94,14 @@ Describe 'New-WorkBranch' {
         New-WorkBranch -Name 'feature/test-one'
 
         $current = Get-TestCurrentBranch -Path $script:TempRepo
-        $current | Should Be 'feature/test-one'
+        $current | Should -Be 'feature/test-one'
     }
 
     It 'returns a structured object describing the new working area' {
         $result = New-WorkBranch -Name 'feature/test-result'
 
-        $result | Should Not BeNullOrEmpty
-        $result.Branch | Should Be 'feature/test-result'
+        $result | Should -Not -BeNullOrEmpty
+        $result.Branch | Should -Be 'feature/test-result'
     }
 
     It 'refuses to create a working area that already exists' {
@@ -108,22 +110,22 @@ Describe 'New-WorkBranch' {
         $caught = $null
         try { New-WorkBranch -Name 'feature/already-here' } catch { $caught = $_ }
 
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 
     It 'rejects invalid working-area names' {
         $caught = $null
         try { New-WorkBranch -Name 'has spaces' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 
     It 'every invocation writes a log file with SUCCESS outcome' {
         New-WorkBranch -Name 'feature/log-success'
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'New-WorkBranch-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
         $body = Get-Content -LiteralPath ($logs | Sort-Object LastWriteTime | Select-Object -Last 1).FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Outcome: SUCCESS'
     }
 
     It 'plain-English failure surfaces the log path with no raw git word' {
@@ -132,11 +134,11 @@ Describe 'New-WorkBranch' {
         $thrown = $null
         try { New-WorkBranch -Name 'feature/already-fail' } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bgit\b'
+        $userMessage | Should -Not -Match '(?i)\bgit\b'
     }
 
     It 'refuses to create a working area while there are unfinished conflicts' {
@@ -157,7 +159,7 @@ Describe 'New-WorkBranch' {
 
         $caught = $null
         try { New-WorkBranch -Name 'feature/should-fail-during-conflict' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -196,20 +198,20 @@ Describe 'Switch-Work' {
         Switch-Work -Name 'feature/already'
 
         $current = Get-TestCurrentBranch -Path $script:TempRepo
-        $current | Should Be 'feature/already'
+        $current | Should -Be 'feature/already'
     }
 
     It 'returns a structured object describing the switch' {
         $result = Switch-Work -Name 'feature/already'
 
-        $result | Should Not BeNullOrEmpty
-        $result.Branch | Should Be 'feature/already'
+        $result | Should -Not -BeNullOrEmpty
+        $result.Branch | Should -Be 'feature/already'
     }
 
     It 'refuses to switch to a working area that does not exist' {
         $caught = $null
         try { Switch-Work -Name 'feature/does-not-exist' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 
     It 'refuses to switch when there are unsaved changes' {
@@ -217,30 +219,30 @@ Describe 'Switch-Work' {
 
         $caught = $null
         try { Switch-Work -Name 'feature/already' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
 
         $current = Get-TestCurrentBranch -Path $script:TempRepo
-        $current | Should Be $script:BaseBranch
+        $current | Should -Be $script:BaseBranch
     }
 
     It 'every invocation writes a log file with SUCCESS outcome' {
         Switch-Work -Name 'feature/already'
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Switch-Work-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
         $body = Get-Content -LiteralPath ($logs | Sort-Object LastWriteTime | Select-Object -Last 1).FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Outcome: SUCCESS'
     }
 
     It 'plain-English failure surfaces the log path with no raw git word' {
         $thrown = $null
         try { Switch-Work -Name 'feature/does-not-exist' } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bgit\b'
+        $userMessage | Should -Not -Match '(?i)\bgit\b'
     }
 
     It 'refuses to switch while there are unfinished conflicts' {
@@ -261,6 +263,6 @@ Describe 'Switch-Work' {
 
         $caught = $null
         try { Switch-Work -Name 'feature/already' } catch { $caught = $_ }
-        $caught | Should Not BeNullOrEmpty
+        $caught | Should -Not -BeNullOrEmpty
     }
 }

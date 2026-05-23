@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -10,6 +11,7 @@ $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 # tools/Publish-GitEasy.ps1 at stage time so that:
 #   - Tests stay deterministic in CI / on air-gapped machines.
 #   - Network checks happen close to the actual publish.
+}
 
 Describe 'GitEasy publish readiness - core manifest fields' {
     BeforeAll {
@@ -18,64 +20,64 @@ Describe 'GitEasy publish readiness - core manifest fields' {
     }
 
     It 'GUID is the canonical GitEasy GUID' {
-        $manifest.GUID | Should Be '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
+        $manifest.GUID | Should -Be '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     }
 
     It 'ModuleVersion is three-segment SemVer' {
-        $manifest.ModuleVersion | Should Match '^\d+\.\d+\.\d+$'
+        $manifest.ModuleVersion | Should -Match '^\d+\.\d+\.\d+$'
     }
 
     It 'Author is set' {
-        [string]::IsNullOrWhiteSpace($manifest.Author) | Should Be $false
+        [string]::IsNullOrWhiteSpace($manifest.Author) | Should -Be $false
     }
 
     It 'CompanyName is set' {
-        [string]::IsNullOrWhiteSpace($manifest.CompanyName) | Should Be $false
+        [string]::IsNullOrWhiteSpace($manifest.CompanyName) | Should -Be $false
     }
 
     It 'Copyright contains a four-digit year' {
-        $manifest.Copyright | Should Match '20\d\d'
+        $manifest.Copyright | Should -Match '20\d\d'
     }
 
     It 'Copyright references the SPDX license id' {
-        $manifest.Copyright | Should Match 'MPL'
+        $manifest.Copyright | Should -Match 'MPL'
     }
 
     It 'Description is non-empty' {
-        [string]::IsNullOrWhiteSpace($manifest.Description) | Should Be $false
+        [string]::IsNullOrWhiteSpace($manifest.Description) | Should -Be $false
     }
 
     It 'Description is at most 400 characters (avoid search-card truncation)' {
-        ($manifest.Description.Length -le 400) | Should Be $true
+        ($manifest.Description.Length -le 400) | Should -Be $true
     }
 
     It 'Description is at least 80 characters (avoid telegraphic blurb)' {
-        ($manifest.Description.Length -ge 80) | Should Be $true
+        ($manifest.Description.Length -ge 80) | Should -Be $true
     }
 
     It 'Description names the audience' {
-        $manifest.Description | Should Match '(?i)sysadmin|compliance|change manager'
+        $manifest.Description | Should -Match '(?i)sysadmin|compliance|change manager'
     }
 
     It 'Description names at least one exported command' {
-        $manifest.Description | Should Match '(Save-Work|Find-CodeChange|Show-History|Set-Token|Test-Login)'
+        $manifest.Description | Should -Match '(Save-Work|Find-CodeChange|Show-History|Set-Token|Test-Login)'
     }
 
     It 'PowerShellVersion is 5.1' {
-        $manifest.PowerShellVersion | Should Be '5.1'
+        $manifest.PowerShellVersion | Should -Be '5.1'
     }
 
     It 'CompatiblePSEditions includes Desktop' {
-        ($manifest.CompatiblePSEditions -contains 'Desktop') | Should Be $true
+        ($manifest.CompatiblePSEditions -contains 'Desktop') | Should -Be $true
     }
 
     It 'CompatiblePSEditions includes Core' {
-        ($manifest.CompatiblePSEditions -contains 'Core') | Should Be $true
+        ($manifest.CompatiblePSEditions -contains 'Core') | Should -Be $true
     }
 
     It 'FormatsToProcess files all exist on disk' {
         foreach ($f in $manifest.FormatsToProcess) {
-            Test-Path (Join-Path $ProjectRoot $f) | Should Be $true
+            Test-Path (Join-Path $ProjectRoot $f) | Should -Be $true
         }
     }
 }
@@ -86,11 +88,11 @@ Describe 'GitEasy publish readiness - exports' {
     }
 
     It 'CmdletsToExport is an empty array, not a wildcard' {
-        ($manifest.CmdletsToExport.Count -eq 0) | Should Be $true
+        ($manifest.CmdletsToExport.Count -eq 0) | Should -Be $true
     }
 
     It 'VariablesToExport is an empty array, not a wildcard' {
-        ($manifest.VariablesToExport.Count -eq 0) | Should Be $true
+        ($manifest.VariablesToExport.Count -eq 0) | Should -Be $true
     }
 
     It 'AliasesToExport contains the three documented singular-form aliases' {
@@ -99,22 +101,22 @@ Describe 'GitEasy publish readiness - exports' {
         # can also type Get-Update / Show-Release / Undo-Change.
         $expected = @('Get-Update', 'Show-Release', 'Undo-Change') | Sort-Object
         $actual   = @($manifest.AliasesToExport | Sort-Object)
-        ($actual -join '|') | Should Be ($expected -join '|')
+        ($actual -join '|') | Should -Be ($expected -join '|')
     }
 
     It 'AliasesToExport contains no wildcards' {
-        ($manifest.AliasesToExport -join ',') | Should Not Match '\*'
+        ($manifest.AliasesToExport -join ',') | Should -Not -Match '\*'
     }
 
     It 'FunctionsToExport contains no wildcards' {
-        ($manifest.FunctionsToExport -join ',') | Should Not Match '\*'
+        ($manifest.FunctionsToExport -join ',') | Should -Not -Match '\*'
     }
 
     It 'FunctionsToExport matches the Public\ directory exactly' {
         $publicFiles = @(Get-ChildItem -LiteralPath (Join-Path $ProjectRoot 'Public') -Filter '*.ps1' |
                         ForEach-Object { $_.BaseName } | Sort-Object)
         $exported = @($manifest.FunctionsToExport | Sort-Object)
-        ($publicFiles -join '|') | Should Be ($exported -join '|')
+        ($publicFiles -join '|') | Should -Be ($exported -join '|')
     }
 }
 
@@ -125,79 +127,79 @@ Describe 'GitEasy publish readiness - PSData' {
     }
 
     It 'Tags has 10 or more entries' {
-        ($psdata.Tags.Count -ge 10) | Should Be $true
+        ($psdata.Tags.Count -ge 10) | Should -Be $true
     }
 
     It 'Tags includes Git' {
-        ($psdata.Tags -contains 'Git') | Should Be $true
+        ($psdata.Tags -contains 'Git') | Should -Be $true
     }
 
     It 'Tags includes PSEdition_Desktop (drives Find-Module -Tag)' {
-        ($psdata.Tags -contains 'PSEdition_Desktop') | Should Be $true
+        ($psdata.Tags -contains 'PSEdition_Desktop') | Should -Be $true
     }
 
     It 'Tags includes PSEdition_Core (drives Find-Module -Tag)' {
-        ($psdata.Tags -contains 'PSEdition_Core') | Should Be $true
+        ($psdata.Tags -contains 'PSEdition_Core') | Should -Be $true
     }
 
     It 'Tags does not include a generic "PowerShell" tag (every module is PowerShell)' {
         foreach ($t in $psdata.Tags) {
-            ($t.ToLower() -eq 'powershell') | Should Be $false
+            ($t.ToLower() -eq 'powershell') | Should -Be $false
         }
     }
 
     It 'No tag contains whitespace' {
         foreach ($t in $psdata.Tags) {
-            $t | Should Not Match '\s'
+            $t | Should -Not -Match '\s'
         }
     }
 
     It 'LicenseUri is HTTPS' {
-        $psdata.LicenseUri | Should Match '^https://'
+        $psdata.LicenseUri | Should -Match '^https://'
     }
 
     It 'LicenseUri points at the in-repo LICENSE file (display matches shipped license)' {
-        $psdata.LicenseUri | Should Match 'github\.com/greenmtnsun/GitEasy/blob/main/LICENSE'
+        $psdata.LicenseUri | Should -Match 'github\.com/greenmtnsun/GitEasy/blob/main/LICENSE'
     }
 
     It 'ProjectUri is HTTPS' {
-        $psdata.ProjectUri | Should Match '^https://'
+        $psdata.ProjectUri | Should -Match '^https://'
     }
 
     It 'ProjectUri is the canonical GitHub repo' {
-        $psdata.ProjectUri | Should Be 'https://github.com/greenmtnsun/GitEasy'
+        $psdata.ProjectUri | Should -Be 'https://github.com/greenmtnsun/GitEasy'
     }
 
     It 'IconUri is set' {
-        [string]::IsNullOrWhiteSpace($psdata.IconUri) | Should Be $false
+        [string]::IsNullOrWhiteSpace($psdata.IconUri) | Should -Be $false
     }
 
     It 'IconUri is on raw.githubusercontent.com (direct image, not a webpage)' {
-        $psdata.IconUri | Should Match '^https://raw\.githubusercontent\.com/'
+        $psdata.IconUri | Should -Match '^https://raw\.githubusercontent\.com/'
     }
 
     It 'IconUri references a .png file' {
-        $psdata.IconUri | Should Match '\.png$'
+        $psdata.IconUri | Should -Match '\.png$'
     }
 
     It 'ReleaseNotes is inline content, not just a URL stub' {
-        ($psdata.ReleaseNotes.Length -gt 100) | Should Be $true
+        ($psdata.ReleaseNotes.Length -gt 100) | Should -Be $true
     }
 
     It 'ReleaseNotes spans multiple lines (Gallery renders plaintext, line breaks matter)' {
-        $psdata.ReleaseNotes | Should Match "`n"
+        $psdata.ReleaseNotes | Should -Match "`n"
     }
 
     It 'ReleaseNotes references the current ModuleVersion' {
-        $psdata.ReleaseNotes | Should Match ([regex]::Escape($manifest.ModuleVersion))
+        $psdata.ReleaseNotes | Should -Match ([regex]::Escape($manifest.ModuleVersion))
     }
 
     It 'Prerelease is unset for a stable release' {
-        ($null -eq $psdata.Prerelease -or [string]::IsNullOrWhiteSpace($psdata.Prerelease)) | Should Be $true
+        ($null -eq $psdata.Prerelease -or [string]::IsNullOrWhiteSpace($psdata.Prerelease)) | Should -Be $true
     }
 
     It 'RequireLicenseAcceptance is unset (MPL-2.0 does not need click-through)' {
-        ($null -eq $psdata.RequireLicenseAcceptance -or $psdata.RequireLicenseAcceptance -eq $false) | Should Be $true
+        ($null -eq $psdata.RequireLicenseAcceptance -or $psdata.RequireLicenseAcceptance -eq $false) | Should -Be $true
     }
 }
 
@@ -207,31 +209,31 @@ Describe 'GitEasy publish readiness - repo files the Gallery surface depends on'
     }
 
     It 'LICENSE file exists at repo root' {
-        Test-Path (Join-Path $ProjectRoot 'LICENSE') | Should Be $true
+        Test-Path (Join-Path $ProjectRoot 'LICENSE') | Should -Be $true
     }
 
     It 'LICENSE file references Mozilla Public License Version 2.0' {
         $licText = Get-Content -LiteralPath (Join-Path $ProjectRoot 'LICENSE') -Raw
-        $licText | Should Match 'Mozilla Public License Version 2\.0'
+        $licText | Should -Match 'Mozilla Public License Version 2\.0'
     }
 
     It 'README.md exists at repo root' {
-        Test-Path (Join-Path $ProjectRoot 'README.md') | Should Be $true
+        Test-Path (Join-Path $ProjectRoot 'README.md') | Should -Be $true
     }
 
     It 'CHANGELOG.md exists at repo root' {
-        Test-Path (Join-Path $ProjectRoot 'CHANGELOG.md') | Should Be $true
+        Test-Path (Join-Path $ProjectRoot 'CHANGELOG.md') | Should -Be $true
     }
 
     It 'CHANGELOG.md contains an entry for the current ModuleVersion' {
         $changelog = Get-Content -LiteralPath (Join-Path $ProjectRoot 'CHANGELOG.md') -Raw
-        $changelog | Should Match ([regex]::Escape($manifest.ModuleVersion))
+        $changelog | Should -Match ([regex]::Escape($manifest.ModuleVersion))
     }
 }
 
 Describe 'GitEasy publish readiness - publish tooling' {
     It 'tools/Publish-GitEasy.ps1 exists' {
-        Test-Path (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') | Should Be $true
+        Test-Path (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') | Should -Be $true
     }
 
     It 'tools/Publish-GitEasy.ps1 parses without errors' {
@@ -239,17 +241,17 @@ Describe 'GitEasy publish readiness - publish tooling' {
         $tokens = $null
         $parseErrors = $null
         [System.Management.Automation.Language.Parser]::ParseFile($f, [ref]$tokens, [ref]$parseErrors) | Out-Null
-        @($parseErrors).Count | Should Be 0
+        @($parseErrors).Count | Should -Be 0
     }
 
     It 'tools/Publish-GitEasy.ps1 has a [CmdletBinding()] block' {
         $content = Get-Content -LiteralPath (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') -Raw
-        $content | Should Match '\[CmdletBinding\(\)\]'
+        $content | Should -Match '\[CmdletBinding\(\)\]'
     }
 
     It 'tools/Publish-GitEasy.ps1 gates real publish behind both -Publish and -NuGetApiKey' {
         $content = Get-Content -LiteralPath (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') -Raw
-        $content | Should Match '-Publish'
-        $content | Should Match '-NuGetApiKey'
+        $content | Should -Match '-Publish'
+        $content | Should -Match '-NuGetApiKey'
     }
 }

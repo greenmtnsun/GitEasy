@@ -8,7 +8,10 @@ See `~/.claude/skills/goal-author/SKILL.md` for the authoring discipline.
 
 | ID | Title | Status | Phase | Opened | Closed |
 |----|-------|--------|-------|--------|--------|
-| _no goals yet_ | | | | | |
+| [GR-001](Goals/GR-001-two-repo-split.md) | Execute the two-repo public/private split | OPEN | ongoing | 2026-05-23 | |
+| [GR-002](Goals/GR-002-github-pr-ref-bpa-purge.md) | Purge BPA-tainted PR refs on origin | OPEN | ongoing | 2026-05-23 | |
+| [GR-003](Goals/GR-003-pester-suite-green.md) | Restore Pester suite to green (569/569) | OPEN | ongoing | 2026-05-23 | |
+| [GR-004](Goals/GR-004-psscriptanalyzer-punch-list.md) | Resolve PSScriptAnalyzer warnings on PSGallery card | OPEN | ongoing | 2026-05-23 | |
 
 ## Lifecycle
 

@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -48,6 +49,7 @@ function New-TestRepositoryWithCommit {
         Pop-Location
     }
 }
+}
 
 Describe 'Restore-File' {
     BeforeAll {
@@ -83,7 +85,7 @@ Describe 'Restore-File' {
         Restore-File -Path 'README.md'
 
         $content = Get-Content -LiteralPath $target -Raw
-        $content.Trim() | Should Be 'baseline content'
+        $content.Trim() | Should -Be 'baseline content'
     }
 
     It 'leaves other modified files untouched' {
@@ -99,18 +101,18 @@ Describe 'Restore-File' {
         Restore-File -Path 'README.md'
 
         $aContent = Get-Content -LiteralPath $a -Raw
-        $aContent.Trim() | Should Be 'edited a'
+        $aContent.Trim() | Should -Be 'edited a'
     }
 
     It 'fails plainly when the path does not exist' {
         $thrown = $null
         try { Restore-File -Path 'nope/does-not-exist.txt' } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
-        $thrown.Exception.Message | Should Match '(?i)Details:'
+        $thrown | Should -Not -BeNullOrEmpty
+        $thrown.Exception.Message | Should -Match '(?i)Details:'
 
         $userMessage = $thrown.Exception.Message -replace '(?ms)Details:.*$',''
-        $userMessage | Should Not Match '(?i)\bgit\b'
+        $userMessage | Should -Not -Match '(?i)\bgit\b'
     }
 
     It 'every invocation writes a log file with SUCCESS outcome' {
@@ -120,9 +122,9 @@ Describe 'Restore-File' {
         Restore-File -Path 'README.md'
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Restore-File-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
         $body = Get-Content -LiteralPath ($logs | Sort-Object LastWriteTime | Select-Object -Last 1).FullName -Raw
-        $body | Should Match 'Outcome: SUCCESS'
+        $body | Should -Match 'Outcome: SUCCESS'
     }
 
     It 'returns a structured object describing the restore' {
@@ -131,8 +133,8 @@ Describe 'Restore-File' {
 
         $result = Restore-File -Path 'README.md'
 
-        $result | Should Not BeNullOrEmpty
-        $result.Path | Should Match 'README\.md'
+        $result | Should -Not -BeNullOrEmpty
+        $result.Path | Should -Match 'README\.md'
     }
 }
 
@@ -170,7 +172,7 @@ Describe 'Undo-Changes' {
         Undo-Changes -Force
 
         $content = Get-Content -LiteralPath $target -Raw
-        $content.Trim() | Should Be 'baseline content'
+        $content.Trim() | Should -Be 'baseline content'
     }
 
     It 'requires -Force or -Confirm so a bare invocation never quietly destroys work' {
@@ -180,12 +182,12 @@ Describe 'Undo-Changes' {
         $thrown = $null
         try { Undo-Changes } catch { $thrown = $_ }
 
-        $thrown | Should Not BeNullOrEmpty
+        $thrown | Should -Not -BeNullOrEmpty
     }
 
     It 'reports cleanly when there is nothing to undo' {
         $messages = & { Undo-Changes -Force } *>&1
-        ($messages -join ' ') | Should Match '(?i)nothing'
+        ($messages -join ' ') | Should -Match '(?i)nothing'
     }
 
     It 'every invocation writes a log file' {
@@ -195,7 +197,7 @@ Describe 'Undo-Changes' {
         Undo-Changes -Force
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Undo-Changes-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
     }
 
     It 'returns a structured object describing the undo' {
@@ -204,8 +206,8 @@ Describe 'Undo-Changes' {
 
         $result = Undo-Changes -Force
 
-        $result | Should Not BeNullOrEmpty
-        ($result.PSObject.Properties.Name -contains 'Repository') | Should Be $true
+        $result | Should -Not -BeNullOrEmpty
+        ($result.PSObject.Properties.Name -contains 'Repository') | Should -Be $true
     }
 }
 
@@ -243,9 +245,9 @@ Describe 'Clear-Junk' {
 
         $result = Clear-Junk
 
-        Test-Path -LiteralPath (Join-Path $script:TempRepo 'leftover.bak') | Should Be $true
-        Test-Path -LiteralPath (Join-Path $script:TempRepo 'kept.txt')     | Should Be $true
-        ($result.PSObject.Properties.Name -contains 'Candidates') | Should Be $true
+        Test-Path -LiteralPath (Join-Path $script:TempRepo 'leftover.bak') | Should -Be $true
+        Test-Path -LiteralPath (Join-Path $script:TempRepo 'kept.txt')     | Should -Be $true
+        ($result.PSObject.Properties.Name -contains 'Candidates') | Should -Be $true
     }
 
     It 'removes ignored files when -Force is supplied' {
@@ -254,7 +256,7 @@ Describe 'Clear-Junk' {
 
         Clear-Junk -Force | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:TempRepo 'leftover.bak') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:TempRepo 'leftover.bak') | Should -Be $false
     }
 
     It 'never removes tracked files even with -Force -Aggressive' {
@@ -262,14 +264,14 @@ Describe 'Clear-Junk' {
 
         Clear-Junk -Force -Aggressive | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:TempRepo 'README.md') | Should Be $true
+        Test-Path -LiteralPath (Join-Path $script:TempRepo 'README.md') | Should -Be $true
     }
 
     It 'every invocation writes a log file' {
         Clear-Junk | Out-Null
 
         $logs = @(Get-ChildItem -LiteralPath $script:TempLogs -Filter 'Clear-Junk-*.log' -File)
-        $logs.Count -gt 0 | Should Be $true
+        $logs.Count -gt 0 | Should -Be $true
     }
 
     It '-Aggressive removes untracked files not in .gitignore when -Force is also supplied' {
@@ -277,6 +279,6 @@ Describe 'Clear-Junk' {
 
         Clear-Junk -Force -Aggressive | Out-Null
 
-        Test-Path -LiteralPath (Join-Path $script:TempRepo 'random.tmp') | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:TempRepo 'random.tmp') | Should -Be $false
     }
 }

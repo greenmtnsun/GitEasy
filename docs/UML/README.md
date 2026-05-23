@@ -69,7 +69,7 @@ this codebase. Commands take one of **three structural paths**:
 - **Mutating (7)** — `Save-Work, New-Release, Undo-Changes, Switch-Work,
   Restore-File, New-WorkBranch, Clear-Junk`. These open a log session, then
   call `Assert-GESafeSave` (which itself fans out to `Test-GERepositoryBusy`,
-  `Get-GEConflictFiles`, `Get-GERepoRoot`) **before** touching the working
+  `Get-GEConflictFile`, `Get-GERepoRoot`) **before** touching the working
   tree, run git through the engine, and close the session SUCCESS/FAILURE.
 - **Logged config / sync (5)** — `Show-Change, Get-Updates, Set-Token, Set-Ssh,
   Reset-Login`. Same log-session bracket, **no** `Assert-GESafeSave`.

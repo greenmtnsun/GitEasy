@@ -1,3 +1,4 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 
@@ -54,6 +55,7 @@ function Set-GlobalCredentialHelper {
 function Remove-GlobalCredentialHelper {
     Invoke-TestGit -ArgumentList @('config', '--global', '--unset', 'credential.helper') -AllowFailure | Out-Null
 }
+}
 
 Describe 'Get-VaultStatus — contract' {
 
@@ -77,7 +79,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
         }
 
         It 'result has a CredentialHelper property' {
@@ -88,7 +90,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            ($result | Get-Member -Name CredentialHelper) | Should Not BeNullOrEmpty
+            ($result | Get-Member -Name CredentialHelper) | Should -Not -BeNullOrEmpty
         }
 
         It 'result has a Configured property' {
@@ -99,7 +101,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            ($result | Get-Member -Name Configured) | Should Not BeNullOrEmpty
+            ($result | Get-Member -Name Configured) | Should -Not -BeNullOrEmpty
         }
 
         It 'result has exactly two properties — no extra fields leak out' {
@@ -111,7 +113,7 @@ Describe 'Get-VaultStatus — contract' {
             $result    = Get-VaultStatus
             $propNames = ($result | Get-Member -MemberType NoteProperty).Name | Sort-Object
 
-            $propNames.Count | Should Be 2
+            $propNames.Count | Should -Be 2
         }
     }
 
@@ -129,7 +131,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.Configured | Should Be $true
+            $result.Configured | Should -Be $true
         }
 
         It 'CredentialHelper echoes back the value git config returned' {
@@ -140,7 +142,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.CredentialHelper | Should Be 'osxkeychain'
+            $result.CredentialHelper | Should -Be 'osxkeychain'
         }
 
         It 'only the first line of git output is used when multiple lines are returned' {
@@ -151,7 +153,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.CredentialHelper | Should Be 'manager-core'
+            $result.CredentialHelper | Should -Be 'manager-core'
         }
     }
 
@@ -169,7 +171,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.Configured | Should Be $false
+            $result.Configured | Should -Be $false
         }
 
         It 'CredentialHelper is $null or empty when git config exits non-zero' {
@@ -180,7 +182,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.CredentialHelper | Should BeNullOrEmpty
+            $result.CredentialHelper | Should -BeNullOrEmpty
         }
 
         It 'Configured is $false when exit code is 0 but output is whitespace only' {
@@ -191,7 +193,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.Configured | Should Be $false
+            $result.Configured | Should -Be $false
         }
     }
 
@@ -211,7 +213,7 @@ Describe 'Get-VaultStatus — contract' {
 
             # The contract: only the storage name (a short word or path) is returned,
             # never a string that looks like a credential (long base64, token prefix, etc).
-            $result.CredentialHelper | Should Match '^[\w\-\.\/\\]+$'
+            $result.CredentialHelper | Should -Match '^[\w\-\.\/\\]+$'
         }
 
         It 'result does not contain a property named Password, Token, Secret, or Key' {
@@ -223,7 +225,7 @@ Describe 'Get-VaultStatus — contract' {
             $result     = Get-VaultStatus
             $propNames  = ($result | Get-Member -MemberType NoteProperty).Name
 
-            @($propNames | Where-Object { $_ -match '(?i)(password|token|secret|key)' }).Count | Should Be 0
+            @($propNames | Where-Object { $_ -match '(?i)(password|token|secret|key)' }).Count | Should -Be 0
         }
     }
 
@@ -241,7 +243,7 @@ Describe 'Get-VaultStatus — contract' {
             $thrown = $null
             try { Get-VaultStatus } catch { $thrown = $_ }
 
-            $thrown | Should Not BeNullOrEmpty
+            $thrown | Should -Not -BeNullOrEmpty
         }
 
         It 'error message does not contain internal git jargon when git is missing' {
@@ -254,8 +256,8 @@ Describe 'Get-VaultStatus — contract' {
 
             # The word "git" in the error is allowed here (it names the dependency),
             # but internal flags, refspecs, plumbing terms must not appear.
-            $thrown.Exception.Message | Should Not Match '(?i)\brefspec\b'
-            $thrown.Exception.Message | Should Not Match '(?i)\bHEAD\b'
+            $thrown.Exception.Message | Should -Not -Match '(?i)\brefspec\b'
+            $thrown.Exception.Message | Should -Not -Match '(?i)\bHEAD\b'
         }
     }
 
@@ -321,8 +323,8 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.Configured | Should Be $true
-            $result.CredentialHelper | Should Be 'store'
+            $result.Configured | Should -Be $true
+            $result.CredentialHelper | Should -Be 'store'
         }
 
         It 'Configured is $false after unsetting credential.helper' {
@@ -330,7 +332,7 @@ Describe 'Get-VaultStatus — contract' {
 
             $result = Get-VaultStatus
 
-            $result.Configured | Should Be $false
+            $result.Configured | Should -Be $false
         }
 
         It 'CredentialHelper value is never $null when Configured is $true' {
@@ -339,12 +341,12 @@ Describe 'Get-VaultStatus — contract' {
             $result = Get-VaultStatus
 
             if ($result.Configured) {
-                $result.CredentialHelper | Should Not BeNullOrEmpty
+                $result.CredentialHelper | Should -Not -BeNullOrEmpty
             }
             else {
                 # helper was already absent before we could set it; assert
                 # the contract we DO know in this branch instead of $true|=$true.
-                $result.Configured | Should Be $false
+                $result.Configured | Should -Be $false
             }
         }
     }

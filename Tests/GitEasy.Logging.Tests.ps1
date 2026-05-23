@@ -1,5 +1,7 @@
+BeforeAll {
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
+}
 
 Describe 'Get-GELogPath' {
     BeforeAll {
@@ -22,14 +24,14 @@ Describe 'Get-GELogPath' {
     It 'returns the LOCALAPPDATA default when nothing else is set' {
         $result = & (Get-Module GitEasy) { Get-GELogPath }
         $expected = Join-Path $env:LOCALAPPDATA 'GitEasy\Logs'
-        $result | Should Be $expected
+        $result | Should -Be $expected
     }
 
     It 'honors the GITEASY_LOG_PATH environment variable' {
         $envPath = Join-Path ([IO.Path]::GetTempPath()) 'giteasy-test-env-logs'
         $env:GITEASY_LOG_PATH = $envPath
         $result = & (Get-Module GitEasy) { Get-GELogPath }
-        $result | Should Be $envPath
+        $result | Should -Be $envPath
     }
 
     It 'honors the -OverridePath parameter above env and default' {
@@ -39,7 +41,7 @@ Describe 'Get-GELogPath' {
         # Module-scope script blocks do not inherit caller variables; pass the
         # path through param() so the assertion can compare against it cleanly.
         $result = & (Get-Module GitEasy) { param($p) Get-GELogPath -OverridePath $p } $explicitPath
-        $result | Should Be $explicitPath
+        $result | Should -Be $explicitPath
     }
 }
 
@@ -69,8 +71,8 @@ Describe 'Remove-GEOldLog' {
 
         & (Get-Module GitEasy) { param($d) Remove-GEOldLog -Directory $d -RetentionDays 30 } $script:TempDir
 
-        Test-Path -LiteralPath $oldFile | Should Be $false
-        Test-Path -LiteralPath $newFile | Should Be $true
+        Test-Path -LiteralPath $oldFile | Should -Be $false
+        Test-Path -LiteralPath $newFile | Should -Be $true
     }
 
     It 'keeps all log files when none are older than the retention threshold' {
@@ -81,15 +83,15 @@ Describe 'Remove-GEOldLog' {
 
         & (Get-Module GitEasy) { param($d) Remove-GEOldLog -Directory $d -RetentionDays 30 } $script:TempDir
 
-        Test-Path -LiteralPath $f1 | Should Be $true
-        Test-Path -LiteralPath $f2 | Should Be $true
+        Test-Path -LiteralPath $f1 | Should -Be $true
+        Test-Path -LiteralPath $f2 | Should -Be $true
     }
 
     It 'does not throw when the directory does not exist' {
         $missing = Join-Path $script:TempDir 'nope'
         $thrown = $null
         try { & (Get-Module GitEasy) { param($d) Remove-GEOldLog -Directory $d -RetentionDays 30 } $missing } catch { $thrown = $_ }
-        $thrown | Should BeNullOrEmpty
+        $thrown | Should -BeNullOrEmpty
     }
 
     It 'does not touch non-log files' {
@@ -104,8 +106,8 @@ Describe 'Remove-GEOldLog' {
 
         & (Get-Module GitEasy) { param($d) Remove-GEOldLog -Directory $d -RetentionDays 30 } $script:TempDir
 
-        Test-Path -LiteralPath $logFile | Should Be $false
-        Test-Path -LiteralPath $txtFile | Should Be $true
+        Test-Path -LiteralPath $logFile | Should -Be $false
+        Test-Path -LiteralPath $txtFile | Should -Be $true
     }
 }
 
@@ -141,10 +143,10 @@ Describe 'Show-Diagnostic' {
         }
 
         $rows = @(Show-Diagnostic -List)
-        $rows.Count | Should Be 3
-        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'Name'        | Should Be $true
-        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'LastWritten' | Should Be $true
-        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'SizeKB'      | Should Be $true
+        $rows.Count | Should -Be 3
+        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'Name'        | Should -Be $true
+        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'LastWritten' | Should -Be $true
+        ($rows | Select-Object -First 1).PSObject.Properties.Name -contains 'SizeKB'      | Should -Be $true
     }
 
     It '-List -Count limits the number of returned rows' {
@@ -154,18 +156,18 @@ Describe 'Show-Diagnostic' {
         }
 
         $rows = @(Show-Diagnostic -List -Count 2)
-        $rows.Count | Should Be 2
+        $rows.Count | Should -Be 2
     }
 
     It '-List returns an empty result when the log folder is empty' {
         $rows = @(Show-Diagnostic -List)
-        $rows.Count | Should Be 0
+        $rows.Count | Should -Be 0
     }
 
     It 'does not throw when the log directory does not exist' {
         Remove-Item -LiteralPath $script:TempLogs -Recurse -Force -ErrorAction SilentlyContinue
         $thrown = $null
         try { Show-Diagnostic -List } catch { $thrown = $_ }
-        $thrown | Should BeNullOrEmpty
+        $thrown | Should -BeNullOrEmpty
     }
 }

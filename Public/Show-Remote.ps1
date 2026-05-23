@@ -25,6 +25,7 @@
     Find-CodeChange
     #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject], [System.Object[]])]
     param()
 
     $remotes = @(Get-GERemoteSummary)

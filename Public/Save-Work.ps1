@@ -61,6 +61,7 @@ function Save-Work {
     Show-Diagnostic
     #>
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([PSCustomObject])]
     param(
         [Parameter(Position = 0)]
         [string]$Message,

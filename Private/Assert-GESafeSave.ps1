@@ -4,7 +4,7 @@ function Assert-GESafeSave {
     Throw a plain-English exception if it is not safe to save right now.
 
     .DESCRIPTION
-    Assert-GESafeSave guards Save-Work against three failure modes: not being in a saveable workspace; an unfinished merge / rebase / cherry-pick / revert / bisect being in progress; and unfinished merge conflicts. It uses Test-GERepositoryBusy and Get-GEConflictFiles for those checks so the logic is single-sourced.
+    Assert-GESafeSave guards Save-Work against three failure modes: not being in a saveable workspace; an unfinished merge / rebase / cherry-pick / revert / bisect being in progress; and unfinished merge conflicts. It uses Test-GERepositoryBusy and Get-GEConflictFile for those checks so the logic is single-sourced.
 
     .PARAMETER Path
     The folder to check. Defaults to the current location.
@@ -25,7 +25,7 @@ function Assert-GESafeSave {
     Test-GERepositoryBusy
 
     .LINK
-    Get-GEConflictFiles
+    Get-GEConflictFile
     #>
     [CmdletBinding()]
     param(
@@ -51,7 +51,7 @@ function Assert-GESafeSave {
         throw "Cannot save right now. A $opList is in progress. Finish or cancel that first."
     }
 
-    $conflicts = @(Get-GEConflictFiles -Path $root -LogPath $LogPath)
+    $conflicts = @(Get-GEConflictFile -Path $root -LogPath $LogPath)
 
     if ($conflicts.Count -gt 0) {
         $list = ($conflicts -join ', ')
