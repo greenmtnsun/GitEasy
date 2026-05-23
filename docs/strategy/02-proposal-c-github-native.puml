@@ -1,0 +1,66 @@
+@startuml ProposalC_GitHubNative
+title Proposal C - GitHub-Native split (snapshot 2026-05-20)
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+actor "PowerShell user" as User
+actor "GitHub viewer / community" as Viewer
+actor "Keith\n(solo operator)" as Keith
+actor "Future collaborator" as Future
+
+package "Public - visible to anyone on the internet" {
+  cloud "GitHub repo: greenmtnsun/GitEasy" as PubRepo {
+    component "Module code + Tests + Examples" as Code
+    component "README, LICENSE, CHANGELOG, CONTRIBUTING" as Top
+    component "docs/UML, docs/SECURITY-FINDINGS-*" as Docs
+  }
+  cloud "GitHub Issues\n(on the public repo)" as Issues {
+    component "Community bug reports" as Bugs
+    component "Roadmap-labeled items\n(public roadmap signal)" as Roadmap
+  }
+  cloud "GitHub Wiki\n(separate <repo>.wiki.git)" as Wiki {
+    component "Extended user docs\n(install guide, cookbook, FAQ)" as WikiContent
+  }
+  cloud "PowerShell Gallery" as PSG {
+    component "GitEasy package" as Pkg
+  }
+}
+
+package "Private - Keith only" {
+  cloud "GitHub Project board\n(private, attached to public repo)" as Board {
+    component "Internal planning\n(sprint queue, prioritization,\nstatus columns)" as Sprint
+  }
+  folder "Local filesystem only" as Local {
+    component ".claude/ session data\n(gitignored, no cloud backup\nunless externally configured)" as AI
+    component "Dev tooling scaffolds\n(Build-*UnitTests.ps1,\nUpdate-*Wiki.ps1)" as DevTools
+  }
+}
+
+User --> Pkg : install
+User --> PubRepo : reads docs
+Viewer --> PubRepo : reads code, CHANGELOG, security docs
+Viewer --> Issues : files bug, reads roadmap
+Viewer --> Wiki : reads extended docs
+Keith --> PubRepo : commits releases
+Keith --> Issues : triages, responds, labels
+Keith --> Wiki : authors extended docs
+Keith --> Board : drags cards, sets priority
+Keith --> Local : session work
+Keith --> PSG : Publish-Module
+Future ..> Board : invited as collaborator
+
+note bottom of Roadmap
+  Public roadmap = inbound-funnel signal.
+  Visible to anyone; commits Keith to
+  ongoing maintenance honesty. A stale
+  roadmap is brand-negative for anti-vibe.
+end note
+
+note bottom of Local
+  AI session data is local-only by default.
+  Cloud backup requires a separate decision
+  (external service, OR fold to Proposal D).
+end note
+
+@enduml

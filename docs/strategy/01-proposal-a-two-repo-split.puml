@@ -1,0 +1,54 @@
+@startuml ProposalA_TwoRepoSplit
+title Proposal A - Two-Repo Split (snapshot 2026-05-20)
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+actor "PowerShell user\n(installs from Gallery)" as User
+actor "GitHub viewer\n(community, future hire,\npartner you brief later)" as Viewer
+actor "Keith\n(solo operator)" as Keith
+actor "Future collaborator\n(CIO friend / accountant friend,\non engagement)" as Future
+
+package "Public - visible to anyone on the internet" {
+  cloud "GitHub repo: greenmtnsun/GitEasy" as PubRepo {
+    component "Module code\n(Public/, Private/, Format/, manifest, psm1)" as Code
+    component "Tests/, Examples/" as Tests
+    component "README, LICENSE, CHANGELOG, CONTRIBUTING" as Top
+    component "docs/UML, docs/SECURITY-FINDINGS-*" as Docs
+  }
+  cloud "PowerShell Gallery" as PSG {
+    component "GitEasy package (per release)" as Pkg
+  }
+}
+
+package "Private - Keith only (until access granted)" {
+  cloud "GitHub repo: greenmtnsun/GitEasy-internal\n(private)" as PrivRepo {
+    component "Roadmap.md\nKnown-Bugs-and-Fixes.md\nDecision Records (DRs)" as Plan
+    component "PROJECT_MANIFEST.md\n(internal philosophy)" as Manifest
+    component "Dev tooling\n(Update-*Wiki.ps1,\nBuild-*UnitTests.ps1)" as DevTools
+    component "AI session backups\n(.claude/, handoffs, scratchpads)" as AI
+  }
+}
+
+User --> Pkg : install
+User --> PubRepo : reads docs
+Viewer --> PubRepo : reads README, CHANGELOG, code, UML
+Keith --> PubRepo : commits releases
+Keith --> PrivRepo : commits planning, DRs, scratchpads
+Keith --> PSG : Publish-Module on release
+Future ..> PrivRepo : invited on engagement\n(repo as share mechanism)
+
+note bottom of PubRepo
+  Pristine commit history. No internal
+  planning content ever entered this repo.
+  Anti-vibe brand carried by SECURITY-FINDINGS
+  + CHANGELOG, not a public roadmap.
+end note
+
+note bottom of PrivRepo
+  Full git history on planning + DRs.
+  AI session data has cloud backup.
+  Clean access-grant mechanism for collaborators.
+end note
+
+@enduml

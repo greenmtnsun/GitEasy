@@ -1,0 +1,78 @@
+@startuml ProposalD_ClaudeEraHybrid
+title Proposal D - Claude-Era Hybrid: A's structure + sync layer (snapshot 2026-05-20)
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+actor "PowerShell user" as User
+actor "GitHub viewer / community" as Viewer
+actor "Keith\n(solo operator,\nfile-in-folder planning)" as Keith
+actor "Future collaborator" as Future
+
+package "Public - visible to anyone on the internet" {
+  cloud "GitHub repo: greenmtnsun/GitEasy" as PubRepo {
+    component "Module code + Tests + Examples" as Code
+    component "README, LICENSE, CHANGELOG, CONTRIBUTING" as Top
+    component "docs/UML, docs/SECURITY-FINDINGS-*" as Docs
+  }
+  cloud "GitHub Issues" as Issues {
+    component "Community bug reports" as Bugs
+    component "Roadmap items\n(MIRRORED from internal Roadmap.md\nvia sync layer below)" as Roadmap
+  }
+  cloud "PowerShell Gallery" as PSG {
+    component "GitEasy package" as Pkg
+  }
+}
+
+package "Sync layer - the part Claude unlocks" {
+  component "tools/Sync-RoadmapToIssues.ps1\n(scheduled or on-edit,\nidempotent, dry-run-able)" as Sync
+}
+
+package "Private - Keith only" {
+  cloud "GitHub repo: greenmtnsun/GitEasy-internal\n(private)" as PrivRepo {
+    component "Roadmap.md\n(SOURCE OF TRUTH for planning)" as Plan
+    component "Known-Bugs-and-Fixes.md\nPROJECT_MANIFEST.md\nDecision Records" as Internal
+    component "AI session backups\n(.claude/, handoffs)\nDev tooling" as AI
+  }
+}
+
+User --> Pkg : install
+User --> PubRepo : reads docs
+Viewer --> PubRepo : reads
+Viewer --> Issues : files bug, reads roadmap
+
+Keith --> PubRepo : commits releases
+Keith --> PrivRepo : authors Roadmap.md + DRs\n(current habit preserved)
+Keith --> PSG : Publish-Module
+
+Plan --> Sync : Claude reads internal roadmap
+Sync --> Roadmap : upserts labeled Issues\n(creates/updates/closes\nto match Roadmap.md state)
+Bugs --> Sync : pulls inbound to local triage
+Sync --> Internal : mirrors triage queue\nback to internal repo
+
+Future ..> PrivRepo : invited on engagement
+
+note bottom of Plan
+  Keith keeps file-in-folder planning
+  (current habit, full git history,
+  natural in Claude sessions).
+  Public visibility is automated.
+end note
+
+note bottom of Sync
+  This bridge wasn't viable for a solo
+  dev to build + maintain pre-Claude.
+  One afternoon to author; one hook or
+  schedule entry to run; zero ongoing
+  manual sync burden.
+end note
+
+note bottom of PubRepo
+  Anti-vibe brand carried by SECURITY-FINDINGS
+  + CHANGELOG + (when sync runs) an honest
+  public roadmap that cannot go stale because
+  the source-of-truth file is what Keith
+  actually edits in his planning sessions.
+end note
+
+@enduml
