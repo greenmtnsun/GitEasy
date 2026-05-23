@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="-apple-system, 'Segoe UI', Roboto, system-ui, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">Why one GitEasy command instead of four git commands</title>
+  <desc id="desc">Four stacked git commands - add, commit, pull --rebase, push - collapse into one Save-Work command.</desc>
+
+  <style>
+    .panel-title { font-size: 14px; font-weight: 600; fill: #6b7280; letter-spacing: 1.2px; text-transform: uppercase; }
+    .step-num { font-size: 13px; font-weight: 700; fill: #6b7280; }
+    .step-cmd { font-size: 16px; font-weight: 600; fill: #111827; font-family: 'Cascadia Mono', Consolas, 'Courier New', monospace; }
+    .step-note { font-size: 11px; fill: #6b7280; }
+    .ge-cmd { font-size: 22px; font-weight: 700; fill: #ffffff; font-family: 'Cascadia Mono', Consolas, 'Courier New', monospace; }
+    .ge-note { font-size: 13px; fill: #d1fae5; }
+    .collapse-arrow { stroke: #16a34a; stroke-width: 3; fill: none; }
+    .stack-arrow { stroke: #d1d5db; stroke-width: 2; fill: none; }
+    .raw-box { fill: #ffffff; stroke: #d1d5db; stroke-width: 1.5; }
+    .ge-box { fill: #166534; stroke: #14532d; stroke-width: 2; }
+  </style>
+
+  <!-- left column header -->
+  <text x="40" y="40" class="panel-title">Raw Git (4 steps)</text>
+
+  <!-- raw git box 1: add -->
+  <rect class="raw-box" x="40" y="60" width="320" height="60" rx="6"/>
+  <text x="56" y="83" class="step-num">1</text>
+  <text x="80" y="85" class="step-cmd">git add --all</text>
+  <text x="80" y="105" class="step-note">stage every changed file</text>
+
+  <!-- arrow -->
+  <line class="stack-arrow" x1="200" y1="125" x2="200" y2="145"/>
+  <polygon points="195,143 205,143 200,153" fill="#d1d5db"/>
+
+  <!-- raw git box 2: commit -->
+  <rect class="raw-box" x="40" y="155" width="320" height="60" rx="6"/>
+  <text x="56" y="178" class="step-num">2</text>
+  <text x="80" y="180" class="step-cmd">git commit -m "msg"</text>
+  <text x="80" y="200" class="step-note">record a saved point</text>
+
+  <!-- arrow -->
+  <line class="stack-arrow" x1="200" y1="220" x2="200" y2="240"/>
+  <polygon points="195,238 205,238 200,248" fill="#d1d5db"/>
+
+  <!-- raw git box 3: pull rebase -->
+  <rect class="raw-box" x="40" y="250" width="320" height="60" rx="6"/>
+  <text x="56" y="273" class="step-num">3</text>
+  <text x="80" y="275" class="step-cmd">git pull --rebase</text>
+  <text x="80" y="295" class="step-note">replay yours on top of theirs</text>
+
+  <!-- arrow -->
+  <line class="stack-arrow" x1="200" y1="315" x2="200" y2="335"/>
+  <polygon points="195,333 205,333 200,343" fill="#d1d5db"/>
+
+  <!-- raw git box 4: push -->
+  <rect class="raw-box" x="40" y="345" width="320" height="60" rx="6"/>
+  <text x="56" y="368" class="step-num">4</text>
+  <text x="80" y="370" class="step-cmd">git push</text>
+  <text x="80" y="390" class="step-note">send to the online home</text>
+
+  <!-- collapse arrow (middle): four lines converging to one tip -->
+  <path class="collapse-arrow" d="M 380 90  C 460 90, 460 230, 540 230" />
+  <path class="collapse-arrow" d="M 380 185 C 460 185, 460 230, 540 230" />
+  <path class="collapse-arrow" d="M 380 280 C 460 280, 460 230, 540 230" />
+  <path class="collapse-arrow" d="M 380 375 C 460 375, 460 230, 540 230" />
+  <polygon points="540,222 540,238 555,230" fill="#16a34a"/>
+
+  <!-- right column header -->
+  <text x="565" y="40" class="panel-title">GitEasy (1 command)</text>
+
+  <!-- one GitEasy box -->
+  <rect class="ge-box" x="565" y="180" width="300" height="110" rx="10"/>
+  <text x="585" y="220" class="ge-cmd">Save-Work 'msg'</text>
+  <text x="585" y="252" class="ge-note">one verb. same four jobs.</text>
+  <text x="585" y="270" class="ge-note">every git call logged, scrubbed,</text>
+  <text x="585" y="288" class="ge-note">and exit-coded under the hood.</text>
+
+  <!-- bottom tagline -->
+  <text x="450" y="445" text-anchor="middle" class="step-note" font-size="13">
+    Nothing is hidden. The four git calls still run; you see them in
+    <tspan font-family="Consolas, monospace" fill="#111827">%LOCALAPPDATA%\GitEasy\Logs</tspan>.
+  </text>
+</svg>

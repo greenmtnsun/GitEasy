@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" font-family="-apple-system, 'Segoe UI', Roboto, system-ui, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">GitEasy - Plain-English Git for everyone who isn't a developer</title>
+  <desc id="desc">GitEasy wordmark with tagline and the audiences it serves: sysadmins, DBAs, compliance, change managers.</desc>
+
+  <!-- soft cream background panel; thin green rule top and bottom for "honest, no-frills" tone -->
+  <rect width="1200" height="360" fill="#fafaf7"/>
+  <rect x="0" y="0" width="1200" height="4" fill="#166534"/>
+  <rect x="0" y="356" width="1200" height="4" fill="#166534"/>
+
+  <!-- wordmark -->
+  <text x="80" y="130" font-size="84" font-weight="800" fill="#111827" letter-spacing="-1">GitEasy</text>
+
+  <!-- small green dot caret after wordmark for a quiet brand mark -->
+  <circle cx="392" cy="118" r="9" fill="#166534"/>
+
+  <!-- tagline -->
+  <text x="80" y="180" font-size="24" font-weight="500" fill="#374151">
+    Plain-English Git for everyone who isn't a developer.
+  </text>
+
+  <!-- subline (proof points) -->
+  <text x="80" y="218" font-size="16" fill="#6b7280">
+    Five everyday commands. One log file per call. No raw git output. MPL-2.0.
+  </text>
+
+  <!-- divider rule -->
+  <line x1="80" y1="248" x2="1120" y2="248" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- audience row: small uppercase, mid-dot separated, restrained -->
+  <text x="80" y="288" font-size="13" font-weight="600" fill="#166534" letter-spacing="2.5" text-transform="uppercase">
+    BUILT FOR
+  </text>
+  <text x="80" y="318" font-size="16" font-weight="500" fill="#374151" letter-spacing="0.5">
+    Sysadmins<tspan fill="#9ca3af">  ·  </tspan>Database administrators<tspan fill="#9ca3af">  ·  </tspan>DevOps<tspan fill="#9ca3af">  ·  </tspan>Compliance &amp; audit<tspan fill="#9ca3af">  ·  </tspan>Change managers<tspan fill="#9ca3af">  ·  </tspan>Technical writers
+  </text>
+</svg>

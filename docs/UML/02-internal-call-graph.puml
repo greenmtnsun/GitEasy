@@ -1,0 +1,52 @@
+@startuml GitEasyInternalCallGraph
+title GitEasy - Internal Call Graph (v1.5.3)
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+component "Mutating - 7\nSave-Work, New-Release, Undo-Changes,\nSwitch-Work, Restore-File,\nNew-WorkBranch, Clear-Junk" <<command>> as Mut
+component "Logged config / sync - 5\nShow-Change, Get-Updates,\nSet-Token, Set-Ssh, Reset-Login" <<command>> as Cfg
+component "Query / no-session - 9\nTest-Login, Show-Remote, Show-History,\nSearch-History, Show-Releases,\nFind-CodeChange, Set-Vault,\nGet-VaultStatus, Show-Diagnostic" <<command>> as Qry
+
+component "Start-GELogSession" <<helper>> as StartLog
+component "Complete-GELogSession" <<helper>> as EndLog
+component "Add-GELogStep" <<helper>> as AddLog
+component "Get-GELogPath" <<helper>> as LogPath
+component "Remove-GEOldLog" <<helper>> as Prune
+component "Assert-GESafeSave" <<helper>> as Safe
+component "Repo-state checks\nTest-GERepositoryBusy,\nGet-GEConflictFiles, Get-GERepoRoot" <<helper>> as RepoChk
+component "Query helpers\nGet-GEBranchName, Get-GERemoteUrl,\nGet-GEProviderName, Get-GERemoteSummary,\nGet-GEHistory, Get-GECodeChange" <<helper>> as QHelp
+component "Credential surface safety\nTest-GERemoteUrlSafe (input guard),\nConvert-GERemoteToSsh (input transform),\nFormat-GESafeUrl (output sanitiser),\nFormat-GESafeLogLine (output sanitiser)" <<helper>> as UrlSafe
+component "Invoke-GEGit" <<engine>> as Engine
+
+Mut --> StartLog
+Mut --> Safe
+Mut --> Engine
+Mut --> EndLog
+Safe --> RepoChk
+RepoChk --> Engine
+
+Cfg --> StartLog
+Cfg --> Engine
+Cfg --> EndLog
+Cfg --> UrlSafe : Set-Token / Set-Ssh (input);\nReset-Login (output, F-01/F-03)
+Cfg --> QHelp : Set-Token / Set-Ssh / Reset-Login only
+
+Qry --> QHelp
+Qry --> RepoChk : Get-VaultStatus repo checks
+Qry --> Engine : all but Show-Diagnostic
+Qry --> LogPath : Show-Diagnostic only
+Qry --> UrlSafe : Test-Login (output, F-05)
+
+StartLog --> LogPath
+StartLog --> Prune
+QHelp --> Engine
+QHelp --> UrlSafe : Get-GERemoteSummary (output, F-01)
+Engine --> AddLog : per git step, when log session open
+Engine --> UrlSafe : F-06: sanitises URL-shaped args before log + throw
+
+note bottom of Engine
+  Three paths, not one spine: mutating gates
+  Assert-GESafeSave; query path opens no
+  log session (Show-Diagnostic skips git too).
+end note
+@enduml

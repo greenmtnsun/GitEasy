@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitEasy — Plain-English Git for everyone who isn't a developer</title>
+  <meta name="description" content="GitEasy is a PowerShell module that lets a Git-clueless person save and publish their work without learning Git jargon. Five everyday commands. No raw Git output. One log file per call.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="index.html" class="active">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="who.html">Who it's for</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <img src="images/hero.svg" alt="GitEasy — Plain-English Git for everyone who isn't a developer">
+    <h1>Save your work without learning Git.</h1>
+    <p class="lede">
+      GitEasy is a PowerShell module for sysadmins, database administrators,
+      change managers, compliance teams — the people who need to check in
+      code without signing up for a college class on Git first. Five everyday
+      commands. No raw Git output. One log file per call.
+    </p>
+    <div class="cta-row">
+      <a href="how.html" class="btn btn-primary">Walk through how it works →</a>
+      <a href="who.html" class="btn btn-secondary">Who it's for</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>The shortest version</h2>
+    <p>
+      If you've ever closed PowerShell because the Git error message felt
+      scarier than the change you were trying to save, GitEasy is for you.
+      The five commands you'll actually use every day:
+    </p>
+    <pre><code>Find-CodeChange         # What changed?
+Save-Work 'fix readme'  # Save and publish in one step.
+Show-History            # Show recent saved points.
+Show-Remote             # Where this folder is published.
+Test-Login              # Confirm the online connection works.</code></pre>
+    <p>
+      That's it. Behind each command there's a careful engine that scrubs
+      credentials, logs every step, and refuses to do anything risky
+      without your say-so. You don't have to know any of that to use it.
+    </p>
+  </section>
+
+  <section>
+    <h2>Why this exists</h2>
+    <p>
+      Most of the people GitEasy was built for — change managers,
+      compliance analysts, database administrators — never wanted to
+      become Git experts. They wanted to check in some code. But the Git learning
+      curve isn't a couple of hours; it's a whole vocabulary and a whole
+      new set of ways to get things wrong. So work gets put off, or it
+      stays in the older tools we already know.
+    </p>
+    <p>
+      GitEasy is what showed up when one of those teams couldn't put it
+      off anymore. The full origin story is on the
+      <a href="who.html">Who it's for</a> page.
+    </p>
+  </section>
+
+  <section>
+    <h2>What's in the box</h2>
+    <ul style="margin-left: 22px; line-height: 1.7;">
+      <li><strong>21 plain-English commands</strong> — Save-Work, Find-CodeChange, Show-History, Test-Login, Reset-Login, and friends.</li>
+      <li><strong>One private engine</strong> — every Git call goes through the same safe helper, scrubbed and logged.</li>
+      <li><strong>Per-command log files</strong> — written under your AppData folder, self-destruct after 30 days.</li>
+      <li><strong>Credential-surface safety</strong> — tokens, passwords, and IP addresses are stripped before anything hits disk.</li>
+      <li><strong>Same folder, same Git</strong> — if you already know Git, you can drop down to it any time. Nothing here is hidden.</li>
+    </ul>
+  </section>
+
+  <div class="callout">
+    <p>
+      <strong>Status:</strong> v1.5.3 is shipping. Currently distributed
+      via the GitHub repository (<a href="https://www.powershellgallery.com/packages/GitEasy">PowerShell Gallery</a>
+      publish pending). MPL 2.0. Bug reports as Issues are welcome.
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;·&nbsp;
+    <a href="https://github.com/greenmtnsun/GitEasy/issues">File an Issue</a> &nbsp;·&nbsp;
+    <a href="how.html">How it works</a>
+  </div>
+</footer>
+
+</body>
+</html>

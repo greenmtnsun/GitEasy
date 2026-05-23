@@ -1,0 +1,11 @@
+*.bak
+/Wiki/
+/New-GitEasyWiki.ps1
+/coverage.txt
+/.claude/
+
+# Derived doc artifacts. PDFs are regenerated at publish time by
+# tools/Build-DocsPdf.ps1 from the Markdown sources and ship in the
+# .nupkg only; they do not belong in the source tree.
+/docs/*.pdf
+/docs/*.tmp.html

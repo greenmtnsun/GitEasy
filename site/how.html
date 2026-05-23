@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How GitEasy works — a story walkthrough</title>
+  <meta name="description" content="A card-by-card walkthrough of what GitEasy does, what it doesn't do, and what's happening under the hood.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="how.html" class="active">How it works</a>
+      <a href="who.html">Who it's for</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <h1>How GitEasy works</h1>
+  <p class="lede">
+    Six cards. Click through them to see what each part of GitEasy does
+    — in plain English, with a small picture for each idea.
+  </p>
+
+  <div class="cards-container">
+
+    <!-- ============ CARD 1 ============ -->
+    <article class="card active" data-card="1">
+      <div class="card-header">
+        <span class="card-num">Card 1 of 6</span>
+      </div>
+      <h2 class="card-title">Five commands, not forty</h2>
+      <p class="card-subtitle">The problem GitEasy actually solves.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            To save your work and publish it with raw Git, you have to
+            type four separate commands — stage, commit, pull, push —
+            and remember the right order. Get any of them wrong and you
+            get a scary message.
+          </p>
+          <p>
+            GitEasy collapses those four into one: <code>Save-Work</code>.
+            The four Git steps still run, in the right order, with sane
+            defaults. You just don't have to remember them.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- four small git boxes on the left -->
+            <rect x="20" y="20" width="120" height="40" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="80" y="44" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#111827">git add --all</text>
+
+            <rect x="20" y="80" width="120" height="40" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="80" y="104" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#111827">git commit -m</text>
+
+            <rect x="20" y="140" width="120" height="40" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="80" y="164" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#111827">git pull --rebase</text>
+
+            <rect x="20" y="200" width="120" height="40" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="80" y="224" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#111827">git push</text>
+
+            <!-- collapse arrows -->
+            <path d="M 145 40 C 200 40, 200 160, 230 160" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <path d="M 145 100 C 200 100, 200 160, 230 160" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <path d="M 145 160 L 230 160" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <path d="M 145 220 C 200 220, 200 160, 230 160" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <polygon points="230,154 230,166 244,160" fill="#16a34a"/>
+
+            <!-- one giteasy box on the right -->
+            <rect x="245" y="125" width="100" height="70" rx="6" fill="#166534" stroke="#14532d" stroke-width="2"/>
+            <text x="295" y="155" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" font-family="Consolas, monospace">Save-Work</text>
+            <text x="295" y="175" text-anchor="middle" font-size="11" fill="#d1fae5">'your note'</text>
+
+            <text x="180" y="290" text-anchor="middle" font-size="13" fill="#6b7280">Four steps → one verb.</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>What runs under the hood</summary>
+<pre><code>git add --all
+git commit -m "your note"
+git pull --rebase
+git push</code></pre>
+        <p>Every step is logged in plain text. You can read exactly what GitEasy ran.</p>
+      </details>
+    </article>
+
+    <!-- ============ CARD 2 ============ -->
+    <article class="card" data-card="2">
+      <div class="card-header">
+        <span class="card-num">Card 2 of 6</span>
+      </div>
+      <h2 class="card-title">One safe engine</h2>
+      <p class="card-subtitle">Every Git call goes through the same private helper.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            Inside GitEasy, no command shells out to Git directly.
+            Every single Git call goes through one private helper called
+            <code>Invoke-GEGit</code>.
+          </p>
+          <p>
+            That means one place to log every call, one place to scrub
+            credentials, one place to catch failures and turn them into
+            plain-English messages. If you ever wonder what exact Git
+            command GitEasy ran, there's one file to read.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- user -->
+            <circle cx="60" cy="60" r="24" fill="#ffffff" stroke="#374151" stroke-width="1.5"/>
+            <circle cx="60" cy="50" r="8" fill="none" stroke="#374151" stroke-width="1.5"/>
+            <path d="M 44 70 Q 60 84 76 70" fill="none" stroke="#374151" stroke-width="1.5"/>
+            <text x="60" y="100" text-anchor="middle" font-size="11" fill="#6b7280">You</text>
+
+            <!-- arrow -->
+            <line x1="92" y1="60" x2="140" y2="60" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="138,55 138,65 148,60" fill="#9ca3af"/>
+
+            <!-- public command box -->
+            <rect x="148" y="38" width="100" height="44" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="198" y="56" text-anchor="middle" font-size="11" font-weight="600" fill="#111827">Save-Work</text>
+            <text x="198" y="72" text-anchor="middle" font-size="10" fill="#6b7280">(public)</text>
+
+            <!-- arrow -->
+            <line x1="198" y1="90" x2="198" y2="118" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="193,116 203,116 198,126" fill="#9ca3af"/>
+
+            <!-- engine box (highlighted) -->
+            <rect x="124" y="130" width="148" height="60" rx="6" fill="#166534" stroke="#14532d" stroke-width="2"/>
+            <text x="198" y="154" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" font-family="Consolas, monospace">Invoke-GEGit</text>
+            <text x="198" y="172" text-anchor="middle" font-size="10" fill="#d1fae5">the ONLY place that runs git</text>
+
+            <!-- arrow -->
+            <line x1="198" y1="195" x2="198" y2="220" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="193,218 203,218 198,228" fill="#9ca3af"/>
+
+            <!-- git -->
+            <rect x="148" y="232" width="100" height="32" rx="4" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.5"/>
+            <text x="198" y="252" text-anchor="middle" font-size="12" font-family="Consolas, monospace" fill="#111827">git.exe</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>Why this matters in practice</summary>
+        <p>
+          Any new public command that touches Git has to call
+          <code>Invoke-GEGit</code>. There's no exception. That means
+          when a security review finds a problem with how Git output
+          gets logged, it's one place to fix it — not 21 places.
+        </p>
+      </details>
+    </article>
+
+    <!-- ============ CARD 3 ============ -->
+    <article class="card" data-card="3">
+      <div class="card-header">
+        <span class="card-num">Card 3 of 6</span>
+      </div>
+      <h2 class="card-title">A log file you don't have to read</h2>
+      <p class="card-subtitle">Until you want to.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            Every GitEasy command writes a small log file under
+            <code>%LOCALAPPDATA%\GitEasy\Logs</code>. You don't have to
+            read it. If a command worked, the log is silent.
+          </p>
+          <p>
+            But if something goes wrong, the log file tells you exactly
+            what Git command ran and what it returned. And tokens,
+            passwords, and IP addresses are stripped from the log
+            <em>before</em> anything hits the disk. Old logs delete
+            themselves after 30 days, so the folder doesn't pile up.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- command -->
+            <rect x="40" y="30" width="120" height="40" rx="4" fill="#166534" stroke="#14532d" stroke-width="2"/>
+            <text x="100" y="55" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff" font-family="Consolas, monospace">Save-Work</text>
+
+            <!-- arrow + scrub label -->
+            <line x1="160" y1="50" x2="210" y2="50" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="208,45 208,55 218,50" fill="#9ca3af"/>
+            <text x="185" y="38" text-anchor="middle" font-size="10" fill="#16a34a" font-style="italic">scrub</text>
+
+            <!-- log file -->
+            <rect x="218" y="20" width="110" height="60" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+            <line x1="218" y1="36" x2="328" y2="36" stroke="#d1d5db" stroke-width="1"/>
+            <text x="273" y="32" text-anchor="middle" font-size="9" fill="#6b7280">Save-Work.log</text>
+            <text x="226" y="50" font-size="9" font-family="Consolas, monospace" fill="#374151">git add --all</text>
+            <text x="226" y="62" font-size="9" font-family="Consolas, monospace" fill="#374151">exit: 0</text>
+            <text x="226" y="74" font-size="9" font-family="Consolas, monospace" fill="#374151">git commit -m...</text>
+
+            <!-- folder showing accumulation -->
+            <rect x="80" y="120" width="200" height="120" rx="6" fill="#fafaf7" stroke="#d1d5db" stroke-width="1.5"/>
+            <text x="180" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">%LOCALAPPDATA%\GitEasy\Logs</text>
+
+            <rect x="92" y="148" width="176" height="20" rx="3" fill="#ffffff" stroke="#e5e7eb"/>
+            <text x="100" y="162" font-size="10" font-family="Consolas, monospace" fill="#374151">Save-Work-20260522-093015.log</text>
+
+            <rect x="92" y="172" width="176" height="20" rx="3" fill="#ffffff" stroke="#e5e7eb"/>
+            <text x="100" y="186" font-size="10" font-family="Consolas, monospace" fill="#374151">Find-CodeChange-20260522-093142.log</text>
+
+            <rect x="92" y="196" width="176" height="20" rx="3" fill="#ffffff" stroke="#e5e7eb"/>
+            <text x="100" y="210" font-size="10" font-family="Consolas, monospace" fill="#9ca3af" font-style="italic">older logs auto-delete at 30 days</text>
+
+            <text x="180" y="232" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">silent on success, helpful on failure</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>Open the log right from PowerShell</summary>
+<pre><code>Show-Diagnostic           # open the most recent log
+Show-Diagnostic -List     # list recent logs
+Show-Diagnostic -All      # open the logs folder</code></pre>
+      </details>
+    </article>
+
+    <!-- ============ CARD 4 ============ -->
+    <article class="card" data-card="4">
+      <div class="card-header">
+        <span class="card-num">Card 4 of 6</span>
+      </div>
+      <h2 class="card-title">The safety check before every save</h2>
+      <p class="card-subtitle">GitEasy refuses to make a mess.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            Before any save, GitEasy checks whether your folder is in
+            the middle of something — a half-done merge, a paused
+            rebase, an unfinished cherry-pick. If it is, GitEasy stops
+            and says so in plain English.
+          </p>
+          <p>
+            This is the single most important safety promise. No
+            accidental commit on top of a tangled state. You finish
+            the in-progress operation first, in raw Git if you have
+            to, and then GitEasy is happy to save again.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- save-work attempt -->
+            <rect x="40" y="30" width="120" height="38" rx="4" fill="#166534" stroke="#14532d" stroke-width="2"/>
+            <text x="100" y="54" text-anchor="middle" font-size="13" font-weight="600" fill="#ffffff" font-family="Consolas, monospace">Save-Work</text>
+
+            <!-- arrow into safety check -->
+            <line x1="100" y1="74" x2="100" y2="98" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="95,96 105,96 100,106" fill="#9ca3af"/>
+
+            <!-- safety check diamond -->
+            <polygon points="100,110 175,160 100,210 25,160" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="100" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">Is the repo</text>
+            <text x="100" y="170" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">in the middle</text>
+            <text x="100" y="185" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">of something?</text>
+
+            <!-- no path -->
+            <line x1="175" y1="160" x2="240" y2="160" stroke="#16a34a" stroke-width="2"/>
+            <polygon points="238,155 238,165 248,160" fill="#16a34a"/>
+            <text x="207" y="148" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="600">no</text>
+            <rect x="248" y="138" width="92" height="44" rx="4" fill="#d1fae5" stroke="#16a34a" stroke-width="1.5"/>
+            <text x="294" y="156" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">save</text>
+            <text x="294" y="172" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">proceeds</text>
+
+            <!-- yes path (stop) -->
+            <line x1="100" y1="210" x2="100" y2="234" stroke="#dc2626" stroke-width="2"/>
+            <polygon points="95,232 105,232 100,242" fill="#dc2626"/>
+            <text x="113" y="226" font-size="11" fill="#dc2626" font-weight="600">yes</text>
+            <rect x="40" y="244" width="120" height="44" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="100" y="262" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">STOP</text>
+            <text x="100" y="278" text-anchor="middle" font-size="10" fill="#991b1b">plain-English message</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>What the check actually looks for</summary>
+        <p>
+          The private helper <code>Assert-GESafeSave</code> looks at
+          <code>.git\MERGE_HEAD</code>, <code>REBASE_HEAD</code>,
+          <code>CHERRY_PICK_HEAD</code>, <code>REVERT_HEAD</code>, and
+          <code>BISECT_LOG</code>. If any of them exists, the repo is
+          mid-operation and GitEasy refuses to add new work on top.
+        </p>
+      </details>
+    </article>
+
+    <!-- ============ CARD 5 ============ -->
+    <article class="card" data-card="5">
+      <div class="card-header">
+        <span class="card-num">Card 5 of 6</span>
+      </div>
+      <h2 class="card-title">Credentials never leak</h2>
+      <p class="card-subtitle">Three places they could. Three places they don't.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            Git can leak credentials in surprising ways. A token
+            embedded in a URL. An error message that prints the URL
+            back at you. A diagnostic log that writes the URL to disk.
+            All real. All quiet. All catastrophic if you don't notice.
+          </p>
+          <p>
+            GitEasy blocks all three. A URL with embedded credentials
+            is refused at input. Error messages are sanitized before
+            you see them. Log files are scrubbed before they hit disk.
+            All three are exercised by a formal kill-test suite.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- shield -->
+            <path d="M 180 20 L 240 40 L 240 130 Q 240 180 180 220 Q 120 180 120 130 L 120 40 Z"
+                  fill="#d1fae5" stroke="#166534" stroke-width="2"/>
+            <text x="180" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#166534">3 leaks</text>
+            <text x="180" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#166534">blocked</text>
+
+            <!-- three attempts -->
+            <rect x="20" y="250" width="100" height="56" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+            <text x="70" y="266" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">URL leak</text>
+            <text x="70" y="280" text-anchor="middle" font-size="9" fill="#7f1d1d">https://tok@host</text>
+            <text x="70" y="296" text-anchor="middle" font-size="9" font-weight="700" fill="#16a34a">→ refused</text>
+
+            <rect x="130" y="250" width="100" height="56" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+            <text x="180" y="266" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">error leak</text>
+            <text x="180" y="280" text-anchor="middle" font-size="9" fill="#7f1d1d">"...token..."</text>
+            <text x="180" y="296" text-anchor="middle" font-size="9" font-weight="700" fill="#16a34a">→ sanitized</text>
+
+            <rect x="240" y="250" width="100" height="56" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+            <text x="290" y="266" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">log leak</text>
+            <text x="290" y="280" text-anchor="middle" font-size="9" fill="#7f1d1d">IP / token</text>
+            <text x="290" y="296" text-anchor="middle" font-size="9" font-weight="700" fill="#16a34a">→ scrubbed</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>How we know this is real</summary>
+        <p>
+          Two adversarial security passes (May 17 and May 20, 2026)
+          found six total findings (three of them at "High" severity).
+          All six are fixed. The kill-test suite lives in
+          <code>Tests/GitEasy.AuthHardening.Tests.ps1</code>. The
+          full record is in
+          <code>docs/SECURITY-FINDINGS-2026-05-17.md</code> and
+          <code>docs/SECURITY-FINDINGS-2026-05-20.md</code>.
+        </p>
+      </details>
+    </article>
+
+    <!-- ============ CARD 6 ============ -->
+    <article class="card" data-card="6">
+      <div class="card-header">
+        <span class="card-num">Card 6 of 6</span>
+      </div>
+      <h2 class="card-title">What GitEasy doesn't do</h2>
+      <p class="card-subtitle">By design.</p>
+
+      <div class="card-body">
+        <div class="card-prose">
+          <p>
+            GitEasy is small on purpose. It doesn't rebase. It doesn't
+            squash. It doesn't merge branches together. It doesn't sign
+            commits or do partial-folder check-ins. It does not have a
+            command for every Git verb.
+          </p>
+          <p>
+            Those are sharp tools for people who want them. They all
+            still work — drop into raw Git in the same folder and
+            nothing GitEasy did blocks you. GitEasy keeps its surface
+            small so the people who don't want those tools never have
+            to see them.
+          </p>
+        </div>
+        <div class="card-visual">
+          <svg viewBox="0 0 360 320" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', sans-serif">
+            <!-- GitEasy box (in) -->
+            <rect x="20" y="40" width="160" height="240" rx="8" fill="#d1fae5" stroke="#166534" stroke-width="2"/>
+            <text x="100" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#166534" letter-spacing="1.5">IN GITEASY</text>
+
+            <text x="100" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Save-Work</text>
+            <text x="100" y="112" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Find-CodeChange</text>
+            <text x="100" y="132" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Show-History</text>
+            <text x="100" y="152" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Show-Remote</text>
+            <text x="100" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Test-Login</text>
+            <text x="100" y="192" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Restore-File</text>
+            <text x="100" y="212" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">Undo-Changes</text>
+            <text x="100" y="232" text-anchor="middle" font-size="12" font-weight="600" fill="#111827">New-WorkBranch</text>
+            <text x="100" y="256" text-anchor="middle" font-size="11" fill="#16a34a" font-style="italic">...and 13 more</text>
+
+            <!-- arrow drop down -->
+            <line x1="190" y1="160" x2="218" y2="160" stroke="#9ca3af" stroke-width="2"/>
+            <polygon points="216,155 216,165 226,160" fill="#9ca3af"/>
+            <text x="204" y="150" text-anchor="middle" font-size="9" fill="#6b7280">drop down</text>
+            <text x="204" y="178" text-anchor="middle" font-size="9" fill="#6b7280">to raw git</text>
+
+            <!-- raw git box (out) -->
+            <rect x="226" y="40" width="118" height="240" rx="8" fill="#fafaf7" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="285" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="1.5">USE RAW GIT</text>
+
+            <text x="285" y="92" text-anchor="middle" font-size="11" fill="#6b7280">rebase</text>
+            <text x="285" y="110" text-anchor="middle" font-size="11" fill="#6b7280">squash</text>
+            <text x="285" y="128" text-anchor="middle" font-size="11" fill="#6b7280">cherry-pick</text>
+            <text x="285" y="146" text-anchor="middle" font-size="11" fill="#6b7280">merge</text>
+            <text x="285" y="164" text-anchor="middle" font-size="11" fill="#6b7280">amend</text>
+            <text x="285" y="182" text-anchor="middle" font-size="11" fill="#6b7280">submodule</text>
+            <text x="285" y="200" text-anchor="middle" font-size="11" fill="#6b7280">worktree</text>
+            <text x="285" y="218" text-anchor="middle" font-size="11" fill="#6b7280">bisect</text>
+            <text x="285" y="236" text-anchor="middle" font-size="11" fill="#6b7280">signed commits</text>
+            <text x="285" y="254" text-anchor="middle" font-size="11" fill="#6b7280">LFS</text>
+          </svg>
+        </div>
+      </div>
+
+      <details class="card-reveal">
+        <summary>The end-of-walkthrough recap</summary>
+        <p>
+          Five everyday commands. One safe engine. One log file per
+          call. A safety check before every save. A credential surface
+          that doesn't leak. A boundary that's honest about what's not
+          included. That's GitEasy.
+        </p>
+        <p style="margin-top: 12px;">
+          <a href="https://github.com/greenmtnsun/GitEasy/blob/main/docs/HOW-TO-USE-GITEASY.md" class="btn btn-primary">Read the full how-to →</a>
+        </p>
+      </details>
+    </article>
+
+  </div>
+
+  <!-- card navigation -->
+  <div class="card-nav">
+    <button id="prev-btn" class="card-nav-btn" disabled>← Previous</button>
+    <span class="card-counter"><span id="card-current">1</span> of 6</span>
+    <button id="next-btn" class="card-nav-btn">Next →</button>
+  </div>
+
+  <div class="card-dots" id="card-dots">
+    <span class="card-dot active" data-go="1"></span>
+    <span class="card-dot" data-go="2"></span>
+    <span class="card-dot" data-go="3"></span>
+    <span class="card-dot" data-go="4"></span>
+    <span class="card-dot" data-go="5"></span>
+    <span class="card-dot" data-go="6"></span>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;·&nbsp;
+    <a href="https://github.com/greenmtnsun/GitEasy/issues">File an Issue</a> &nbsp;·&nbsp;
+    <a href="index.html">Home</a>
+  </div>
+</footer>
+
+<script src="cards.js"></script>
+</body>
+</html>
