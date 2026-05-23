@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The wall — every user GitEasy was built for</title>
+  <meta name="description" content="A wall of GitEasy users rendered as overlapping street-pole flyers. 31 user types, plus a few brand stickers, plus space for you.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Wall-page specific - keeps the wall as the dominant element */
+    main.wall-main {
+      max-width: 1280px;
+      padding: 32px 24px 56px;
+    }
+    .wall-intro {
+      max-width: 880px;
+      margin: 0 auto 28px;
+      text-align: center;
+    }
+    .wall-intro h1 {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+    .wall-intro p.lede {
+      font-size: 19px;
+      margin: 0 auto;
+    }
+    .wall-frame {
+      background: #ece7dc;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 18px;
+      margin: 0 auto;
+      max-width: 1240px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .wall-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .wall-actions {
+      max-width: 880px;
+      margin: 28px auto 0;
+      text-align: center;
+      font-size: 15px;
+      color: var(--text-mute);
+    }
+    .wall-actions p { margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="who.html">Who it's for</a>
+      <a href="wall.html" class="active">The wall</a>
+      <a href="https://github.com/greenmtnsun/GitEasy">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wall-main">
+
+  <div class="wall-intro">
+    <h1>The wall</h1>
+    <p class="lede">
+      Every user type GitEasy was built for, plastered on a stretch of
+      telephone poles. The 6 cards on the
+      <a href="who.html">"Who it's for"</a> page are the headlines.
+      This is the whole crowd.
+    </p>
+  </div>
+
+  <div class="wall-frame">
+    <img src="images/audience-wall.svg"
+         alt="A wall of 31 GitEasy user types rendered as overlapping street-pole flyers: sysadmins, database admins, change managers, compliance, DevOps, technical writers, network engineers, security engineers, cloud engineers, data scientists, data analysts, BI developers, researchers, bioinformaticians, statisticians, engineers, scientists, biologists, students, educators, tinkerers, beginner developers, hardware makers, Salesforce admins, ServiceNow admins, pen testers, forensic analysts, QA/test engineers, auditors, power users, system integrators. Plus three brand stickers reading PLAIN ENGLISH, SAVE-WORK, and + YOU?">
+  </div>
+
+  <div class="wall-actions">
+    <p>
+      Spot yourself? <a href="https://github.com/greenmtnsun/GitEasy">Grab the module</a>
+      or read the <a href="how.html">How-it-works walkthrough</a>.
+    </p>
+    <p>
+      Don't see yourself? Open an
+      <a href="https://github.com/greenmtnsun/GitEasy/issues">Issue</a>
+      and tell me what poster I missed. I'll add it.
+    </p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    GitEasy is built by <a href="https://github.com/greenmtnsun">Keith Ramsey</a> under MPL 2.0.<br>
+    <a href="https://github.com/greenmtnsun/GitEasy">Source on GitHub</a> &nbsp;·&nbsp;
+    <a href="index.html">Home</a> &nbsp;·&nbsp;
+    <a href="who.html">Who it's for</a>
+  </div>
+</footer>
+
+</body>
+</html>
