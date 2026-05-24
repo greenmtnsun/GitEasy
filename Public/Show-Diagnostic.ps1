@@ -65,7 +65,7 @@ function Show-Diagnostic {
     }
 
     if ($All) {
-        if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+        if ($env:OS -eq 'Windows_NT') {
             Start-Process -FilePath 'explorer.exe' -ArgumentList $logDirectory
         }
         else {
@@ -101,7 +101,7 @@ function Show-Diagnostic {
     $mostRecent = $allLogs | Select-Object -First 1
     Write-Host "Opening: $($mostRecent.FullName)"
 
-    if ($IsWindows -or ($PSVersionTable.PSEdition -eq 'Desktop')) {
+    if ($env:OS -eq 'Windows_NT') {
         Start-Process -FilePath $mostRecent.FullName
     }
     else {

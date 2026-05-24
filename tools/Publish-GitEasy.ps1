@@ -168,9 +168,9 @@ Write-Host "    OK  $($stagedManifest.Name) $($stagedManifest.Version)" -Foregro
 Write-Host "==> Importing staged module..." -ForegroundColor Cyan
 Import-Module (Join-Path $stageModule 'GitEasy.psd1') -Force -ErrorAction Stop
 $cmds = Get-Command -Module GitEasy
-$expected = $stagedManifest.ExportedFunctions.Count
+$expected = $stagedManifest.ExportedCommands.Count
 if ($cmds.Count -ne $expected) {
-    throw "Expected $expected exported commands, got $($cmds.Count). Check FunctionsToExport vs Public\."
+    throw "Expected $expected exported commands, got $($cmds.Count). Check FunctionsToExport / AliasesToExport vs Public\."
 }
 Write-Host "    OK  $($cmds.Count) commands exported" -ForegroundColor Green
 Remove-Module GitEasy -Force

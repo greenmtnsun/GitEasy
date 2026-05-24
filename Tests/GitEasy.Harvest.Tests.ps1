@@ -195,7 +195,7 @@ Describe 'Save-Work -BumpVersion' {
         ($log.Output -join '') | Should -Match '^\[v1\.3\.0\] fix the thing$'
     }
 
-    It 'finds and bumps a manifest in the conventional <ModuleName>\<ModuleName>.psd1 nested layout' {
+    It 'finds and bumps a manifest in the conventional ModuleName\ModuleName.psd1 nested layout' {
         $nested = Join-Path $script:TempRepo 'NestedModule'
         New-Item -Path $nested -ItemType Directory -Force | Out-Null
 

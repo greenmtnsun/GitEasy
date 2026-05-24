@@ -1,9 +1,15 @@
 <#
 .SYNOPSIS
-Run the GitEasy Pester test suite using Pester 3 (the version the tests were written for).
+Run the GitEasy Pester test suite under both PowerShell 7 and Windows PowerShell 5.1.
 
 .DESCRIPTION
-Explicitly loads Pester 3 (preferring 3.4.x) and invokes the test runner over the Tests folder. GitEasy tests are written in Pester 3 syntax; loading Pester 5 would silently mis-run them via the legacy adapter, so this script pins Pester 3 to keep behavior deterministic across machines.
+Loads Pester 5 (minimum 5.0) and runs the full Tests folder. After a passing run it
+re-invokes itself under the sibling PowerShell edition (powershell.exe if running in
+pwsh, or pwsh if running in powershell.exe) so that Desktop and Core compatibility are
+both verified on every run.
+
+Pester 5 must be installed in both editions. Install it once per edition with:
+  Install-Module Pester -Force -SkipPublisherCheck
 
 .PARAMETER ProjectRoot
 Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
@@ -12,25 +18,26 @@ Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\
 .\tools\Run-GitEasyPester.ps1
 
 .NOTES
-Most environments ship Pester 3 by default with Windows PowerShell 5.1. Tests must work against Pester 3.
+The module manifest declares CompatiblePSEditions = @('Desktop','Core'). Both editions
+must pass before a release is cut.
 #>
 
 [CmdletBinding()]
 param(
     [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
 
-    # Emit Pester 3 code-coverage data. Pester 3 has no native
-    # JaCoCo / Cobertura export, so we render a per-file summary
-    # to stdout and write a coverage.txt artifact for the CI to
-    # publish. Report-only - no threshold gate.
+    # Emit code-coverage data. Renders a per-file summary to stdout and writes
+    # a coverage.txt artifact. Report-only — no threshold gate.
     [switch]$Coverage,
 
     [string]$CoverageOutputPath,
 
-    # Suppress Pester 3's per-Describe/It chatter; show only the
-    # totals summary and any failure detail. Matches the prior
-    # CI contract that called Invoke-Pester -Quiet directly.
-    [switch]$Quiet
+    # Suppress per-Describe/It chatter; show only totals and failure detail.
+    [switch]$Quiet,
+
+    # Internal: prevents infinite recursion when this script re-invokes itself
+    # under the sibling PowerShell edition.  Not intended for direct use.
+    [switch]$ThisEditionOnly
 )
 
 Set-StrictMode -Version Latest
@@ -46,10 +53,10 @@ if (-not (Test-Path -LiteralPath $testRoot)) {
     throw "Missing test folder: $testRoot"
 }
 
-$pester = Get-Module -ListAvailable Pester | Where-Object { $_.Version.Major -lt 4 } | Sort-Object Version -Descending | Select-Object -First 1
+$pester = Get-Module -ListAvailable Pester | Where-Object { $_.Version.Major -ge 5 } | Sort-Object Version -Descending | Select-Object -First 1
 
 if (-not $pester) {
-    throw "Pester 3 is not installed. Install it with: Install-Module Pester -RequiredVersion 3.4.0 -SkipPublisherCheck -Scope AllUsers -Force"
+    throw "Pester 5 is not installed. Install it with: Install-Module Pester -Force -SkipPublisherCheck"
 }
 
 Remove-Module Pester -Force -ErrorAction SilentlyContinue
@@ -62,11 +69,11 @@ Write-Host "Pester:  $($pester.Version)"
 Write-Host ""
 
 $invokeParams = @{
-    Script   = $testRoot
+    Path     = $testRoot
     PassThru = $true
 }
 if ($Quiet) {
-    $invokeParams.Quiet = $true
+    $invokeParams.Output = 'Minimal'
 }
 
 if ($Coverage) {
@@ -146,3 +153,25 @@ if ($result.FailedCount -gt 0) {
 }
 
 Write-Host "GitEasy Pester tests passed." -ForegroundColor Green
+
+if (-not $ThisEditionOnly) {
+    if ($PSVersionTable.PSEdition -eq 'Core') {
+        $altExe  = Get-Command powershell.exe -ErrorAction SilentlyContinue
+        $altName = 'Windows PowerShell 5.1'
+    } else {
+        $altExe  = Get-Command pwsh -ErrorAction SilentlyContinue
+        $altName = 'PowerShell 7'
+    }
+
+    if ($altExe) {
+        Write-Host ""
+        Write-Host "==> Re-running under $altName..." -ForegroundColor Cyan
+        & $altExe.Source -NonInteractive -NoProfile -File $PSCommandPath -ProjectRoot $ProjectRoot -Quiet -ThisEditionOnly
+        if ($LASTEXITCODE -ne 0) {
+            throw "Suite failed under $altName (exit $LASTEXITCODE). Run '$($altExe.Source) -NoProfile -File tools\Run-GitEasyPester.ps1' to see failures."
+        }
+        Write-Host "GitEasy Pester tests passed under $altName." -ForegroundColor Green
+    } else {
+        Write-Warning "$altName not found - cross-edition pass skipped."
+    }
+}

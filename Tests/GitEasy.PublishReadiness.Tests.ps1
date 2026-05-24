@@ -195,11 +195,13 @@ Describe 'GitEasy publish readiness - PSData' {
     }
 
     It 'Prerelease is unset for a stable release' {
-        ($null -eq $psdata.Prerelease -or [string]::IsNullOrWhiteSpace($psdata.Prerelease)) | Should -Be $true
+        $val = $psdata['Prerelease']
+        ($null -eq $val -or [string]::IsNullOrWhiteSpace($val)) | Should -Be $true
     }
 
     It 'RequireLicenseAcceptance is unset (MPL-2.0 does not need click-through)' {
-        ($null -eq $psdata.RequireLicenseAcceptance -or $psdata.RequireLicenseAcceptance -eq $false) | Should -Be $true
+        $val = $psdata['RequireLicenseAcceptance']
+        ($null -eq $val -or $val -eq $false) | Should -Be $true
     }
 }
 
