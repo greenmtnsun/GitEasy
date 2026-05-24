@@ -232,28 +232,3 @@ Describe 'GitEasy publish readiness - repo files the Gallery surface depends on'
         $changelog | Should -Match ([regex]::Escape($manifest.ModuleVersion))
     }
 }
-
-Describe 'GitEasy publish readiness - publish tooling' {
-    It 'tools/Publish-GitEasy.ps1 exists' {
-        Test-Path (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') | Should -Be $true
-    }
-
-    It 'tools/Publish-GitEasy.ps1 parses without errors' {
-        $f = Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1'
-        $tokens = $null
-        $parseErrors = $null
-        [System.Management.Automation.Language.Parser]::ParseFile($f, [ref]$tokens, [ref]$parseErrors) | Out-Null
-        @($parseErrors).Count | Should -Be 0
-    }
-
-    It 'tools/Publish-GitEasy.ps1 has a [CmdletBinding()] block' {
-        $content = Get-Content -LiteralPath (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') -Raw
-        $content | Should -Match '\[CmdletBinding\(\)\]'
-    }
-
-    It 'tools/Publish-GitEasy.ps1 gates real publish behind both -Publish and -NuGetApiKey' {
-        $content = Get-Content -LiteralPath (Join-Path $ProjectRoot 'tools\Publish-GitEasy.ps1') -Raw
-        $content | Should -Match '-Publish'
-        $content | Should -Match '-NuGetApiKey'
-    }
-}

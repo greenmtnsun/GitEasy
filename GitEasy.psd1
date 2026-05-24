@@ -66,7 +66,7 @@ GitEasy 1.5.3 - 2026-05-21
 
 PowerShell Gallery readiness release. No public-command behavior
 change, no private-helper signature change, no format.ps1xml change.
-569 tests on Pester 3.4.0, PS 5.1 + PS 7.
+554 tests on Pester 5.7.1, PS 5.1 + PS 7. (16 tests for private tooling live in GitEasy-internal.)
 
 Gallery metadata
 ----------------
