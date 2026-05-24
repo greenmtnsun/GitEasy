@@ -1,4 +1,4 @@
-﻿function Format-GESafeLogLine {
+function Format-GESafeLogLine {
     <#
     .SYNOPSIS
     Redact credential-bearing lines before they are written to a diagnostic log.

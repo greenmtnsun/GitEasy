@@ -12,7 +12,7 @@ Pester 5 must be installed in both editions. Install it once per edition with:
   Install-Module Pester -Force -SkipPublisherCheck
 
 .PARAMETER ProjectRoot
-Absolute path to the GitEasy source repository. Defaults to C:\Sysadmin\Scripts\GitEasy.
+Absolute path to the GitEasy source repository. Defaults to the repo root derived from this script's location.
 
 .EXAMPLE
 .\tools\Run-GitEasyPester.ps1
@@ -24,7 +24,7 @@ must pass before a release is cut.
 
 [CmdletBinding()]
 param(
-    [string]$ProjectRoot = 'C:\Sysadmin\Scripts\GitEasy',
+    [string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot),
 
     # Emit code-coverage data. Renders a per-file summary to stdout and writes
     # a coverage.txt artifact. Report-only — no threshold gate.

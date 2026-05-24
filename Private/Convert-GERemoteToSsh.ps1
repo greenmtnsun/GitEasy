@@ -1,4 +1,4 @@
-﻿function Convert-GERemoteToSsh {
+function Convert-GERemoteToSsh {
     <#
     .SYNOPSIS
     Convert an HTTPS Git URL to its SSH form.
