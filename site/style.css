@@ -57,6 +57,7 @@ body {
   vertical-align: middle;
   margin-right: 8px;
   border-radius: 4px;
+  transform: scaleX(-1);
 }
 .brand-dot {
   display: inline-block;
