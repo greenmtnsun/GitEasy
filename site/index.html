@@ -11,7 +11,7 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="index.html" class="brand">GitEasy<span class="brand-dot"></span></a>
+    <a href="index.html" class="brand"><img src="images/logo.png" alt="" class="brand-logo" aria-hidden="true">GitEasy<span class="brand-dot"></span></a>
     <nav class="links">
       <a href="index.html" class="active">Home</a>
       <a href="how.html">How it works</a>
@@ -25,7 +25,7 @@
 <main class="homepage">
 
   <div class="hero-wall" role="img" aria-label="A wall of 31 GitEasy user types as overlapping street-pole flyers: sysadmins, DBAs, change managers, compliance, DevOps, technical writers, network engineers, security engineers, cloud engineers, data scientists, data analysts, BI developers, researchers, bioinformaticians, statisticians, engineers, scientists, biologists, students, educators, tinkerers, beginner developers, hardware makers, Salesforce admins, ServiceNow admins, pen testers, forensic analysts, QA test engineers, auditors, power users, system integrators. Plus three brand stickers: PLAIN ENGLISH, SAVE-WORK, and + YOU?">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
+<svg id="hero-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif">
   <defs><pattern id="grit" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.6" fill="#999" fill-opacity="0.18"/><circle cx="5" cy="4" r="0.4" fill="#aaa" fill-opacity="0.12"/></pattern></defs>
   <rect width="1200" height="760" fill="#ece7dc"/><rect width="1200" height="760" fill="url(#grit)"/>
   <rect x="0" y="680" width="1200" height="80" fill="#9a958a"/><line x1="0" y1="680" x2="1200" y2="680" stroke="#5a564f" stroke-width="2"/>
@@ -66,6 +66,7 @@
   <g transform="translate(810,440) rotate(14)" opacity="0.92"><rect width="120" height="36" fill="#ffd166" stroke="#1a1a1a" stroke-width="1.2"/><text x="60" y="22" text-anchor="middle" font-size="11" font-weight="800" fill="#1a1a1a">SAVE-WORK</text></g>
   <g transform="translate(40,720)"><text x="0" y="0" font-size="11" font-style="italic" fill="#555">GitEasy &mdash; for everyone on this wall and the next.</text></g>
 </svg>
+  <img id="hero-photo" src="images/hero-wall-photo.png" alt="GitEasy audience — a photorealistic city wall covered in colorful flyers for sysadmins, change managers, DBAs, data scientists, and dozens more." style="display:none;width:100%;height:auto;border-radius:4px;">
   </div>
 
   <div class="hero-caption">
@@ -148,5 +149,11 @@ Test-Login              # Confirm the online connection works.</code></pre>
   </div>
 </footer>
 
+<script>
+if (Math.random() < 0.5) {
+  document.getElementById('hero-svg').style.display = 'none';
+  document.getElementById('hero-photo').style.display = 'block';
+}
+</script>
 </body>
 </html>

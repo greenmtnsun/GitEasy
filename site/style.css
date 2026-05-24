@@ -51,6 +51,13 @@ body {
   text-decoration: none;
   letter-spacing: -0.5px;
 }
+.brand-logo {
+  height: 36px;
+  width: auto;
+  vertical-align: middle;
+  margin-right: 8px;
+  border-radius: 4px;
+}
 .brand-dot {
   display: inline-block;
   width: 8px;
