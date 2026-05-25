@@ -1,11 +1,19 @@
 @{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.3'
+    ModuleVersion        = '1.5.4'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
     Copyright            = '(c) 2026 Keith Ramsey. Licensed under MPL-2.0.'
-    Description          = 'Plain-English Git for sysadmins, change managers, and compliance teams. Five everyday PowerShell commands (Save-Work, Find-CodeChange, Show-History, Set-Token, Test-Login) wrap git on Windows with no raw output, no jargon, and one log file per command. PowerShell 5.1 and 7. MPL-2.0.'
+    Description          = @'
+Save your work without learning Git. GitEasy gives sysadmins, change managers, DBAs, compliance teams, and 25 other non-developer roles a set of plain-English PowerShell commands that wrap git — with no jargon, no raw output, no way to accidentally overwrite someone else's work.
+
+If you've ever closed PowerShell because the Git error message felt scarier than the change you were trying to save, this is for you.
+
+Five commands cover most days: Save-Work, Find-CodeChange, Show-History, Show-Remote, Test-Login. There's more when you're ready — and I've kept it just as plain. Check the HOW-TO doc included in this package. Give it a try — the worst that happens is you type Get-Help Save-Work.
+
+Every command logs what it did. Credentials are scrubbed before anything hits disk. PowerShell 5.1 and 7. MPL-2.0.
+'@
     PowerShellVersion    = '5.1'
     CompatiblePSEditions = @('Desktop', 'Core')
     FormatsToProcess     = @('Format\GitEasy.format.ps1xml')
@@ -61,47 +69,11 @@
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
-GitEasy 1.5.3 - 2026-05-21
+GitEasy 1.5.4 - 2026-05-24
 ==========================
 
-PowerShell Gallery readiness release. No public-command behavior
-change, no private-helper signature change, no format.ps1xml change.
-554 tests on Pester 5.7.1, PS 5.1 + PS 7. (16 tests for private tooling live in GitEasy-internal.)
-
-Gallery metadata
-----------------
-- Description rewritten audience-first (sysadmins / change managers /
-  compliance teams), under 400 chars to avoid search-card truncation.
-- Tags replaced with a 14-entry list incl. PSEdition_Desktop and
-  PSEdition_Core (drive Find-Module -Tag), DevOps, Automation,
-  SourceControl, VersionControl, Bitbucket.
-- CompatiblePSEditions = @('Desktop','Core') stamped explicitly.
-- IconUri set; LicenseUri now points at the in-repo LICENSE file
-  (display matches shipped license).
-- ReleaseNotes is now inline plaintext. PSGallery does not render
-  Markdown; a URL stub wastes the surface.
-
-Tooling
--------
-- tools/Publish-GitEasy.ps1 - enumerate-then-include staging,
-  manifest revalidation, Pester gate, URI reachability check,
-  dry-run by default. Real publish requires -Publish + -NuGetApiKey.
-- Tests/GitEasy.PublishReadiness.Tests.ps1 - 47 tests verifying
-  every Gallery-surface field (one per playbook checklist row).
-
-Docs
-----
-- docs/FOR-GIT-EXPERTS.md - dedicated expert-audience reference
-  covering the underlying git call sequence, scrub rules,
-  return-object schema, scripting patterns, override knobs, and
-  where to fall back to raw Git.
-- docs/PSGALLERY-METADATA-PLAYBOOK.md - pre-publish reference for
-  every Gallery-surfaced metadata field.
-- README + HOW-TO install recipes drop GitEasy into the user-scope
-  PowerShell module folder so Import-Module GitEasy works without a
-  path. The previous C:\Sysadmin\Scripts install path was a leftover
-  from the author's local development folder and was never the right
-  default to publish.
+Description rewrite for PowerShell Gallery. No functional change,
+no test change, no public-command behavior change.
 
 Full notes:
 https://github.com/greenmtnsun/GitEasy/blob/main/CHANGELOG.md
