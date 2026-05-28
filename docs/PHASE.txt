@@ -1,0 +1,32 @@
+4
+
+Phase 4 — Maintenance (active).
+
+GitEasy has been a public-track product since v1.5.2 (the first version
+intended for PowerShell Gallery publication). Phases 1, 2, and 3 are
+historically closed — the decision records in DECISIONS_PHASE1.md /
+DECISIONS_PHASE2.md / DECISIONS_PHASE3.md were authored retroactively
+2026-05-28 from the artifacts that already documented these decisions
+(PROJECT_MANIFEST.md "Immutable Rules", CHANGELOG.md, README.md, the
+security-findings docs, and the public surface itself). Nothing in the
+retroactive set is invented — every decision is sourced from a real
+artifact and cites where.
+
+- Phase 1 — Design: CLOSED. Public-surface philosophy (plain-English / no
+  jargon), prefix convention (GE), license choice (MPL-2.0), language
+  scope (PowerShell only), structured-result return on every path,
+  per-invocation log files, vault-based credentials.
+- Phase 2 — Implementation: CLOSED. Public/Private/.psm1 loader layout,
+  Pester 3 test stack (PS 5.1 compatibility), fail-fast on unsafe Git
+  state, no here-strings in generated files.
+- Phase 3 — Hardening + first public release: CLOSED at v1.5.3 / v1.5.4.
+  Credential-surface review (F-01..F-06) closed; Format-GESafeUrl +
+  Format-GESafeLogLine + Test-GERemoteUrlSafe shipped as the safe-handle
+  triad; PSGallery metadata audience-first (Description, 14 tags,
+  in-repo LicenseUri, inline plaintext ReleaseNotes); contribution door
+  closed pending CLA decision.
+- Phase 4 — Maintenance: ACTIVE. Bug-fix releases as they surface; new
+  features arrive as named additions (NOT lifecycle phases) and roll
+  into the existing structure.
+
+See Docs/DECISION_REGISTER.md for the per-decision index.
