@@ -23,6 +23,7 @@ real artifact the decision is sourced from. Nothing is invented.
 | [DR-013](DECISIONS_PHASE3.md#dr-013) | Test-GERemoteUrlSafe is the single accept/reject gate for any URL the module will write back to disk or pass to git | DECIDED (retroactive) | 3 | CHANGELOG 1.5.2; Private/Test-GERemoteUrlSafe.ps1 |
 | [DR-014](DECISIONS_PHASE3.md#dr-014) | PSGallery metadata is audience-first: `Description` under 400 chars and named for sysadmins/change-managers/compliance; `LicenseUri` points at the in-repo LICENSE file; inline plaintext `ReleaseNotes` | DECIDED (retroactive — shipped at v1.5.3) | 3 | CHANGELOG 1.5.3; docs/PSGALLERY-METADATA-PLAYBOOK.md |
 | [DR-015](DECISIONS_PHASE3.md#dr-015) | No CLA today; external pull requests not accepted until the contribution path is resolved. The contribution door is "closed for now," not bolted | DECIDED (retroactive) | 3 | README.md "From Keith"; README.md 2026-05-22 note |
+| [DR-016](DECISIONS_PHASE4.md#dr-016) | UML rebuild from 3 of 12 to 12 of 12, phased across 3 follow-on sessions (Foundational / Behavioral / Cross-product) | DECIDED (2026-05-28); implementation Phase 4 follow-on | 4 | full suite-standard UML coverage |
 
 ## Phase model
 

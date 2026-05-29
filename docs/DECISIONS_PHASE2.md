@@ -112,7 +112,12 @@ user's work.
 # Decision Record 011 — No here-strings in generated files (`.ps1`, `.psm1`); `.psd1` is exempt
 
 ## Status
-DECIDED (retroactive, ratified 2026-05-28).
+DECIDED (retroactive, ratified 2026-05-28). **AMENDED 2026-05-28** per
+suite-policy #2 (Keith ratified): load-bearing template here-strings (HTML,
+CSS, SQL templates, etc.) may stay if they carry an inline `HERE-STRING
+AUDIT (DR-011 amended 2026-05-28)` comment explaining the carve-out. The
+ban still applies to incidental / convenience here-strings; the audit-comment
+exemption is for genuine template bodies only.
 
 ## Question
 Are PowerShell here-strings (`@"…"@` or `@'…'@`) allowed in this codebase?
