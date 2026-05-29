@@ -9,3 +9,4 @@
 # .nupkg only; they do not belong in the source tree.
 /docs/*.pdf
 /docs/*.tmp.html
+.wrangler/
