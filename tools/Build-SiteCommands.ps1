@@ -111,6 +111,10 @@ Get-ChildItem -Path $OutputDir -Filter '*.html' -File -ErrorAction SilentlyConti
 
 Write-Host '==> Converting Markdown to styled HTML...' -ForegroundColor Cyan
 
+# HERE-STRING AUDIT (GitEasy DR-011 amended 2026-05-28) — excluded per
+# suite-policy #2: literal HTML template body, single-quoted (never
+# interpolated). Tool-time only; output is the GitEasy docs site, never
+# shipped to PSGallery.
 $htmlTemplate = @'
 <!DOCTYPE html>
 <html lang="en">
@@ -220,6 +224,11 @@ $cardLinks = ($commandsOnly | ForEach-Object {
     "        <a href=`"$href`"><span class=`"cmd-name`">$cmdName</span><span class=`"cmd-syn`">$([System.Web.HttpUtility]::HtmlEncode($syn))</span></a>"
 }) -join "`n"
 
+# HERE-STRING AUDIT (GitEasy DR-011 amended 2026-05-28) — excluded per
+# suite-policy #2: double-quoted HTML index template. Every interpolated
+# value is HTML-encoded at the call site (see HtmlEncode above), so the
+# interpolation surface is sanitized. Tool-time only; output is the site
+# index, never shipped to PSGallery.
 $indexHtml = @"
 <!DOCTYPE html>
 <html lang="en">

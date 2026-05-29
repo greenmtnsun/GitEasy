@@ -106,6 +106,11 @@ Write-Host ''
 
 # Embedded CSS. Restrained typography, single brand-green accent,
 # generous line-height and whitespace. Tuned for printed/PDF reading.
+# HERE-STRING AUDIT (GitEasy DR-011 amended 2026-05-28) — excluded from the
+# project's "no here-strings in generated files" rule per suite-policy #2:
+# this is a literal CSS template body, single-quoted (never interpolated),
+# embedded in a docs-build tool (not in a generated module file). Tool-time
+# only; never ships to PSGallery.
 $css = @'
 @page {
   size: Letter;
@@ -229,6 +234,11 @@ foreach ($rel in $Docs) {
         $firstHeading = $info.Tokens | Where-Object { $_.GetType().Name -eq 'HeadingBlock' -and $_.Level -eq 1 } | Select-Object -First 1
         if ($firstHeading) { $title = $firstHeading.Inline.ToString() }
     }
+    # HERE-STRING AUDIT (GitEasy DR-011 amended 2026-05-28) — excluded per
+    # suite-policy #2: double-quoted HTML template body. The one interpolated
+    # value, $title, is HTML-encoded immediately above via
+    # [System.Web.HttpUtility]::HtmlEncode. Tool-time only; output is a
+    # docs PDF, never shipped to PSGallery.
     $page = @"
 <!DOCTYPE html>
 <html lang="en">
