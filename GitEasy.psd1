@@ -5,15 +5,7 @@
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
     Copyright            = '(c) 2026 Keith Ramsey. Licensed under MPL-2.0.'
-    Description          = @'
-Save your work without learning Git. GitEasy gives sysadmins, change managers, DBAs, compliance teams, and 25 other non-developer roles a set of plain-English PowerShell commands that wrap git — with no jargon, no raw output, no way to accidentally overwrite someone else's work.
-
-If you've ever closed PowerShell because the Git error message felt scarier than the change you were trying to save, this is for you.
-
-Five commands cover most days: Save-Work, Find-CodeChange, Show-History, Show-Remote, Test-Login. There's more when you're ready — and I've kept it just as plain. Check the HOW-TO doc included in this package. Give it a try — the worst that happens is you type Get-Help Save-Work.
-
-Every command logs what it did. Credentials are scrubbed before anything hits disk. PowerShell 5.1 and 7. MPL-2.0.
-'@
+    Description          = 'Save your work without learning Git. Plain-English PowerShell commands for sysadmins, change managers, DBAs, compliance teams, and 25 other non-developer roles — no jargon, no raw Git output. Save-Work, Find-CodeChange, Show-History, Test-Login. Credentials scrubbed before anything hits disk. PS 5.1 and 7. MPL-2.0.'
     PowerShellVersion    = '5.1'
     CompatiblePSEditions = @('Desktop', 'Core')
     FormatsToProcess     = @('Format\GitEasy.format.ps1xml')
@@ -63,7 +55,6 @@ Every command logs what it did. Credentials are scrubbed before anything hits di
                 'PlainEnglish'
                 'BeginnerFriendly'
                 'Windows'
-                'PowerShell'
                 'PSEdition_Desktop'
                 'PSEdition_Core'
             )
