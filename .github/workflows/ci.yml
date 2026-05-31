@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pester (pwsh)
+        shell: pwsh
+        run: Install-Module Pester -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Install Pester (Windows PowerShell 5.1)
+        shell: powershell
+        run: Install-Module Pester -Force -SkipPublisherCheck -Scope CurrentUser
+
+      - name: Run Pester suite (PS 7 + PS 5.1)
+        shell: pwsh
+        run: .\tools\Run-GitEasyPester.ps1 -Quiet
+
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -SkipPublisherCheck -Scope CurrentUser
+          $r = @('Public', 'Private') | ForEach-Object {
+            Invoke-ScriptAnalyzer -Path ".\$_" -Settings .\PSScriptAnalyzerSettings.psd1 -Recurse
+          }
+          if ($r) { $r | Format-Table -AutoSize; exit 1 }
+          Write-Host 'PSScriptAnalyzer: 0 issues.' -ForegroundColor Green

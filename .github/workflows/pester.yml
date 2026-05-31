@@ -46,6 +46,21 @@ jobs:
           $ErrorActionPreference = 'Stop'
           .\tools\Audit-PublicJargon.ps1 -ProjectRoot .
 
+      - name: PSScriptAnalyzer gate
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Module -ListAvailable PSScriptAnalyzer)) {
+              Set-PSRepository PSGallery -InstallationPolicy Trusted
+              Install-Module PSScriptAnalyzer -Force -SkipPublisherCheck
+          }
+          $r    = Invoke-ScriptAnalyzer -Path . -Recurse -Settings .\PSScriptAnalyzerSettings.psd1
+          if ($r) { $r | Format-Table -AutoSize }
+          $errs = @($r | Where-Object { $_.Severity -eq 'Error' })
+          $warn = @($r | Where-Object { $_.Severity -eq 'Warning' })
+          Write-Host "PSSA: $($errs.Count) error(s), $($warn.Count) warning(s)"
+          if ($errs.Count -gt 0) { throw "PSScriptAnalyzer found $($errs.Count) error(s)." }
+
   pester-pwsh:
     name: Pester on PowerShell 7
     runs-on: windows-latest
@@ -73,3 +88,18 @@ jobs:
               }
               throw "Pester reported $($r.FailedCount) failure(s)."
           }
+
+      - name: PSScriptAnalyzer gate
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Module -ListAvailable PSScriptAnalyzer)) {
+              Set-PSRepository PSGallery -InstallationPolicy Trusted
+              Install-Module PSScriptAnalyzer -Force -SkipPublisherCheck
+          }
+          $r    = Invoke-ScriptAnalyzer -Path . -Recurse -Settings .\PSScriptAnalyzerSettings.psd1
+          if ($r) { $r | Format-Table -AutoSize }
+          $errs = @($r | Where-Object { $_.Severity -eq 'Error' })
+          $warn = @($r | Where-Object { $_.Severity -eq 'Warning' })
+          Write-Host "PSSA: $($errs.Count) error(s), $($warn.Count) warning(s)"
+          if ($errs.Count -gt 0) { throw "PSScriptAnalyzer found $($errs.Count) error(s)." }

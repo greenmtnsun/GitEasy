@@ -4,6 +4,23 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-05-31
+
+### Changed
+
+- **PSGallery tags corrected.** `Plain-English` and `Beginner-Friendly` replaced with `PlainEnglish` and `BeginnerFriendly` — hyphenated tags are treated as single tokens by PSGallery search, making them invisible to multi-word queries. `Windows` and `PowerShell` added as high-traffic search terms the module was missing.
+- **`PSScriptAnalyzerSettings.psd1`** — `PSAvoidUsingWriteHost` explicitly disabled. Write-Host is project convention (structured output to host, not pipeline); GR-004 confirmed 0 warnings with it excluded. CI now uses this setting file, so the exclusion must be encoded here rather than passed ad-hoc.
+
+### Added
+
+- **GitHub Actions CI (`.github/workflows/ci.yml`).** Runs the full Pester suite under both PS 7 and Windows PowerShell 5.1 on every push and PR. A second step runs PSScriptAnalyzer against `Public/` and `Private/` using `PSScriptAnalyzerSettings.psd1`; fails the build on any error or warning.
+- **`tools/Test-GitEasyProjectState.ps1`** — project-state checker verifying required-folder presence, manifest sanity, manifest-exports vs Public/ parity, and convention-doc presence.
+- **Decision record workflow bootstrapped** retroactively (`docs/PHASE.txt`, `docs/DECISION_REGISTER.md`, `docs/DECISIONS_PHASE1–4.md`). 16 decisions across four phases, all sourced from existing artifacts; nothing invented.
+
+### No functional change
+
+- No public-command behavior change. No private-helper signature change. No test changes.
+
 ## [1.5.3] - 2026-05-21
 
 ### Added

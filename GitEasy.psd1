@@ -1,6 +1,6 @@
 @{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.4'
+    ModuleVersion        = '1.5.5'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
@@ -60,8 +60,10 @@ Every command logs what it did. Credentials are scrubbed before anything hits di
                 'DevOps'
                 'Automation'
                 'Workflow'
-                'Plain-English'
-                'Beginner-Friendly'
+                'PlainEnglish'
+                'BeginnerFriendly'
+                'Windows'
+                'PowerShell'
                 'PSEdition_Desktop'
                 'PSEdition_Core'
             )
@@ -69,11 +71,17 @@ Every command logs what it did. Credentials are scrubbed before anything hits di
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
-GitEasy 1.5.4 - 2026-05-24
+GitEasy 1.5.5 - 2026-05-31
 ==========================
 
-Description rewrite for PowerShell Gallery. No functional change,
-no test change, no public-command behavior change.
+PSGallery tag corrections + GitHub Actions CI. No functional change.
+
+Tags: Plain-English -> PlainEnglish, Beginner-Friendly -> BeginnerFriendly
+(hyphenated tags are single tokens in PSGallery search). Added Windows and
+PowerShell as top search terms the module was missing.
+
+CI: GitHub Actions now runs the full Pester suite (PS 7 + PS 5.1) and
+PSScriptAnalyzer on every push and PR.
 
 Full notes:
 https://github.com/greenmtnsun/GitEasy/blob/main/CHANGELOG.md
