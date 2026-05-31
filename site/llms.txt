@@ -1,0 +1,45 @@
+# GitEasy
+
+> Plain-English Git for sysadmins, DBAs, change managers, compliance teams, and the 28 other kinds of professionals who need to version-control their work without learning Git's vocabulary.
+
+GitEasy is a free, open-source PowerShell module. It wraps Git into 21 plain-English commands — no jargon, no raw Git output, one log file per invocation. Install it with `Install-Module GitEasy` from the PowerShell Gallery.
+
+## Who it's for
+
+GitEasy is built for technical professionals who are not software developers: sysadmins, database administrators, change managers, compliance analysts, network engineers, security engineers, data scientists, technical writers, QA engineers, cloud engineers, DevOps and SRE teams, auditors, educators, researchers, bioinformaticians, statisticians, forensic analysts, pen testers, BI developers, data analysts, Salesforce admins, ServiceNow admins, hardware makers, power users, system integrators, students, and anyone who tracks files in PowerShell but never wanted Git to be a course they had to pass.
+
+## The five commands most people use every day
+
+- `Save-Work 'message'` — Commit and push in one step with a plain-English message.
+- `Find-CodeChange` — Show what has changed since the last save point.
+- `Show-History` — List recent saved points in readable form.
+- `Show-Remote` — Show where this folder is published (URL scrubbed of credentials).
+- `Test-Login` — Confirm the online connection and credentials work.
+
+## Installation
+
+```powershell
+Install-Module GitEasy
+```
+
+Requires PowerShell 5.1 or later. Works on Windows. No prior Git knowledge required.
+
+## Safety model
+
+Every command runs through a single internal engine. Credentials, tokens, passwords, and IP addresses are stripped before anything is written to disk or displayed. One log file is created per invocation under AppData and self-destructs after 30 days. Commands that could cause data loss (like Undo-Changes) ask for confirmation.
+
+## All 21 commands
+
+Save-Work, Find-CodeChange, Show-History, Show-Remote, Test-Login, Undo-Changes, Restore-File, Clear-Junk, Show-Change, Search-History, Show-Releases, New-Release, New-WorkBranch, Switch-Work, Get-Updates, Show-Diagnostic, Set-Vault, Set-Token, Set-SSH, Reset-Login, Get-VaultStatus.
+
+## Links
+
+- Home: https://git-easy.pages.dev/
+- How it works: https://git-easy.pages.dev/how.html
+- Who it's for: https://git-easy.pages.dev/who.html
+- Full command reference: https://git-easy.pages.dev/commands/
+- GitHub source: https://github.com/greenmtnsun/GitEasy
+- PowerShell Gallery: https://www.powershellgallery.com/packages/GitEasy
+- License: MPL 2.0
+- Current version: 1.5.4
+- Author: Keith Ramsey (https://github.com/greenmtnsun)
