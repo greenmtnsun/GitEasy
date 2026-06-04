@@ -61,6 +61,12 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 function New-DriftResult {
+    <#
+    .DESCRIPTION
+    Internal. Builds a structured drift-check result object.
+    Steps:
+    1. Pack the status, repo path, manifest path, manifest version, diagram findings, and message into a pscustomobject.
+    #>
     param($Status, $Manifest, $ManifestVersion, $Diagrams, $Message)
     [pscustomobject]@{
         Status          = $Status            # OK | Drift | NotApplicable | Error
