@@ -32,6 +32,14 @@ function Set-Vault {
     - Use Get-VaultStatus to confirm the choice without exposing any secret values.
     - -WriteIgnoreList never overwrites your existing patterns; it only appends what is missing.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Confirm Git is installed.
+    3. Handle WhatIf and return early if applicable.
+    4. Write the chosen credential storage name to the global Git configuration.
+    5. If -WriteIgnoreList is set and a project folder was found, read the existing ignore list (if any), identify which starter patterns are missing, and append only those.
+    6. Return a structured result with the storage name and ignore list status.
+
     .LINK
     Get-VaultStatus
 

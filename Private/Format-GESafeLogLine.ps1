@@ -18,6 +18,11 @@ function Format-GESafeLogLine {
     .NOTES
     Internal. Read/output-path sanitiser. Pairs with Add-GELogStep (the sink) and Format-GESafeUrl (the URL-shaped equivalent).
 
+    Steps:
+    1. For each input line, test whether it matches the credential key=value or Header: value pattern.
+    2. Replace the value portion with [redacted] while preserving the key name and separator.
+    3. Return lines that do not match unchanged.
+
     .LINK
     Add-GELogStep
 

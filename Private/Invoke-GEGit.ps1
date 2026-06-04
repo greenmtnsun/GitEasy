@@ -29,6 +29,14 @@ function Invoke-GEGit {
     .NOTES
     Internal. Public commands route every Git call through this helper.
 
+    Steps:
+    1. Change to the working directory, run the Git command capturing combined output, then restore the previous location.
+    2. Separate the combined output into stdout lines and stderr lines (ErrorRecord objects are stderr).
+    3. Sanitize each argument before logging to strip any embedded credentials.
+    4. If a log path was provided, append a step record with the command, exit code, stdout, and stderr.
+    5. If the exit code is non-zero and -AllowFailure was not set, throw with the sanitized command and output.
+    6. Return a result object with the exit code, stdout array, and stderr array.
+
     .LINK
     Save-Work
     #>

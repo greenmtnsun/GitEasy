@@ -17,6 +17,9 @@ function Find-CodeChange {
     .NOTES
     A clean working area does not always mean everything has been published. If Find-CodeChange shows IsClean=True but Save-Work still finds work to publish, that is correct - it means there are saved points that have not been published yet.
 
+    Steps:
+    1. Delegate to the internal status helper, which reads the workspace state and returns a structured result object.
+
     .LINK
     Save-Work
 

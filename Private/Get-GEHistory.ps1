@@ -18,6 +18,12 @@
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. Query the saved-point log with a tab-separated format; return an empty array on failure.
+    3. Parse each non-blank line into a result object with repository, short identifier, date, author, and message.
+    4. Emit each result object to the pipeline.
+
     .LINK
     Show-History
     #>

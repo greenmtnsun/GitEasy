@@ -15,6 +15,11 @@
     .NOTES
     Mismatched published locations should be treated as a stop-and-investigate signal before saving or publishing. If the listed URL is not what you expected, do not save until you understand why.
 
+    Steps:
+    1. Load the list of configured published locations.
+    2. If none are found, return a single object with a "no remotes configured" message.
+    3. Otherwise, return the array of published location objects.
+
     .LINK
     Test-Login
 

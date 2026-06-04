@@ -15,6 +15,12 @@
     .NOTES
     Internal. Pure transformation. No I/O.
 
+    Steps:
+    1. Return 'None' if the URL is empty or null.
+    2. Return 'GitHub' if the URL contains github.com.
+    3. Return 'GitLab' if the URL contains gitlab.com.
+    4. Return 'Unknown' for any other URL.
+
     .LINK
     Show-Remote
 

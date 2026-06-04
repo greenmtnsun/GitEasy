@@ -18,6 +18,12 @@ function Assert-GESafeSave {
     .NOTES
     Internal. Returns $true on success; throws plain-English on every failure.
 
+    Steps:
+    1. Find the project folder root; throw a plain-English message if the path is not inside a project.
+    2. Check whether a multi-step operation is in progress; throw naming the operation if so.
+    3. Check for files with unresolved conflicts; throw listing the files if any are found.
+    4. Return $true.
+
     .LINK
     Save-Work
 

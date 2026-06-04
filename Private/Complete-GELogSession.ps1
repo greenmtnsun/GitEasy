@@ -27,6 +27,11 @@ function Complete-GELogSession {
     .NOTES
     Internal. Append-only.
 
+    Steps:
+    1. Return immediately if the log file does not exist.
+    2. Build the closing lines: separator, outcome, finish timestamp, optional user-facing message, optional inner error text.
+    3. Append all lines to the file without a UTF-8 BOM.
+
     .LINK
     Start-GELogSession
 

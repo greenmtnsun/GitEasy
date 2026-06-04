@@ -15,6 +15,12 @@
     .NOTES
     Internal. Read-only validation.
 
+    Steps:
+    1. Throw if the URL is empty or null.
+    2. Throw if the URL embeds credentials in the authority (the ://user@host pattern).
+    3. Throw if the URL is neither HTTPS nor SSH format.
+    4. Return $true.
+
     .LINK
     Set-Token
 

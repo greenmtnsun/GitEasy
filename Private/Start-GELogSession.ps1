@@ -27,6 +27,14 @@ function Start-GELogSession {
     .NOTES
     Internal. Touches the log directory.
 
+    Steps:
+    1. Resolve the log directory using Get-GELogPath.
+    2. Create the directory if it does not already exist.
+    3. Prune log files older than the retention threshold.
+    4. Build a filename from the command name and a millisecond-precision UTC timestamp.
+    5. Write the session header (time, command, repository, working area, PowerShell version, GitEasy version) without a UTF-8 BOM.
+    6. Return a session object whose Path property points at the new file.
+
     .LINK
     Add-GELogStep
 

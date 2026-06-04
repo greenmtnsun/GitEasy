@@ -15,6 +15,14 @@
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. List all configured published locations in verbose form; return an empty array on failure.
+    3. For each line, parse the remote name, URL, and purpose (fetch or push).
+    4. Sanitize the URL to remove any embedded credentials before including it in the result.
+    5. Classify the provider from the sanitized URL.
+    6. Emit each result object to the pipeline.
+
     .LINK
     Show-Remote
     #>

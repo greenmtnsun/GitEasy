@@ -19,6 +19,12 @@ function Test-GERepositoryBusy {
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. Resolve the .git directory path (may be relative in a worktree; convert to absolute).
+    3. Check for each in-progress operation sentinel file or folder (merge, cherry-pick, revert, bisect, rebase).
+    4. Return a result object with IsBusy and the deduplicated list of in-progress operation names.
+
     .LINK
     Assert-GESafeSave
     #>

@@ -18,6 +18,12 @@ function Remove-GEOldLog {
     .NOTES
     Internal. Destructive but bounded; only touches *.log files.
 
+    Steps:
+    1. Return immediately if the directory does not exist or RetentionDays is zero or negative.
+    2. Compute the cutoff date.
+    3. List all *.log files in the directory whose last-write time is older than the cutoff.
+    4. Remove each file via ShouldProcess (respects -WhatIf and -Confirm).
+
     .LINK
     Start-GELogSession
     #>

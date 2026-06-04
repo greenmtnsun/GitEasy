@@ -19,6 +19,11 @@ function Get-GEConflictFile {
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. Query for files in an unmerged/conflict state.
+    3. Return the filenames as a string array, or an empty array if there are none.
+
     .LINK
     Assert-GESafeSave
     #>

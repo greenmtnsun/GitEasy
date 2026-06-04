@@ -23,6 +23,15 @@ function Get-Updates {
     .NOTES
     Read-only with respect to your working area. Does fetch from the remote, which writes new objects to your local Git database; Save-Work decides whether and how those updates are applied.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Confirm a published location is configured and that the requested name exists.
+    3. Determine the active working area name.
+    4. Record the current position of the published location before fetching.
+    5. Fetch new saved points from the published location.
+    6. Compare the before and after positions to count how many new saved points arrived.
+    7. Report the count and return a structured result.
+
     .LINK
     Save-Work
 

@@ -28,6 +28,11 @@ function Format-GESafeUrl {
     .NOTES
     Internal. Read-only string transform. Pairs with Test-GERemoteUrlSafe (input guard) and Get-GERemoteSummary / Reset-Login (read-path callers).
 
+    Steps:
+    1. Return the input unchanged if it is null or empty.
+    2. Apply a regex that strips the "userinfo@" segment from the authority of any scheme://... URL in the text.
+    3. Return the sanitized text (SSH-shaped urls like git@host:path are left unchanged).
+
     .LINK
     Test-GERemoteUrlSafe
 

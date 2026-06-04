@@ -48,6 +48,17 @@ function Save-Work {
     - Writes commit messages without UTF-8 BOM.
     - Hides raw Git output from the user. On failure, the thrown message points at a log file with the full technical detail.
 
+    Steps:
+    1. Probe for the project folder root and the active working area; start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. If -BumpVersion is set, find the module manifest, parse the current version, bump the chosen component, write the updated file, and prefix the message with the new version number.
+    4. Read the workspace state: changed files, unpublished saved points, and the published location.
+    5. If there is nothing to save and nothing unpublished, report "No changes to save" and return.
+    6. If the workspace is clean but has unpublished saved points, publish them and return.
+    7. Stage all changes, write the message to a temporary file, and record the saved point.
+    8. If a published location is configured and -NoPush was not set, pull peer updates before pushing.
+    9. Push the saved point to the published location.
+
     .LINK
     Find-CodeChange
 

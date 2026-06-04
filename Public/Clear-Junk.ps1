@@ -35,6 +35,17 @@ function Clear-Junk {
     - Use Set-Vault -WriteIgnoreList if you want a starter .gitignore for a fresh project.
     - Refuses to run during an unfinished merge, rebase, cherry-pick, revert, or bisect.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Build the file-filter flags based on whether -Aggressive is set.
+    4. Run a preview scan to list files that would be removed.
+    5. If no files are found, report "No junk files found" and return.
+    6. If -Force was not passed, list the candidates and return without removing anything.
+    7. Remove the listed files using the project's ignore list as the filter.
+    8. Re-run the preview scan to count what remains, then calculate how many were removed.
+    9. Report how many files were removed and return a structured result.
+
     .LINK
     Find-CodeChange
 

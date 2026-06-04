@@ -41,6 +41,17 @@ function New-Release {
     - Refuses to overwrite an existing release without -Force.
     - Writes the release note without UTF-8 BOM.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Validate that the version name is a valid release identifier.
+    4. Check whether a release with that name already exists; refuse to overwrite without -Force.
+    5. Handle WhatIf and return early if applicable.
+    6. Delete the existing local release marker if -Force was given.
+    7. Write the note to a temporary file and create the annotated release marker from it.
+    8. If a published location is configured and -NoPush was not set, push the marker to it.
+    9. Return a structured result with the version, note, and publish status.
+
     .LINK
     Show-Releases
 

@@ -82,6 +82,14 @@ $UserFacingCommands = @(
 )
 
 function Test-JargonInText {
+    <#
+    .DESCRIPTION
+    Internal. Returns the subset of jargon terms that appear as whole words in the given text.
+    Steps:
+    1. Return an empty array for empty or null input.
+    2. For each term, test for a whole-word match in the text.
+    3. Return the list of matching terms.
+    #>
     param(
         [string]$Text,
         [string[]]$Terms
@@ -98,6 +106,14 @@ function Test-JargonInText {
 }
 
 function Test-StringIsUserFacing {
+    <#
+    .DESCRIPTION
+    Internal. Returns true if the given AST node is a direct argument to a user-facing output command or a throw statement.
+    Steps:
+    1. Walk up the parent chain from the given node.
+    2. Return true when a user-facing command or throw statement is found first.
+    3. Return false when a non-user-facing command is found first, or no command is found.
+    #>
     param([System.Management.Automation.Language.Ast]$Node)
 
     $parent = $Node.Parent

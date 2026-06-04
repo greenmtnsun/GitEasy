@@ -27,6 +27,13 @@ if (-not $ProjectRoot) {
 $results = New-Object System.Collections.Generic.List[object]
 
 function Add-Result {
+    <#
+    .DESCRIPTION
+    Internal. Appends a check result record to the script-scoped results list.
+    Steps:
+    1. Build a result object with check name, status, outcome, error category, and path.
+    2. Add the object to the results list.
+    #>
     param(
         [string] $Check,
         [string] $Status,

@@ -15,6 +15,12 @@
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. Try the modern working-area name query; use the fallback symbolic-ref query if it returns empty.
+    3. Throw a plain-English message if both queries return empty (detached or corrupt state).
+    4. Return the working area name.
+
     .LINK
     Find-CodeChange
     #>

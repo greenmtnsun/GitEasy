@@ -35,6 +35,13 @@ function Show-Change {
     .NOTES
     Read-only. Does not modify anything in the project. Use Find-CodeChange for a count summary; Show-Change for the actual diff text.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. If -Compact is set, run a summary view and return a single object with the combined text.
+    3. Otherwise, list the names of all changed files (respecting -NextSave and -Path filters).
+    4. For each changed file, run a full line-by-line diff and build a per-file result object.
+    5. Return the array of per-file results.
+
     .LINK
     Find-CodeChange
 

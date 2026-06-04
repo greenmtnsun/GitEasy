@@ -18,6 +18,11 @@
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root.
+    2. Query the URL of the named published location; return $null on failure.
+    3. Return $null if the result is empty; otherwise return the URL string.
+
     .LINK
     Show-Remote
     #>

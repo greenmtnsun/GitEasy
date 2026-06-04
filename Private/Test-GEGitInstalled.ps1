@@ -11,6 +11,11 @@
 
     .NOTES
     Internal. Read-only.
+
+    Steps:
+    1. Check whether the git executable is available on PATH.
+    2. Throw a plain-English message if it is not found.
+    3. Return $true.
     #>
     [CmdletBinding()]
     param()

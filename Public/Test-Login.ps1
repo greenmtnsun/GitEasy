@@ -20,6 +20,14 @@
     .NOTES
     A failed Test-Login should be fixed before running Save-Work. The returned object includes the technical exit code for follow-up.
 
+    Steps:
+    1. Find the project folder root, the active working area, and the URL of the published location.
+    2. Sanitize the URL before exposing it on the returned object (strips any embedded credentials).
+    3. If no published location is configured, return a failed result immediately.
+    4. Run a read-only connectivity check against the published location.
+    5. Sanitize any error output from the check before it reaches the returned object.
+    6. Return a structured result with the project, working area, provider, URL, pass/fail status, and exit code.
+
     .LINK
     Set-Token
 

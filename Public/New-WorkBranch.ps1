@@ -29,6 +29,15 @@ function New-WorkBranch {
     - Refuses to overwrite an existing working area.
     - Validates the name through git check-ref-format.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Validate the working area name format.
+    4. Confirm no working area with that name already exists.
+    5. Handle WhatIf and return early if applicable.
+    6. Create the new working area and switch into it.
+    7. Return a structured result with the new working area name.
+
     .LINK
     Switch-Work
 

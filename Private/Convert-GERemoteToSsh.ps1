@@ -15,6 +15,12 @@ function Convert-GERemoteToSsh {
     .NOTES
     Internal. Pure transformation. No I/O. Uses [uri] for parsing so that an embedded user:token@ cannot be mistaken for the host (the F-04 fix; sibling of the F-02 Reset-Login parse fix).
 
+    Steps:
+    1. Return the URL unchanged if it is already SSH-shaped.
+    2. Parse the URL; throw if it is not a recognized HTTPS URL.
+    3. Throw if the URL embeds credentials in the authority segment.
+    4. Build and return the SSH form: git@host:path.
+
     .LINK
     Set-Ssh
     #>

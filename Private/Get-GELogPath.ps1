@@ -18,6 +18,11 @@ function Get-GELogPath {
     .NOTES
     Internal. No I/O.
 
+    Steps:
+    1. Return the -OverridePath value if it was provided.
+    2. Return the GITEASY_LOG_PATH environment variable value if it is set.
+    3. Otherwise return the default path under %LOCALAPPDATA%\GitEasy\Logs.
+
     .LINK
     Show-Diagnostic
 

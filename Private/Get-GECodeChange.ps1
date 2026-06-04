@@ -19,6 +19,12 @@ function Get-GECodeChange {
     .NOTES
     Internal. Read-only.
 
+    Steps:
+    1. Find the project folder root and the active working area name.
+    2. Read the workspace status, unstaged change summary, and staged change summary.
+    3. Classify each status line into staged, unstaged, or untracked counts.
+    4. Build and return a result object with the repository, working area, clean flag, and all counts.
+
     .LINK
     Find-CodeChange
     #>

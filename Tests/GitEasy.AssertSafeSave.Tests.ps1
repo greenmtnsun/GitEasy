@@ -8,6 +8,14 @@ $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 # there through Save-Work; this suite asserts its own contract directly.
 # ---------------------------------------------------------------------------
 function Invoke-TestGit {
+    <#
+    .DESCRIPTION
+    Test helper. Runs git with the given arguments and returns exit code and output.
+    Steps:
+    1. Run git capturing combined output.
+    2. Throw on non-zero exit unless -AllowFailure is set.
+    3. Return a result object with the exit code and output array.
+    #>
     param(
         [Parameter(Mandatory)]
         [string[]]$ArgumentList,
@@ -37,6 +45,13 @@ function Invoke-TestGit {
 }
 
 function New-TestRepository {
+    <#
+    .DESCRIPTION
+    Test helper. Creates a minimal git repository for test isolation.
+    Steps:
+    1. Create the target directory.
+    2. Initialize a new repository, then set test-safe user name and email.
+    #>
     param([Parameter(Mandatory)] [string]$Path)
 
     New-Item -Path $Path -ItemType Directory -Force | Out-Null
@@ -55,6 +70,13 @@ function New-TestRepository {
 # Commit a file with raw git (no Save-Work — keep this suite independent of
 # the command it guards).
 function Add-TestCommit {
+    <#
+    .DESCRIPTION
+    Test helper. Writes a file and records it as a saved point in the given repository.
+    Steps:
+    1. Write the file content to the target path.
+    2. Stage all changes and record the saved point with the given message.
+    #>
     param(
         [Parameter(Mandatory)][string]$Repo,
         [Parameter(Mandatory)][string]$FileName,
@@ -73,6 +95,13 @@ function Add-TestCommit {
 }
 
 function Get-TestCurrentBranch {
+    <#
+    .DESCRIPTION
+    Test helper. Returns the active working area name for the given repository.
+    Steps:
+    1. Query the symbolic reference for the current working area.
+    2. Return the first line of output.
+    #>
     param([Parameter(Mandatory)][string]$Path)
     Push-Location -LiteralPath $Path
     try {

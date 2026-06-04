@@ -27,6 +27,14 @@ function Set-Ssh {
     - After Set-Ssh, run Test-Login to confirm key-based authentication works.
     - If SSH unexpectedly prompts for credentials, run Show-Remote and verify the URL.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. If no URL was provided, read the existing HTTPS URL and convert it to SSH form.
+    3. Validate that the final URL does not embed credentials and matches the expected SSH format.
+    4. Handle WhatIf and return early if applicable.
+    5. Set or add the published location with the SSH URL.
+    6. Return a structured result with the remote name and configured URL.
+
     .LINK
     Test-Login
 

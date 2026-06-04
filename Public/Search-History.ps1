@@ -29,6 +29,14 @@ function Search-History {
     .NOTES
     Search-History looks at every saved point in history, not just recent ones, so it can be slow on very large projects. Use -Count to limit how many results to return.
 
+    Steps:
+    1. Find the project folder root.
+    2. Build the history query using the search text as a change-detector filter; add the change text flag if -Patch was set.
+    3. Run the query; return an empty array if it produces no output or fails.
+    4. Split the output on a unique delimiter and parse each block into a structured object with identifier, date, author, and message.
+    5. If -Patch was set, attach the change text to each object.
+    6. Return the array of matching saved-point objects.
+
     .LINK
     Show-History
 

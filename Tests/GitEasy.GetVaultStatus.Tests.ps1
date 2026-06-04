@@ -7,6 +7,14 @@ $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 # Mirrors the pattern from SaveWork.Tests.ps1.
 # ---------------------------------------------------------------------------
 function Invoke-TestGit {
+    <#
+    .DESCRIPTION
+    Test helper. Runs git with the given arguments and returns exit code and output.
+    Steps:
+    1. Run git capturing combined output.
+    2. Throw on non-zero exit unless -AllowFailure is set.
+    3. Return a result object with the exit code and output array.
+    #>
     param(
         [Parameter(Mandatory)]
         [string[]]$ArgumentList,
@@ -40,6 +48,13 @@ function Invoke-TestGit {
 # Tests that mutate this key must restore it in AfterEach.
 # ---------------------------------------------------------------------------
 function Get-GlobalCredentialHelper {
+    <#
+    .DESCRIPTION
+    Test helper. Reads the global credential storage configuration value.
+    Steps:
+    1. Query the global credential.helper setting.
+    2. Return the value, or $null if not set.
+    #>
     $r = Invoke-TestGit -ArgumentList @('config', '--global', '--get', 'credential.helper') -AllowFailure
     if ($r.ExitCode -eq 0) {
         return ($r.Output | Select-Object -First 1)
@@ -48,11 +63,23 @@ function Get-GlobalCredentialHelper {
 }
 
 function Set-GlobalCredentialHelper {
+    <#
+    .DESCRIPTION
+    Test helper. Sets the global credential storage configuration to the given value.
+    Steps:
+    1. Write the given value to the global credential.helper setting.
+    #>
     param([string]$Value)
     Invoke-TestGit -ArgumentList @('config', '--global', 'credential.helper', $Value) | Out-Null
 }
 
 function Remove-GlobalCredentialHelper {
+    <#
+    .DESCRIPTION
+    Test helper. Removes the global credential storage configuration.
+    Steps:
+    1. Unset the global credential.helper setting (best effort; failure is not fatal).
+    #>
     Invoke-TestGit -ArgumentList @('config', '--global', '--unset', 'credential.helper') -AllowFailure | Out-Null
 }
 }

@@ -29,6 +29,14 @@ function Restore-File {
     - Refuses to operate on a file that does not exist or is not tracked.
     - Run Save-Work -NoPush first if you might want the discarded edits later.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Confirm the specified file is tracked in the project, not just present on disk.
+    4. Handle WhatIf and return early if applicable.
+    5. Restore the file to its last saved state.
+    6. Return a structured result with the file path and a confirmation message.
+
     .LINK
     Find-CodeChange
 

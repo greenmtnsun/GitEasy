@@ -35,6 +35,14 @@ function Show-Diagnostic {
     .NOTES
     Logs older than 30 days are automatically pruned each time a new log is written. To send a log to a colleague, attach the file directly - it is self-contained.
 
+    Steps:
+    1. Resolve the log directory from the parameter, the environment variable, or the default location.
+    2. If the directory does not exist, report that no logs have been written yet and return.
+    3. If -All is set, open the logs folder in Explorer (or print the path on non-Windows) and return.
+    4. Load all log files sorted newest first.
+    5. If -List is set, return a table of the most recent logs up to the requested count.
+    6. Otherwise, open the most recent log file in the default editor.
+
     .LINK
     Save-Work
 

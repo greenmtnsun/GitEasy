@@ -28,6 +28,17 @@
     - Do not run during an active save or merge.
     - Always run Test-Login after Reset-Login before saving more work.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Look up the URL of the named published location and parse the host from it.
+    3. Refuse if the published location is not HTTPS (SSH remotes are not supported here).
+    4. Handle WhatIf and return early if applicable.
+    5. Ask Git to reject the saved entry for that host.
+    6. Ask the credential manager to erase the cached entry (best effort; failure does not abort).
+    7. Remove matching Windows Credential Manager entries via cmdkey (best effort).
+    8. Fail with a plain-English message if no storage layer reported a successful clear.
+    9. Return a structured result confirming the host whose login was forgotten.
+
     .LINK
     Set-Token
 

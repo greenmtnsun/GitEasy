@@ -27,6 +27,12 @@ function Add-GELogStep {
     .NOTES
     Internal. Append-only.
 
+    Steps:
+    1. Return immediately if the log file does not exist.
+    2. Build the record lines: step description, exit code, optional note, and each output line indented two spaces.
+    3. Append a blank line as a record separator.
+    4. Write all lines to the file without a UTF-8 BOM.
+
     .LINK
     Start-GELogSession
 

@@ -15,6 +15,11 @@
     .NOTES
     Output is safe to log or share. It does not contain credentials.
 
+    Steps:
+    1. Confirm Git is installed.
+    2. Read the global credential storage setting from the Git configuration.
+    3. Return a structured object with the storage name and whether anything is configured.
+
     .LINK
     Set-Vault
 

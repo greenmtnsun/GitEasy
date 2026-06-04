@@ -29,6 +29,16 @@ function Undo-Changes {
     - Refuses to run during an unfinished merge, rebase, cherry-pick, revert, or bisect.
     - Refuses to run while there are unfinished conflicts.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Read the workspace state; if there is nothing to undo, report "Nothing to undo" and return.
+    4. Require -Force, -Confirm, or -WhatIf; refuse with a plain-English message if none is provided.
+    5. Handle ShouldProcess; return early if the user declines or -WhatIf is set.
+    6. Restore all tracked files to their last saved state.
+    7. Remove all untracked files and folders.
+    8. Return a structured result with the count of discarded changes.
+
     .LINK
     Find-CodeChange
 

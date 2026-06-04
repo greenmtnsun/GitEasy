@@ -3,6 +3,14 @@ $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath = Join-Path $ProjectRoot 'GitEasy.psd1'
 
 function Invoke-TestGit {
+    <#
+    .DESCRIPTION
+    Test helper. Runs git with the given arguments and returns exit code and output.
+    Steps:
+    1. Run git capturing combined output.
+    2. Throw on non-zero exit unless -AllowFailure is set.
+    3. Return a result object with the exit code and output array.
+    #>
     param(
         [Parameter(Mandatory)]
         [string[]]$ArgumentList,
@@ -32,6 +40,14 @@ function Invoke-TestGit {
 }
 
 function New-TestRepositoryWithCommit {
+    <#
+    .DESCRIPTION
+    Test helper. Creates a git repository with one saved point for test isolation.
+    Steps:
+    1. Create the target directory.
+    2. Initialize a new repository and set test-safe user name and email.
+    3. Write a README file, stage it, and create the first saved point.
+    #>
     param([Parameter(Mandatory)] [string]$Path)
 
     New-Item -Path $Path -ItemType Directory -Force | Out-Null

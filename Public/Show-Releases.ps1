@@ -24,6 +24,13 @@ function Show-Releases {
     .NOTES
     Returns structured objects you can pipe and filter. Each object has Repository, Version, Date, and Note.
 
+    Steps:
+    1. Find the project folder root.
+    2. Build the release listing query with the optional version filter pattern and count limit.
+    3. Run the query; return an empty array if it fails.
+    4. Parse each tab-separated line into a structured object with version name, date, and note.
+    5. Return the array of release objects.
+
     .LINK
     New-Release
 

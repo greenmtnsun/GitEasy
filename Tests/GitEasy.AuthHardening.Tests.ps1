@@ -9,6 +9,14 @@ $ModulePath  = Join-Path $ProjectRoot 'GitEasy.psd1'
 # real credential store. Every Reset-Login path exercised here either
 # throws before the credential step or is short-circuited by -WhatIf.
 function Invoke-TestGit {
+    <#
+    .DESCRIPTION
+    Test helper. Runs git with the given arguments and returns exit code and output.
+    Steps:
+    1. Run git capturing combined output.
+    2. Throw on non-zero exit unless -AllowFailure is set.
+    3. Return a result object with the exit code and output array.
+    #>
     param(
         [Parameter(Mandatory)]
         [string[]]$ArgumentList,
@@ -30,6 +38,13 @@ function Invoke-TestGit {
 }
 
 function New-TestRepository {
+    <#
+    .DESCRIPTION
+    Test helper. Creates a minimal git repository for test isolation.
+    Steps:
+    1. Create the target directory.
+    2. Initialize a new repository, then set test-safe user name and email.
+    #>
     param([Parameter(Mandatory)] [string]$Path)
     New-Item -Path $Path -ItemType Directory -Force | Out-Null
     Push-Location -LiteralPath $Path

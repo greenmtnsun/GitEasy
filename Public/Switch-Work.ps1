@@ -29,6 +29,15 @@ function Switch-Work {
     - Refuses to switch when there are unsaved changes in the active working area.
     - Refuses to switch into a working area that does not exist.
 
+    Steps:
+    1. Probe for the project folder root and start a diagnostic log session.
+    2. Check that no merge, rebase, or other in-progress operation is underway.
+    3. Confirm the target working area exists.
+    4. Confirm there are no unsaved changes in the active working area.
+    5. Handle WhatIf and return early if applicable.
+    6. Switch into the target working area.
+    7. Return a structured result confirming the switch.
+
     .LINK
     New-WorkBranch
 

@@ -15,6 +15,12 @@
     .NOTES
     Internal. Read-only. Many other GitEasy helpers depend on this.
 
+    Steps:
+    1. Confirm Git is installed.
+    2. Ask Git for the project folder root path.
+    3. Throw a plain-English message if the result is empty (not inside a project).
+    4. Return the root path.
+
     .LINK
     Find-CodeChange
 

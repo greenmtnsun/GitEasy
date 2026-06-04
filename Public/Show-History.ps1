@@ -26,6 +26,12 @@ function Show-History {
     .NOTES
     A saved point in the history may still be local only if your active working area is ahead of the published version. Use Save-Work without -NoPush to publish, or check Find-CodeChange and Show-Remote to see the state.
 
+    Steps:
+    1. If -Graph is set, run a visual graph of saved points and print the lines directly to the host, then return.
+    2. Load the most recent saved points up to the requested count.
+    3. If none are found, return a single "no saved points" result object.
+    4. Otherwise, return the array of saved-point objects.
+
     .LINK
     Save-Work
 

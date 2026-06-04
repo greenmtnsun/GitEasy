@@ -27,6 +27,13 @@ function Set-Token {
     - After Set-Token, run Test-Login to confirm authentication works.
     - Failures point at a log file with the full technical detail.
 
+    Steps:
+    1. Validate that the URL does not embed credentials and starts with https://.
+    2. Probe for the project folder root and start a diagnostic log session.
+    3. Handle WhatIf and return early if applicable.
+    4. Set or add the published location with the provided HTTPS URL.
+    5. Return a structured result with the remote name and configured URL.
+
     .LINK
     Set-Vault
 
