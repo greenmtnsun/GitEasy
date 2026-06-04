@@ -1,5 +1,5 @@
 @startuml GitEasyDataFlow
-title GitEasy - Data Flow (v1.5.3)
+title GitEasy - Data Flow (v1.5.5)
 skinparam componentStyle rectangle
 skinparam shadowing false
 left to right direction

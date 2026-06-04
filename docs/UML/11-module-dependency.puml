@@ -1,0 +1,41 @@
+@startuml GitEasyModuleDependency
+title GitEasy - Module Dependencies (v1.5.5)
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+package "GitEasy" {
+  component "GitEasy.psd1\nGitEasy.psm1\n21 public + 21 private functions" as Core
+}
+
+package "Hard runtime dependency\n(absent = module fails)" {
+  component "git.exe\n(any recent version)" <<boundary>> as Git
+}
+
+package "Soft runtime dependencies\n(absent = reduced function, not crash)" {
+  component "git-credential-manager (GCM)\nor compatible credential helper" <<boundary>> as GCM
+  component "cmdkey.exe\n(Windows Credential Manager)" <<boundary>> as Cmdkey
+  component "SSH agent + key pair\n(for SSH remotes)" <<boundary>> as SSH
+}
+
+package "External services\n(reached through git.exe)" {
+  component "GitHub / GitLab\nor any HTTPS/SSH Git remote" <<boundary>> as Remote
+}
+
+package "Development dependencies\n(tests only; not shipped)" {
+  component "Pester 3+ (PS 5.1)\nor Pester 5+ (PS 7)" <<helper>> as Pester
+  component "PSScriptAnalyzer" <<helper>> as PSSA
+}
+
+Core --> Git : all git calls route\nthrough Invoke-GEGit (single seam)
+Core --> GCM : Set-Vault writes helper config;\nReset-Login erases stored entry
+Core --> Cmdkey : Reset-Login only (best-effort;\nWindows; failure non-fatal)
+Core --> SSH : Set-Ssh writes SSH remote URL;\ngit.exe handles key auth from there
+Core --> Remote : through git.exe (fetch / push)
+
+Pester ..> Core : imports for testing
+PSSA ..> Core : lints at build time
+
+note bottom of Core
+  Module imports nothing at runtime.\ngit.exe is the only hard dep.\nAll other deps are opt-in paths.
+end note
+@enduml

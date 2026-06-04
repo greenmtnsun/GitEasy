@@ -1,5 +1,5 @@
 @startuml GitEasyArchitectureOverview
-title GitEasy - Architecture Overview (v1.5.3)
+title GitEasy - Architecture Overview (v1.5.5)
 skinparam componentStyle rectangle
 skinparam shadowing false
 left to right direction

@@ -1,5 +1,5 @@
 @startuml GitEasyInternalCallGraph
-title GitEasy - Internal Call Graph (v1.5.3)
+title GitEasy - Internal Call Graph (v1.5.5)
 skinparam componentStyle rectangle
 skinparam shadowing false
 

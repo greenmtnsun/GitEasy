@@ -1,0 +1,29 @@
+@startuml GitEasyDeployment
+title GitEasy - Deployment View (v1.5.5)
+skinparam shadowing false
+
+node "User workstation" {
+  component "PowerShell session\n(PS 5.1 or PS 7)" as PSSession
+  component "GitEasy module\n(GitEasy.psd1 + GitEasy.psm1)" <<command>> as Module
+  component "git.exe\n(hard runtime dep)" <<boundary>> as Git
+  component "Credential stores\nGCM / Windows Vault / SSH agent" <<store>> as Creds
+  database "%LOCALAPPDATA%\\GitEasy\\Logs\\\n(one .log per invocation;\n30-day auto-prune)" <<store>> as Logs
+  file "Temp commit/tag message file\n(GUID-named; deleted in finally)" <<store>> as TempFile
+}
+
+database ".git repository\n(local filesystem)" <<store>> as LocalRepo
+
+cloud "Network remote\ngithub.com / gitlab.com" <<boundary>> as Remote
+
+PSSession --> Module : loads
+Module --> Git : all git work routes\nthrough Invoke-GEGit (single point)
+Git --> LocalRepo : read / write
+Git --> Remote : fetch (read) / push (write)\nHTTPS or SSH
+Module --> Creds : Set-Token / Set-Ssh /\nSet-Vault write;\nTest-Login / Get-VaultStatus read
+Module --> Logs : write one log per invocation;\nAdd-GELogStep appends per git step
+Module --> TempFile : Save-Work and New-Release\nwrite here; deleted after git call
+
+note bottom of Module
+  No PowerShell module imports at runtime.\ngit.exe is the only hard runtime dependency.
+end note
+@enduml

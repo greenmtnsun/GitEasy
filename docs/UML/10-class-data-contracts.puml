@@ -1,0 +1,191 @@
+@startuml GitEasyDataContracts
+title GitEasy - PSCustomObject Data Contracts (v1.5.5)
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty methods
+
+package "Navigation and query" {
+  class "CodeChange" <<result>> {
+    +Repository : string
+    +Branch : string
+    +IsClean : bool
+    +ChangeCount : int
+    +StagedCount : int
+    +UnstagedCount : int
+    +UntrackedCount : int
+    +Status : string[]
+    +DiffStat : string[]
+    +StagedDiffStat : string[]
+    ..
+    PSTypeName: GitEasy.CodeChange
+    Commands: Find-CodeChange
+  }
+
+  class "SavedPointEntry" <<result>> {
+    +Repository : string
+    +Hash : string
+    +Date : string
+    +Author : string
+    +Message : string
+    +Change : string  [with -Patch only]
+    ..
+    Commands: Show-History (array),
+    Search-History (array)
+  }
+
+  class "ReleaseEntry" <<result>> {
+    +Repository : string
+    +Version : string
+    +Date : string
+    +Note : string
+    ..
+    Commands: Show-Releases (array)
+  }
+
+  class "RemoteEntry" <<result>> {
+    +Repository : string
+    +Remote : string
+    +Purpose : string
+    +Provider : string
+    +Url : string
+    ..
+    Commands: Show-Remote (array)
+  }
+
+  class "DiffEntry" <<result>> {
+    +Repository : string
+    +Path : string
+    +NextSave : bool
+    +Diff : string
+    ..
+    Commands: Show-Change (per-file array)
+    Compact variant: {Repository, NextSave, Summary}
+  }
+
+  class "DiagLogEntry" <<result>> {
+    +Name : string
+    +LastWritten : string
+    +SizeKB : decimal
+    ..
+    Commands: Show-Diagnostic -List (array)
+  }
+}
+
+package "Action results" {
+  class "WorkAreaResult" <<result>> {
+    +Repository : string
+    +Branch : string
+    +Message : string
+    ..
+    Commands: New-WorkBranch, Switch-Work
+  }
+
+  class "JunkResult" <<result>> {
+    +Repository : string
+    +Candidates : string[]
+    +Removed : int
+    +Message : string
+    ..
+    Commands: Clear-Junk
+  }
+
+  class "RestoreResult" <<result>> {
+    +Repository : string
+    +Path : string
+    +Message : string
+    ..
+    Commands: Restore-File
+  }
+
+  class "UndoResult" <<result>> {
+    +Repository : string
+    +Discarded : int
+    +Message : string
+    ..
+    Commands: Undo-Changes
+  }
+
+  class "UpdatesResult" <<result>> {
+    +Repository : string
+    +Remote : string
+    +Branch : string
+    +NewSavedPoints : int
+    +Message : string
+    ..
+    Commands: Get-Updates
+  }
+
+  class "ReleaseResult" <<result>> {
+    +Repository : string
+    +Version : string
+    +Note : string
+    +Published : bool
+    +Message : string
+    ..
+    Commands: New-Release
+  }
+}
+
+package "Credential and auth" {
+  class "LoginResult" <<result>> {
+    +Repository : string
+    +Branch : string
+    +Remote : string
+    +Provider : string
+    +Url : string
+    +Passed : bool
+    +ExitCode : int?
+    +Message : string
+    ..
+    Commands: Test-Login
+  }
+
+  class "RemoteConfigResult" <<result>> {
+    +Repository : string
+    +Remote : string
+    +Url : string
+    +Message : string
+    ..
+    Commands: Set-Token, Set-Ssh
+  }
+
+  class "VaultStatus" <<result>> {
+    +CredentialHelper : string
+    +Configured : bool
+    ..
+    Commands: Get-VaultStatus
+  }
+
+  class "VaultSetResult" <<result>> {
+    +CredentialHelper : string
+    +IgnoreList : IgnoreListInfo?
+    +Message : string
+    ..
+    Commands: Set-Vault
+  }
+
+  class "IgnoreListInfo" <<result>> {
+    +Path : string
+    +Added : int
+    +Skipped : int
+    ..
+    Nested in VaultSetResult.IgnoreList
+  }
+
+  class "ResetLoginResult" <<result>> {
+    +Host : string
+    +Message : string
+    ..
+    Commands: Reset-Login
+  }
+}
+
+VaultSetResult "1" *-- "0..1" IgnoreListInfo : IgnoreList
+
+note bottom of "CodeChange"
+  Save-Work does NOT return a result object.
+  It writes to the host and returns void.
+  All other mutating commands return
+  a structured result or throw.
+end note
+@enduml

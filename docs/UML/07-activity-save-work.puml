@@ -1,0 +1,91 @@
+@startuml GitEasySaveWorkActivity
+title GitEasy - Save-Work End-to-End Activity (v1.5.5)
+skinparam shadowing false
+
+start
+
+:Probe repo root and active working area\n(AllowFailure — partial success is ok here);
+:Start-GELogSession;
+
+:Assert-GESafeSave\n(busy-state check + conflict check);
+
+if (not inside a project folder?) then (yes)
+  :throw "not inside a saveable workspace";
+  stop
+endif
+
+if (-BumpVersion?) then (yes)
+  :Find .psd1 manifest\n(root, then one level deep);
+  :Parse ModuleVersion;\nbump Major / Minor / Build / Revision;
+  :Write updated manifest without UTF-8 BOM;
+  :Prefix message with [vX.Y.Z];
+endif
+
+:git status --porcelain=v1;
+:Check upstream ref + count ahead commits;
+
+if (workspace clean\nAND ahead-count = 0?) then (yes)
+  :Write-Host "No changes to save";
+  :Complete-GELogSession SUCCESS;
+  stop
+endif
+
+if (workspace clean\nAND ahead-count > 0?) then (yes)
+  if (-NoPush or no remote?) then (yes)
+    :Report "N saved change(s) not yet published";
+    :Complete-GELogSession SUCCESS;
+    stop
+  else (no)
+    :git push (or git push -u if no upstream);
+    :Write-Host "Published N saved change(s)";
+    :Complete-GELogSession SUCCESS;
+    stop
+  endif
+endif
+
+note right
+  Dirty path (unsaved changes exist).
+end note
+
+if (-WhatIf?) then (yes)
+  :Complete-GELogSession SUCCESS (WhatIf);
+  stop
+endif
+
+:Default message = "Save work <timestamp>"\nif -Message was not provided;
+:git add --all;
+:Write message to GUID temp file\nwithout UTF-8 BOM;
+:git commit -F <tempfile>;
+note right
+  finally block deletes tempfile.
+end note
+:Write-Host "Saved your work to '<branch>'";
+
+if (-NoPush?) then (yes)
+  :Report "Saved locally only";
+  :Complete-GELogSession SUCCESS;
+  stop
+endif
+
+if (no remote configured?) then (yes)
+  :Report "No published location. Saved locally only";
+  :Complete-GELogSession SUCCESS;
+  stop
+endif
+
+if (upstream tracking ref exists?) then (yes)
+  :git pull --rebase;
+  if (rebase conflict?) then (yes)
+    :git rebase --abort;
+    :throw conflict message;
+    :Complete-GELogSession FAILURE;
+    stop
+  endif
+endif
+
+:git push (or git push -u if no upstream);
+:Write-Host "Published your work to '<branch>'";
+:Complete-GELogSession SUCCESS;
+stop
+
+@enduml

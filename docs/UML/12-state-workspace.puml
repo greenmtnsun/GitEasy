@@ -1,0 +1,52 @@
+@startuml GitEasyWorkspaceState
+title GitEasy - Workspace State Machine (v1.5.5)
+skinparam shadowing false
+
+[*] --> CheckingEntry : Save-Work called
+
+state CheckingEntry {
+  [*] --> GuardCheck : entry
+  GuardCheck : Assert-GESafeSave
+}
+
+state BlockedByGuard : Busy or unresolved conflicts.\nThrows before any git call.
+CheckingEntry --> BlockedByGuard : MERGE_HEAD / CHERRY_PICK_HEAD /\nREVERT_HEAD / BISECT_START /\nrebase-merge / rebase-apply present\nOR unresolved conflict files exist
+BlockedByGuard --> [*]
+
+state ReadingState {
+  [*] --> ProbeWorkspace
+  ProbeWorkspace : git status --porcelain\ngit rev-parse @{u} (upstream)\nrev-list --count (ahead)
+}
+
+CheckingEntry --> ReadingState : guard passes
+
+state "Nothing to do" as NothingToDo : IsClean AND aheadCount = 0
+state "Pending publish" as PendingPublish : IsClean AND aheadCount > 0
+state "Unsaved changes" as Dirty : !IsClean
+
+ReadingState --> NothingToDo
+ReadingState --> PendingPublish
+ReadingState --> Dirty
+
+NothingToDo --> [*] : "No changes to save"
+
+PendingPublish --> [*] : -NoPush or no remote\n"N saved change(s) not yet published"
+PendingPublish --> Published : push succeeds
+
+state "Committed locally" as Committed
+Dirty --> Committed : git add --all;\ngit commit -F <tempfile>
+
+Committed --> [*] : -NoPush or no remote\n"Saved locally only"
+Committed --> PullRebase : upstream exists
+
+state PullRebase : git pull --rebase
+PullRebase --> Committed : rebase conflict\n(abort + throw)
+PullRebase --> Published : rebase + push succeed
+
+state Published : "Published your work\nto '<branch>'"
+Published --> [*]
+
+note right of Dirty
+  -BumpVersion path runs before\nReadingState if the flag is set:\nmanifest is updated and message\nprefixed before status is read.
+end note
+@enduml

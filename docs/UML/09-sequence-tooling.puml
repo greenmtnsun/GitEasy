@@ -1,0 +1,37 @@
+@startuml GitEasyToolingAudit
+title GitEasy - Jargon Audit Tool Sequence (v1.5.5)\ntools/Audit-PublicJargon.ps1
+skinparam shadowing false
+
+actor User as U
+participant "Audit-PublicJargon.ps1" as Audit
+participant "PS Language.Parser\n(AST)" as AST
+participant "Test-StringIsUserFacing" as SF
+participant "Test-JargonInText" as JT
+
+U -> Audit : .\\tools\\Audit-PublicJargon.ps1 [-ProjectRoot <path>]
+
+Audit -> Audit : validate ProjectRoot and Public\\ exist;\nload HARD + SOFT jargon vocabulary
+
+loop for each Public\\*.ps1 file
+  Audit -> AST : ParseFile(path) -> AST + tokens
+  AST --> Audit : abstract syntax tree
+
+  loop for each StringConstantExpressionAst node
+    Audit -> SF : is this node user-facing?\n(parent = Write-Host/Warning/Error\nor a throw statement?)
+    SF --> Audit : $true / $false
+
+    alt string is user-facing
+      Audit -> JT : scan for HARD jargon\n(upstream, HEAD, rebase, stash, ...)
+      JT --> Audit : matched terms or empty
+      Audit -> JT : scan for SOFT jargon\n(commit, push, branch, merge, ...)
+      JT --> Audit : matched terms or empty
+    end
+  end
+end
+
+Audit -> U : print findings grouped by file;\nHARD flagged for mandatory fix,\nSOFT flagged for contextual review
+
+note right of Audit
+  Read-only. Never modifies any file.\nExit 0 even when findings exist;\ncaller decides how to gate on results.
+end note
+@enduml

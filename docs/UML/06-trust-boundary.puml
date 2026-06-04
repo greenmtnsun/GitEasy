@@ -1,0 +1,44 @@
+@startuml GitEasyTrustBoundary
+title GitEasy - Security / Trust-Boundary View (v1.5.5)
+left to right direction
+skinparam shadowing false
+
+package "Untrusted inputs" {
+  component "User-supplied remote URL\n(Set-Token, Set-Ssh)" <<boundary>> as UserUrl
+  component ".git/config read path\n(Get-GERemoteUrl)" <<boundary>> as GitConfig
+  component "git credential layer output\n(Reset-Login stdout/stderr)" <<boundary>> as CredOut
+  component "git error messages\n(may quote the remote URL)" <<boundary>> as GitErr
+  component "In-progress operation state\n(.git/MERGE_HEAD etc.)" <<boundary>> as GitState
+}
+
+package "Security guards" {
+  component "Test-GERemoteUrlSafe\n[F-01, F-04]\nreject URLs with embedded user:token@" <<helper>> as G1
+  component "Format-GESafeUrl\n[F-01, F-05, F-06]\nstrip userinfo@ from URL-shaped text" <<helper>> as G2
+  component "Format-GESafeLogLine\n[F-02, F-03]\nredact password=/token= lines" <<helper>> as G3
+  component "Assert-GESafeSave\n[state guard]\nreject when merge/rebase/conflict active" <<helper>> as G4
+}
+
+package "Safe zone" {
+  component "Invoke-GEGit" <<helper>> as Engine
+  component "Log session helpers\n(Start / Add / Complete)" <<helper>> as LogH
+  database "Diagnostic log files\n(plaintext on disk)" <<store>> as Logs
+}
+
+UserUrl --> G1 : input gate;\nSet-Token + Set-Ssh call this\nbefore writing to git remote
+GitConfig --> G2 : read-path gate;\nGet-GERemoteUrl output sanitised\nbefore display or log
+CredOut --> G3 : output sanitiser;\nReset-Login captures cred-layer output\nand passes through this first
+GitErr --> G2 : error message sanitiser;\nTest-Login sanitises ls-remote errors\nbefore returning them [F-05]
+GitState --> G4 : state guard;\nchecks MERGE_HEAD, CHERRY_PICK_HEAD,\nREVERT_HEAD, BISECT_START,\nrebase-merge, rebase-apply
+
+G1 --> Engine : validated URL only
+G2 --> LogH : sanitised text
+G3 --> LogH : sanitised credential output
+G4 --> Engine : guard passes, git call proceeds
+
+Engine --> G2 : [F-06] sanitise each ArgumentList\nelement before log step and throw
+LogH --> Logs : write
+
+note bottom of G4
+  Checked by every mutating command\n(Save-Work, Undo-Changes, New-WorkBranch,\nSwitch-Work, Clear-Junk, New-Release,\nRestore-File) before any git call.
+end note
+@enduml

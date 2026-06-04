@@ -1,7 +1,34 @@
 # GitEasy — Architecture (UML)
 
-Technical-takeover documentation for **GitEasy v1.5.3**. Three views plus this
-walkthrough. Reconciled against the working tree on 2026-05-21 (manifest
+Documentation for **GitEasy v1.5.5**. Twelve diagrams covering the standard
+suite-wide set (per DR-016, DECISIONS_PHASE4.md), plus this walkthrough.
+Source is canonical; no rendered images are committed.
+
+## Diagram index
+
+| # | File | View |
+|---|------|------|
+| — | [01-architecture-overview.puml](01-architecture-overview.puml) | Component overview — module + external systems |
+| — | [02-internal-call-graph.puml](02-internal-call-graph.puml) | Internal call dependency — three command-group paths |
+| — | [03-data-flow.puml](03-data-flow.puml) | Data flow — reads/writes per artifact |
+| 4 | [04-use-case.puml](04-use-case.puml) | Use case — actors and what they ask |
+| 5 | [05-deployment.puml](05-deployment.puml) | Deployment — workstation, git.exe, remote, creds, logs |
+| 6 | [06-trust-boundary.puml](06-trust-boundary.puml) | Trust boundary — F-01..F-06 guards + state guard |
+| 7 | [07-activity-save-work.puml](07-activity-save-work.puml) | Activity — Save-Work end-to-end flow |
+| 8 | [08-sequence-credential-path.puml](08-sequence-credential-path.puml) | Sequence — Set-Token/Set-Ssh → Test-Login → Reset-Login |
+| 9 | [09-sequence-tooling.puml](09-sequence-tooling.puml) | Sequence — Audit-PublicJargon.ps1 end-to-end |
+| 10 | [10-class-data-contracts.puml](10-class-data-contracts.puml) | Class — all 21 public command PSCustomObject return shapes |
+| 11 | [11-module-dependency.puml](11-module-dependency.puml) | Component — hard/soft/dev deps, external services |
+| 12 | [12-state-workspace.puml](12-state-workspace.puml) | State — Save-Work workspace state machine |
+
+Diagrams 01–03 are the original three from the v1.5.3 technical-takeover pass;
+the prose walkthrough below covers those three in depth. Diagrams 04–12 were
+added 2026-06-04 per DR-016.
+
+---
+
+Technical-takeover documentation for the original three views follows.
+Reconciled against the working tree on 2026-05-21 (manifest
 `ModuleVersion = 1.5.3`). Source is canonical; no rendered images are committed.
 
 > **1.5.3 reconciliation note.** 1.5.3 is a metadata-only release —
@@ -158,16 +185,23 @@ Things a new owner should know that are **not** obvious from the code:
 
 ## Honest gaps in this documentation
 
-- **3 views, by request.** This is the technical-takeover 3-view set
-  (overview, call graph, data flow), not the suite's 12-diagram canonical set.
-  No use-case, deployment, state-lifecycle, sequence, or class-contract
-  diagrams. The result-record shapes (`Test-Login`'s pscustomobject, the
-  `Invoke-GEGit` `{ExitCode,Output,Stderr}` shape) are **not** diagrammed.
-- **Call graph is at command-group granularity.** Edges were traced by reading
-  the engine, `Assert-GESafeSave`, `Start-GELogSession`, and grep of all 21
-  command call sites, plus full reads of `Save-Work`, `Test-Login`,
-  `Show-Diagnostic` as path exemplars. Per-command call *ordering* inside the
-  other 18 commands is inferred from the path pattern, not line-verified.
-- **Version pin is manual.** Titles carry `(v1.5.2)`; nothing automatically
-  checks the pin against the manifest. Update titles in the same commit as any
-  `ModuleVersion` bump.
+- **Original 3-view gap now closed.** Diagrams 04–12 (added 2026-06-04, DR-016)
+  provide the use-case, deployment, trust-boundary, activity, sequence, class,
+  state, and dependency views that were absent from the takeover pass.
+- **Call graph is at command-group granularity.** Edges in 02-internal-call-graph
+  were traced from the engine, `Assert-GESafeSave`, `Start-GELogSession`, and
+  grep of all 21 command call sites. Per-command call *ordering* inside the 18
+  non-exemplar commands is inferred from the path pattern, not line-verified.
+- **No fan-out sequence.** GitEasy operates on one repository at a time; there is
+  no per-target fan-out equivalent to ClusterValidator's `Invoke-ClvRemote`.
+  Diagram 08 covers the credential single-flow path instead.
+- **Save-Work returns void.** Unlike all other public commands, Save-Work writes to
+  the host and returns nothing. Diagram 10 notes this; a future version may add
+  a result object.
+- **PlantUML render verification not performed.** PlantUML is not installed in the
+  authoring environment for diagrams 04–12. Use `Alt+D` in VS Code or
+  plantuml.com to render-check before treating these as gate-passing artifacts.
+- **Version pin is manual.** Titles carry `(v1.5.5)`; nothing in the repo yet
+  automatically checks the pin against the manifest. Update titles in the same
+  commit as any `ModuleVersion` bump. (The `Test-UmlVersionDrift.ps1` drift
+  checker from the suite toolkit can be copied into `tools/` to automate this.)
