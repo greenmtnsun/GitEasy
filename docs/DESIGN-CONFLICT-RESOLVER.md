@@ -246,9 +246,16 @@ All `git` calls go through `Invoke-GEGit` so credential scrubbing
 2. **Interactive prompt** vs **list-then-switch** (§5.1) — proposal is
    list-then-switch for testability; do you want a `-Interactive` mode later?
 3. **`-KeepBoth` / union** — ship in v1, or defer (it has the most edge cases)?
+   *Current lean (2026-06-06): include in v1, but Keith was unsure — revisit
+   when implementation starts; the binary-refusal + both-added-no-base edge
+   cases in §5.7 are the deciding factor.*
 4. **`-OpenInTool`** — include the opt-in option-A escape hatch in v1, or leave
-   it out entirely?
+   it out entirely? *Current lean (2026-06-06): include in v1.*
 5. **Version** — 1.6.0 (minor, new command) confirmed?
+
+> **Implementation status (2026-06-06):** held by Keith. Design is ratified
+> (DR-017); coding deferred to a later session. Scope lean above is a
+> preference, not a lock — confirm §9 items 1–5 at the start of that session.
 
 ---
 
