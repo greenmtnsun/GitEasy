@@ -1,13 +1,17 @@
-# GitEasy — Design Proposal: Resolve-Conflict
+# GitEasy — Feasibility Study: a conflict resolver for GitEasy
 
-**Status:** RATIFIED as DR-017 (2026-06-06). Design accepted; implementation pending.
+**Status:** FEASIBILITY STUDY — exploratory only. Nothing here is decided or
+ratified. No DR has been changed.
 **Date:** 2026-06-06
-**Affects:** DR-010 (amended), DR-005, DR-006, PROJECT_MANIFEST.md, public surface
+**Would touch (if pursued):** DR-010, DR-005, DR-006, PROJECT_MANIFEST.md, public surface
 
-The design below is accepted (DR-017 in `DECISIONS_PHASE4.md`; DR-010 amended in
-`DECISIONS_PHASE2.md`). No shipped code yet — an implementation session follows.
-The DR text reproduced at the bottom of this doc is the source that was ratified.
-The five items in §9 remain open implementation-detail calls, not blockers.
+This document explores *whether and how* GitEasy could integrate a conflict
+resolver. It is an inquiry, not a commitment. The decision records
+(`DECISIONS_PHASE2.md`, `DECISIONS_PHASE4.md`, `DECISION_REGISTER.md`) are
+**unchanged** — DR-010 still stands as written. The DR text reproduced at the
+bottom of this doc is a *draft for discussion only*, showing what a decision
+would look like if Keith chose to make one. The five items in §9 are open
+questions, not settled calls.
 
 ---
 
@@ -245,28 +249,28 @@ All `git` calls go through `Invoke-GEGit` so credential scrubbing
    call.
 2. **Interactive prompt** vs **list-then-switch** (§5.1) — proposal is
    list-then-switch for testability; do you want a `-Interactive` mode later?
-3. **`-KeepBoth` / union** — ship in v1, or defer (it has the most edge cases)?
-   *Current lean (2026-06-06): include in v1, but Keith was unsure — revisit
-   when implementation starts; the binary-refusal + both-added-no-base edge
-   cases in §5.7 are the deciding factor.*
-4. **`-OpenInTool`** — include the opt-in option-A escape hatch in v1, or leave
-   it out entirely? *Current lean (2026-06-06): include in v1.*
-5. **Version** — 1.6.0 (minor, new command) confirmed?
+3. **`-KeepBoth` / union** — worth including, or skip (it has the most edge
+   cases — binary refusal, both-added-no-base, see §5.7)?
+4. **`-OpenInTool`** — worth the opt-in option-A escape hatch, or not?
+5. **Version** — if pursued, 1.6.0 (minor, new command) would fit.
 
-> **Implementation status (2026-06-06):** held by Keith. Design is ratified
-> (DR-017); coding deferred to a later session. Scope lean above is a
-> preference, not a lock — confirm §9 items 1–5 at the start of that session.
+> **Status (2026-06-06):** feasibility study only. Nothing decided. No DR
+> changed. If Keith wants to pursue it, the next step would be a real decision
+> on §9 items 1–5, then a separate implementation session.
 
 ---
 
-## DR-017 (ratified — now lives in `DECISIONS_PHASE4.md`)
+## Draft DR-017 — FOR DISCUSSION ONLY (not written to any decision record)
+
+The block below is a *what-if* sketch to show the shape a decision could take.
+It has **not** been added to `DECISIONS_PHASE4.md`. DR-017 does not exist.
 
 ```
 ## DR-017
 # Decision Record 017 — Resolve-Conflict: plain-English, strategy-based conflict resolution
 
 ## Status
-DECIDED (2026-06-06; Keith ratified). Implementation Phase 4 follow-on.
+DRAFT FOR DISCUSSION — not decided.
 
 ## Question
 GitEasy detects conflicts and refuses (DR-010) but offers the user no way out,
@@ -301,12 +305,15 @@ the ours/theirs mapping inverts under rebase.
 4
 ```
 
-## DR-010 amendment (ratified — now lives under DR-010 in `DECISIONS_PHASE2.md`)
+## Draft DR-010 amendment — FOR DISCUSSION ONLY (not written to any decision record)
+
+The text below is a *what-if* sketch. DR-010 in `DECISIONS_PHASE2.md` is
+**unchanged**; this amendment has not been applied.
 
 ```
-**AMENDED 2026-06-06 (per DR-017, Keith ratified):** Fail-fast remains the law
-for Save-Work, Switch-Work, and New-WorkBranch. Resolve-Conflict is the single
-sanctioned exception: it is allowed to operate on a repo with unresolved *merge*
-conflicts because resolving them is its sole purpose. Rebase/cherry-pick/revert/
-bisect in-progress states remain fail-fast for all commands.
+**AMENDED (draft, not applied):** Fail-fast remains the law for Save-Work,
+Switch-Work, and New-WorkBranch. Resolve-Conflict would be the single sanctioned
+exception: allowed to operate on a repo with unresolved *merge* conflicts because
+resolving them is its sole purpose. Rebase/cherry-pick/revert/bisect in-progress
+states remain fail-fast for all commands.
 ```

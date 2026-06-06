@@ -76,13 +76,7 @@ needs.
 # Decision Record 010 — Fail-fast on unsafe Git state
 
 ## Status
-DECIDED (retroactive, ratified 2026-05-28). **AMENDED 2026-06-06** per
-DR-017 (Keith ratified): fail-fast remains the law for `Save-Work`,
-`Switch-Work`, and `New-WorkBranch`. `Resolve-Conflict` is the single
-sanctioned exception — it is allowed to operate on a repo with unresolved
-*merge* conflicts because resolving them is its sole purpose. Rebase /
-cherry-pick / revert / bisect in-progress states remain fail-fast for all
-commands.
+DECIDED (retroactive, ratified 2026-05-28).
 
 ## Question
 What does `Save-Work` (and other state-changing commands) do when the
