@@ -1,13 +1,13 @@
 # GitEasy — Design Proposal: Resolve-Conflict
 
-**Status:** PROPOSED (awaiting Keith's ratification)
-**Author of proposal:** drafted for review
+**Status:** RATIFIED as DR-017 (2026-06-06). Design accepted; implementation pending.
 **Date:** 2026-06-06
-**Affects:** DR-010 (amendment), DR-005, DR-006, PROJECT_MANIFEST.md, public surface
+**Affects:** DR-010 (amended), DR-005, DR-006, PROJECT_MANIFEST.md, public surface
 
-This is a design proposal, not shipped code. Nothing here changes behaviour
-until Keith ratifies the DR-017 block at the bottom and an implementation
-session follows.
+The design below is accepted (DR-017 in `DECISIONS_PHASE4.md`; DR-010 amended in
+`DECISIONS_PHASE2.md`). No shipped code yet — an implementation session follows.
+The DR text reproduced at the bottom of this doc is the source that was ratified.
+The five items in §9 remain open implementation-detail calls, not blockers.
 
 ---
 
@@ -252,14 +252,14 @@ All `git` calls go through `Invoke-GEGit` so credential scrubbing
 
 ---
 
-## Proposed DR-017 (ready to paste into `DECISIONS_PHASE4.md` on ratification)
+## DR-017 (ratified — now lives in `DECISIONS_PHASE4.md`)
 
 ```
 ## DR-017
 # Decision Record 017 — Resolve-Conflict: plain-English, strategy-based conflict resolution
 
 ## Status
-PROPOSED (2026-06-06). Awaiting Keith's ratification.
+DECIDED (2026-06-06; Keith ratified). Implementation Phase 4 follow-on.
 
 ## Question
 GitEasy detects conflicts and refuses (DR-010) but offers the user no way out,
@@ -294,12 +294,12 @@ the ours/theirs mapping inverts under rebase.
 4
 ```
 
-## Proposed DR-010 amendment (ready to paste under DR-010 in `DECISIONS_PHASE2.md`)
+## DR-010 amendment (ratified — now lives under DR-010 in `DECISIONS_PHASE2.md`)
 
 ```
-**AMENDED 2026-06-06 (per DR-017, pending ratification):** Fail-fast remains
-the law for Save-Work, Switch-Work, and New-WorkBranch. Resolve-Conflict is the
-single sanctioned exception: it is allowed to operate on a repo with unresolved
-*merge* conflicts because resolving them is its sole purpose. Rebase/cherry-pick/
-revert/bisect in-progress states remain fail-fast for all commands.
+**AMENDED 2026-06-06 (per DR-017, Keith ratified):** Fail-fast remains the law
+for Save-Work, Switch-Work, and New-WorkBranch. Resolve-Conflict is the single
+sanctioned exception: it is allowed to operate on a repo with unresolved *merge*
+conflicts because resolving them is its sole purpose. Rebase/cherry-pick/revert/
+bisect in-progress states remain fail-fast for all commands.
 ```
