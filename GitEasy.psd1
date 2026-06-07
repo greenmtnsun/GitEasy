@@ -1,6 +1,6 @@
 @{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.5'
+    ModuleVersion        = '1.6.0'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
@@ -11,9 +11,12 @@
     FormatsToProcess     = @('Format\GitEasy.format.ps1xml')
     FunctionsToExport    = @(
         'Clear-Junk'
+        'Disable-GitEasy'
+        'Enable-GitEasy'
         'Find-CodeChange'
         'Get-Updates'
         'Get-VaultStatus'
+        'New-BugReport'
         'New-Release'
         'New-WorkBranch'
         'Reset-Login'
@@ -62,17 +65,18 @@
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
-GitEasy 1.5.5 - 2026-05-31
+GitEasy 1.6.0 - 2026-06-07
 ==========================
 
-PSGallery tag corrections + GitHub Actions CI. No functional change.
+Three new commands so GitEasy can be your everyday Git front door.
 
-Tags: Plain-English -> PlainEnglish, Beginner-Friendly -> BeginnerFriendly
-(hyphenated tags are single tokens in PSGallery search). Added Windows and
-PowerShell as top search terms the module was missing.
+Enable-GitEasy / Disable-GitEasy: make GitEasy load automatically in every
+PowerShell session by adding (or removing) a clearly marked block in your
+personal startup file. Safe to run repeatedly; fully reversible.
 
-CI: GitHub Actions now runs the full Pester suite (PS 7 + PS 5.1) and
-PSScriptAnalyzer on every push and PR.
+New-BugReport: opens a pre-filled GitHub issue in your browser with a setup
+snapshot and a credential-scrubbed excerpt of your most recent diagnostic
+log. Nothing is sent on its own - you review and submit.
 
 Full notes:
 https://github.com/greenmtnsun/GitEasy/blob/main/CHANGELOG.md

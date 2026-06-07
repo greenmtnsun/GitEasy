@@ -3,9 +3,12 @@ $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $ModulePath = Join-Path $ProjectRoot 'GitEasy.psd1'
 $ExpectedPublicCommands = @(
     'Clear-Junk',
+    'Disable-GitEasy',
+    'Enable-GitEasy',
     'Find-CodeChange',
     'Get-Updates',
     'Get-VaultStatus',
+    'New-BugReport',
     'New-Release',
     'New-WorkBranch',
     'Reset-Login',

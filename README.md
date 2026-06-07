@@ -99,6 +99,9 @@ If the repo has not been published anywhere yet, Save-Work will tell you so and 
 | `Show-History` | Show recent saved points. |
 | `Show-Remote` | Show where the project folder is published. |
 | `Show-Diagnostic` | Open or list the diagnostic log files. |
+| `New-BugReport` | Open a pre-filled GitHub bug report in your browser. |
+| `Enable-GitEasy` | Make GitEasy load automatically every session. |
+| `Disable-GitEasy` | Stop GitEasy from loading automatically. |
 | `New-WorkBranch` | Start a new working area for an isolated task. |
 | `Switch-Work` | Switch to another existing working area. |
 | `Restore-File` | Restore a single file to its last saved state. |
@@ -139,7 +142,7 @@ Running GitEasy from a CI job or an AI agent? See [`docs/USING-IN-CI-AND-AGENTS.
 
 ## Status
 
-GitEasy is at **1.5.3** — feature-complete public surface (21 commands), 569 Pester tests on both PowerShell hosts, and full plain-English contract.
+GitEasy is at **1.6.0** — plain-English public surface (24 commands), Pester tests on both PowerShell hosts, and full plain-English contract.
 
 See [CHANGELOG.md](CHANGELOG.md) for the history.
 

@@ -4,6 +4,19 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-06-07
+
+### Added
+
+- **`Enable-GitEasy` / `Disable-GitEasy`.** Make GitEasy load automatically in every PowerShell session by adding (or removing) a clearly marked block in the current user's all-hosts startup file (`$PROFILE.CurrentUserAllHosts`). The block only imports GitEasy if it is installed, so it stays safe if the module later moves. Both commands are idempotent — running `Enable-GitEasy` when already enabled (or `Disable-GitEasy` when nothing is set up) reports the state and changes nothing. Only the marked block is ever touched; the rest of the startup file is left intact. Both support `-WhatIf` and return a structured result on every path (DR-005).
+- **`New-BugReport`.** Opens a pre-filled GitHub issue for the GitEasy project in the user's browser, with a setup snapshot (OS, PowerShell version/edition, Git version, GitEasy version) and a credential-scrubbed excerpt of the most recent diagnostic log. Nothing is submitted automatically — the page opens filled in for the user to review and send. If the report would exceed a safe URL length, the log excerpt is dropped and replaced with a pointer to the log file. `-NoLog` omits the excerpt; `-WhatIf` returns the link without opening it.
+- **Private helpers** `Get-GEEnvironmentInfo` (safe version snapshot, no paths or credentials), `Get-GEProfilePath` (resolve the managed startup file), and `Get-GEProfileBlock` (single source of truth for the marked auto-load block shared by Enable/Disable).
+- **Unit tests** for the three new commands and the new helpers under `Tests/Unit/`.
+
+### Changed
+
+- **Public command surface grows from 21 to 24.** Manifest `FunctionsToExport`, the `.psm1` loader exports, and the README command table updated to match.
+
 ## [1.5.5] - 2026-05-31
 
 ### Changed
