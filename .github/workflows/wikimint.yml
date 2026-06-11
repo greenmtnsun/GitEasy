@@ -1,0 +1,79 @@
+name: Generate WikiMint Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'GitEasy.psm1'
+      - 'Public/**/*.ps1'
+      - 'Private/**/*.ps1'
+
+permissions:
+  contents: write
+
+jobs:
+  wikimint:
+    name: Generate wiki from GitEasy.psm1
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate wiki documentation
+        shell: pwsh
+        env:
+          WIKIMINT_API_KEY: ${{ secrets.WIKIMINT_API_KEY }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $endpoint = 'https://wikimint.grayocean-4062ad43.eastus.azurecontainerapps.io/api/v1/generate'
+          $headers  = @{
+              'X-WikiMint-ApiKey' = $env:WIKIMINT_API_KEY
+              'Content-Type'      = 'application/json'
+          }
+
+          $source = Get-Content '.\GitEasy.psm1' -Raw -Encoding UTF8
+          $body   = @{
+              code        = $source
+              language    = 'PowerShell'
+              module_name = 'GitEasy'
+          } | ConvertTo-Json -Depth 5
+
+          Write-Host "Calling WikiMint ($([math]::Round([System.Text.Encoding]::UTF8.GetByteCount($source)/1KB, 1)) KB)..."
+          $resp = Invoke-RestMethod -Uri $endpoint -Method Post -Headers $headers `
+                                    -Body ([System.Text.Encoding]::UTF8.GetBytes($body)) `
+                                    -ContentType 'application/json; charset=utf-8'
+
+          if ($resp.status -ne 'success') {
+              Write-Error "WikiMint generation failed ($($resp.code)): $($resp.message)"
+          }
+
+          New-Item -ItemType Directory -Force -Path '.\Wiki\wikimint' | Out-Null
+
+          # Write the module index page
+          $resp.wiki_doc.rendered_pages.index |
+              Out-File -FilePath '.\Wiki\wikimint\index.md' -Encoding UTF8 -Force
+
+          # Write one page per command
+          foreach ($key in $resp.wiki_doc.rendered_pages.PSObject.Properties.Name) {
+              if ($key -eq 'index') { continue }
+              $resp.wiki_doc.rendered_pages.$key |
+                  Out-File -FilePath ".\Wiki\wikimint\$key.md" -Encoding UTF8 -Force
+          }
+
+          $pageCount = ($resp.wiki_doc.rendered_pages.PSObject.Properties | Measure-Object).Count
+          Write-Host "Written $pageCount page(s) to Wiki/wikimint/"
+
+      - name: Commit wiki docs
+        shell: pwsh
+        run: |
+          git config user.name  'WikiMint Bot'
+          git config user.email 'wikimint@detentpoint.com'
+          git add Wiki/wikimint/
+          $diff = git diff --staged --name-only
+          if ($diff) {
+              git commit -m "docs: update WikiMint documentation [skip ci]"
+              git push
+              Write-Host "Committed and pushed $($diff.Count) file(s)."
+          } else {
+              Write-Host "No wiki changes to commit."
+          }
