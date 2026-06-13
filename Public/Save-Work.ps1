@@ -28,6 +28,9 @@ function Save-Work {
     .PARAMETER BumpKind
     Which part of the version number to bump when -BumpVersion is set. One of: Major, Minor, Build, Revision. Defaults to Build.
 
+    .PARAMETER Files
+    Commit only these files (git add <paths> instead of git add --all). Default empty (stage all changes).
+
     .PARAMETER LogPath
     Override the directory where the diagnostic log for this run is written. Defaults to %LOCALAPPDATA%\GitEasy\Logs and can be overridden site-wide through the GITEASY_LOG_PATH environment variable.
 
@@ -39,6 +42,9 @@ function Save-Work {
 
     .EXAMPLE
     Save-Work 'Add Search-History' -BumpVersion -BumpKind Minor
+
+    .EXAMPLE
+    Save-Work 'Fix module only' -Files src/GitEasy.Core/Models/ApiKeyRecord.cs, src/GitEasy.Core/Models/CustomerRecord.cs
 
     .NOTES
     Safety:
@@ -86,6 +92,9 @@ function Save-Work {
         [Parameter()]
         [ValidateSet('Major', 'Minor', 'Build', 'Revision')]
         [string]$BumpKind = 'Build',
+
+        [Parameter()]
+        [string[]]$Files = @(),
 
         [Parameter()]
         [string]$LogPath = ''
@@ -300,7 +309,14 @@ function Save-Work {
                 $Message = 'Save work ' + (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
             }
 
-            Invoke-GEGit -ArgumentList @('add', '--all') -WorkingDirectory $repoRoot -LogPath $session.Path | Out-Null
+            # Stage files: either specified paths or all changes
+            $addArgs = @('add')
+            if ($Files.Count -gt 0) {
+                $addArgs += $Files
+            } else {
+                $addArgs += '--all'
+            }
+            Invoke-GEGit -ArgumentList $addArgs -WorkingDirectory $repoRoot -LogPath $session.Path | Out-Null
 
             $messageFile = Join-Path ([System.IO.Path]::GetTempPath()) ('GitEasyCommit_' + [guid]::NewGuid().ToString('N') + '.txt')
 
