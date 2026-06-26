@@ -34,10 +34,10 @@ Save-Work, Find-CodeChange, Show-History, Show-Remote, Test-Login, Undo-Changes,
 
 ## Links
 
-- Home: https://git-easy.pages.dev/
-- How it works: https://git-easy.pages.dev/how.html
-- Who it's for: https://git-easy.pages.dev/who.html
-- Full command reference: https://git-easy.pages.dev/commands/
+- Home: https://git-easy.com/
+- How it works: https://git-easy.com/how.html
+- Who it's for: https://git-easy.com/who.html
+- Full command reference: https://git-easy.com/commands/
 - GitHub source: https://github.com/greenmtnsun/GitEasy
 - PowerShell Gallery: https://www.powershellgallery.com/packages/GitEasy
 - License: MPL 2.0
