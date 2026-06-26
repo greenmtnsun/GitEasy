@@ -39,6 +39,11 @@ C:\Sysadmin\Scripts\WikiEngine\Engine\dbaDocsEngine\dbaDocsEngine.psd1.
 .PARAMETER OutputDir
 Where the rendered command HTML lands. Defaults to <ProjectRoot>\site\commands.
 
+.PARAMETER SiteBaseUrl
+Canonical origin for the live site, used to build the canonical <link>
+and og:url / og:image tags emitted into every page. Defaults to the
+custom domain https://git-easy.com (no trailing slash).
+
 .PARAMETER KeepTemp
 Keep the temp folder where WikiEngine wrote the intermediate
 Markdown. Useful for debugging the render shape.
@@ -55,6 +60,7 @@ param(
     [string] $ProjectRoot     = 'C:\Sysadmin\Scripts\GitEasy',
     [string] $WikiEnginePath  = 'C:\Sysadmin\Scripts\WikiEngine\Engine\dbaDocsEngine\dbaDocsEngine.psd1',
     [string] $OutputDir,
+    [string] $SiteBaseUrl     = 'https://git-easy.com',
     [switch] $KeepTemp
 )
 
@@ -123,6 +129,13 @@ $htmlTemplate = @'
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}} - GitEasy</title>
   <meta name="description" content="{{DESC}}">
+  <meta property="og:title" content="{{TITLE}} - GitEasy">
+  <meta property="og:description" content="{{DESC}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{CANONICAL}}">
+  <meta property="og:site_name" content="GitEasy">
+  <meta property="og:image" content="{{OGIMAGE}}">
+  <link rel="canonical" href="{{CANONICAL}}">
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -185,9 +198,22 @@ foreach ($md in $mdFiles) {
 
     $isCommandsActive = if ($baseName -eq 'index') { ' class="active"' } else { '' }
 
+    # Self-referencing canonical URL on the custom domain. The index page
+    # (overwritten by Step 3 below) canonicalizes to the dir, command pages
+    # to their own file.
+    $slug = $baseName.ToLowerInvariant()
+    $canonical = if ($baseName -eq 'index') {
+        "$SiteBaseUrl/commands/"
+    } else {
+        "$SiteBaseUrl/commands/$slug.html"
+    }
+    $ogImage = "$SiteBaseUrl/images/hero-wall-photo.png"
+
     $page = $htmlTemplate `
         -replace '{{TITLE}}', [System.Web.HttpUtility]::HtmlEncode($title) `
         -replace '{{DESC}}', [System.Web.HttpUtility]::HtmlEncode($desc) `
+        -replace '{{CANONICAL}}', $canonical `
+        -replace '{{OGIMAGE}}', $ogImage `
         -replace '{{BODY}}', $bodyHtml `
         -replace '{{COMMANDS_ACTIVE}}', $isCommandsActive
 
@@ -237,6 +263,13 @@ $indexHtml = @"
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Commands - GitEasy</title>
   <meta name="description" content="All $($commandsOnly.Count) GitEasy commands, one page per command. Plain-English help generated from the source.">
+  <meta property="og:title" content="Commands - GitEasy">
+  <meta property="og:description" content="All $($commandsOnly.Count) GitEasy commands, one page per command. Plain-English help generated from the source.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="$SiteBaseUrl/commands/">
+  <meta property="og:site_name" content="GitEasy">
+  <meta property="og:image" content="$SiteBaseUrl/images/hero-wall-photo.png">
+  <link rel="canonical" href="$SiteBaseUrl/commands/">
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
