@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://git-easy.pages.dev/sitemap.xml
+Sitemap: https://git-easy.com/sitemap.xml

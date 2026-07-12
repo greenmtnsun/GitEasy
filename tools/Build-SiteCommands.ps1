@@ -123,6 +123,13 @@ $htmlTemplate = @'
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}} - GitEasy</title>
   <meta name="description" content="{{DESC}}">
+  <meta property="og:title" content="{{TITLE}} - GitEasy">
+  <meta property="og:description" content="{{DESC}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{URL}}">
+  <meta property="og:site_name" content="GitEasy">
+  <meta property="og:image" content="https://git-easy.com/images/hero-wall-photo.png">
+  <link rel="canonical" href="{{URL}}">
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -184,10 +191,12 @@ foreach ($md in $mdFiles) {
     if (-not $desc) { $desc = "$title - GitEasy command reference." }
 
     $isCommandsActive = if ($baseName -eq 'index') { ' class="active"' } else { '' }
+    $pageUrl = "https://git-easy.com/commands/$($baseName.ToLowerInvariant()).html"
 
     $page = $htmlTemplate `
         -replace '{{TITLE}}', [System.Web.HttpUtility]::HtmlEncode($title) `
         -replace '{{DESC}}', [System.Web.HttpUtility]::HtmlEncode($desc) `
+        -replace '{{URL}}', $pageUrl `
         -replace '{{BODY}}', $bodyHtml `
         -replace '{{COMMANDS_ACTIVE}}', $isCommandsActive
 
@@ -237,6 +246,13 @@ $indexHtml = @"
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Commands - GitEasy</title>
   <meta name="description" content="All $($commandsOnly.Count) GitEasy commands, one page per command. Plain-English help generated from the source.">
+  <meta property="og:title" content="Commands - GitEasy">
+  <meta property="og:description" content="All $($commandsOnly.Count) GitEasy commands, one page per command. Plain-English help generated from the source.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://git-easy.com/commands/">
+  <meta property="og:site_name" content="GitEasy">
+  <meta property="og:image" content="https://git-easy.com/images/hero-wall-photo.png">
+  <link rel="canonical" href="https://git-easy.com/commands/">
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
