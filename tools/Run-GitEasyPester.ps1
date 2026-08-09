@@ -68,12 +68,16 @@ Write-Host "Project: $ProjectRoot"
 Write-Host "Pester:  $($pester.Version)"
 Write-Host ""
 
-$invokeParams = @{
-    Path     = $testRoot
-    PassThru = $true
-}
+# Use the PesterConfiguration object API rather than legacy Invoke-Pester
+# parameters. In Pester 5+, -CodeCoverage and -Output live in different
+# parameter sets, so passing both directly is AmbiguousParameterSet — the
+# config object is the only unambiguous way to combine coverage with output
+# control, and it works identically under Pester 5 and 6.
+$config = New-PesterConfiguration
+$config.Run.Path     = $testRoot
+$config.Run.PassThru = $true
 if ($Quiet) {
-    $invokeParams.Output = 'Minimal'
+    $config.Output.Verbosity = 'Minimal'
 }
 
 if ($Coverage) {
@@ -86,14 +90,15 @@ if ($Coverage) {
         }
     }
     if ($coveragePaths.Count -gt 0) {
-        $invokeParams.CodeCoverage = $coveragePaths
+        $config.CodeCoverage.Enabled = $true
+        $config.CodeCoverage.Path    = $coveragePaths
     } else {
         Write-Warning "No Public/Private .ps1 files found under $ProjectRoot - coverage skipped."
         $Coverage = $false
     }
 }
 
-$result = Invoke-Pester @invokeParams
+$result = Invoke-Pester -Configuration $config
 
 $summary = [PSCustomObject]@{
     Total   = $result.TotalCount
@@ -108,15 +113,15 @@ $summary | Format-List
 
 if ($Coverage -and $result.PSObject.Properties['CodeCoverage'] -and $result.CodeCoverage) {
     $cc = $result.CodeCoverage
-    $analyzed = $cc.NumberOfCommandsAnalyzed
-    $executed = $cc.NumberOfCommandsExecuted
-    $missed   = $cc.NumberOfCommandsMissed
+    $analyzed = $cc.CommandsAnalyzedCount
+    $executed = $cc.CommandsExecutedCount
+    $missed   = $cc.CommandsMissedCount
     $pct      = if ($analyzed -gt 0) { [math]::Round(($executed / $analyzed) * 100, 1) } else { 0 }
 
-    $perFile = $cc.AnalyzedFiles | ForEach-Object {
+    $perFile = $cc.FilesAnalyzed | ForEach-Object {
         $file       = $_
-        $fileMissed = @($cc.MissedCommands | Where-Object { $_.File -eq $file }).Count
-        $fileHit    = @($cc.HitCommands    | Where-Object { $_.File -eq $file }).Count
+        $fileMissed = @($cc.CommandsMissed  | Where-Object { $_.File -eq $file }).Count
+        $fileHit    = @($cc.CommandsExecuted | Where-Object { $_.File -eq $file }).Count
         $fileTotal  = $fileHit + $fileMissed
         $filePct    = if ($fileTotal -gt 0) { [math]::Round(($fileHit / $fileTotal) * 100, 1) } else { 0 }
         [PSCustomObject]@{
