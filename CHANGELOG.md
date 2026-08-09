@@ -4,6 +4,16 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.6] - 2026-08-09
+
+### Added
+
+- **`Save-Work -Files`** — selective staging. Pass one or more paths to commit only those files instead of staging every change. The default stays stage-all, so existing usage is unaffected. (BUG-006/011)
+
+### Changed
+
+- **Comment-based help `Steps:` blueprints** added to all public and private functions (swarm-ready standard). Documentation only — no behavior change.
+
 ## [1.5.5] - 2026-05-31
 
 ### Changed

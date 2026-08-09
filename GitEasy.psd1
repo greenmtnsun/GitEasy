@@ -1,6 +1,6 @@
 @{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.5'
+    ModuleVersion        = '1.5.6'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
@@ -62,17 +62,15 @@
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
-GitEasy 1.5.5 - 2026-05-31
+GitEasy 1.5.6 - 2026-08-09
 ==========================
 
-PSGallery tag corrections + GitHub Actions CI. No functional change.
+Save-Work now takes an optional -Files parameter for selective staging:
+pass one or more paths to commit only those files instead of everything.
+The default is unchanged (stage all), so existing usage is unaffected.
 
-Tags: Plain-English -> PlainEnglish, Beginner-Friendly -> BeginnerFriendly
-(hyphenated tags are single tokens in PSGallery search). Added Windows and
-PowerShell as top search terms the module was missing.
-
-CI: GitHub Actions now runs the full Pester suite (PS 7 + PS 5.1) and
-PSScriptAnalyzer on every push and PR.
+Also: comment-based help now carries a numbered Steps: blueprint in every
+function. Documentation only, no behavior change.
 
 Full notes:
 https://github.com/greenmtnsun/GitEasy/blob/main/CHANGELOG.md
