@@ -297,8 +297,8 @@ Describe 'Get-VaultStatus — contract' {
         It 'calls Invoke-GEGit with the credential.helper query arguments' {
             # Pester 3 + module-scoped mock: capturing state via $script: from
             # inside a -ModuleName mock writes to the module's scope, not the
-            # test's. Assert-MockCalled -ParameterFilter is the idiomatic
-            # way to inspect what arguments the mock saw.
+            # test's. Should -Invoke -ParameterFilter is the idiomatic
+            # way to inspect what arguments the mock saw (Pester 5 and 6).
             Mock -ModuleName GitEasy Test-GEGitInstalled { $true }
             Mock -ModuleName GitEasy Invoke-GEGit {
                 [PSCustomObject]@{ ExitCode = 0; Output = @('manager-core'); Stderr = @() }
@@ -306,7 +306,7 @@ Describe 'Get-VaultStatus — contract' {
 
             Get-VaultStatus | Out-Null
 
-            Assert-MockCalled Invoke-GEGit -ModuleName GitEasy -Times 1 -ParameterFilter {
+            Should -Invoke Invoke-GEGit -ModuleName GitEasy -Times 1 -ParameterFilter {
                 ($ArgumentList -join ' ') -match 'credential\.helper'
             }
         }
@@ -319,7 +319,7 @@ Describe 'Get-VaultStatus — contract' {
 
             Get-VaultStatus | Out-Null
 
-            Assert-MockCalled Invoke-GEGit -ModuleName GitEasy -Times 1 -ParameterFilter {
+            Should -Invoke Invoke-GEGit -ModuleName GitEasy -Times 1 -ParameterFilter {
                 $AllowFailure -eq $true
             }
         }
