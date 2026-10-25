@@ -151,7 +151,13 @@ try {
     $releaseRegex = '\((v\d+\.\d+\.\d+(?:\.\d+)?|(?:Stage|Phase)\s+\S+|@?[0-9a-f]{7,40})\)'
     $rx           = if ($presenceMode) { $releaseRegex } else { $pinRegex }
 
-    $findings = foreach ($f in $puml) {
+    # @() around the loop, not decoration. Windows PowerShell 5.1 gives a bare PSCustomObject
+    # no .Count, so a repository holding exactly ONE diagram made $findings a scalar and every
+    # $findings.Count below threw. The catch reported Status 'Error' and failed open, which is
+    # the gate passing silently on the repositories least likely to notice. PowerShell 7 adds
+    # .Count to every object, so the fault was invisible on the edition most runs use.
+    # Found 2026-10-24 in the SpnManager copy of this template, by release-QA pass A.
+    $findings = @(foreach ($f in $puml) {
         $text = Get-Content -LiteralPath $f.FullName -Raw -ErrorAction SilentlyContinue
         $rel  = $f.FullName.Substring($repo.Length).TrimStart('\','/')
         $m    = if ($text) { [regex]::Match($text, $rx) } else { $null }
@@ -174,7 +180,7 @@ try {
             ManifestVersion = $manifestVersion
             Status          = $status
         }
-    }
+    })
 
     $bad = @($findings | Where-Object { $_.Status -in @('Drift','NoPin') })
     if ($bad.Count -eq 0) {
