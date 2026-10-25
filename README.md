@@ -4,6 +4,10 @@
 
 A PowerShell module that lets a Git-clueless person save and publish their work without learning Git jargon.
 
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/GitEasy?label=PowerShell%20Gallery)](https://www.powershellgallery.com/packages/GitEasy)
+
+Using an AI agent? The same plain-English git is available as **[GitEasy MCP](https://detentpoint.com/giteasy)**: 22 tools for Claude Desktop, Cursor, or any MCP client, with a free tier. [Jump to setup](#use-it-from-an-ai-agent-giteasy-mcp).
+
 ## From Keith
 
 I'm Keith Ramsey. For a living, I'm a SQL Server database administrator, and in my spare time, I'm a massive PowerShell enthusiast. For the past thirteen years, I've worked on the same team, quietly building internal tools to solve our specific headaches. GitEasy is a new chapter for me. It's the first tool I've ever released to the public, and honestly, the process of designing for strangers—polishing the code, writing in plain English just to be helpful—has been an absolute blast.
@@ -55,7 +59,14 @@ When something goes wrong, you get a plain-English message and a path to a self-
 
 ## Install
 
-Friend-fast install (PS 5.1 and PS 7, no admin needed):
+From the PowerShell Gallery (PS 5.1 and PS 7, no admin needed):
+
+```powershell
+Install-Module GitEasy -Scope CurrentUser
+Import-Module GitEasy
+```
+
+Or clone it straight into your user-scope module folder:
 
 ```powershell
 $Edition = if ($PSVersionTable.PSEdition -eq 'Core') { 'PowerShell' } else { 'WindowsPowerShell' }
@@ -64,20 +75,8 @@ git clone https://github.com/greenmtnsun/GitEasy.git $ModuleDir
 Import-Module GitEasy
 ```
 
-That drops GitEasy into your user-scope PowerShell module folder
-(which is on `$env:PSModulePath` by default), so
-`Import-Module GitEasy` works from anywhere. See
-[`docs/HOW-TO-USE-GITEASY.md`](docs/HOW-TO-USE-GITEASY.md) for the
+See [`docs/HOW-TO-USE-GITEASY.md`](docs/HOW-TO-USE-GITEASY.md) for the
 offline-install path and all-users scope.
-
-Once a PowerShell Gallery release lands, the install becomes:
-
-```powershell
-Install-Module GitEasy -Scope CurrentUser
-```
-
-The PowerShell Gallery page (when published) will be at
-[**powershellgallery.com/packages/GitEasy**](https://www.powershellgallery.com/packages/GitEasy).
 
 ## Quickstart
 
@@ -89,6 +88,46 @@ Show-History -Count 5
 ```
 
 If the repo has not been published anywhere yet, Save-Work will tell you so and save locally. When you connect a published location later, the next Save-Work will publish everything you have saved up to that point.
+
+## Use it from an AI agent: GitEasy MCP
+
+GitEasy MCP puts the same plain-English git behind 22 MCP tools, so an AI agent can branch, commit, push, tag a release, and fetch updates without raw git flags. It includes the write operations many git MCP servers leave out: `push`, `save_work` (stage, commit, and push in one step), `new_release` (annotated tag, pushed), and `get_updates` (fetch and show incoming commits).
+
+1. Get a free key (500 write calls a month, no card) at [detentpoint.com/giteasy](https://detentpoint.com/giteasy).
+2. Add the server to a client that takes a Streamable HTTP config, such as Cursor or Claude Code:
+
+```json
+{
+  "mcpServers": {
+    "giteasy": {
+      "type": "http",
+      "url": "https://giteasy-mcp.azurewebsites.net/mcp",
+      "headers": { "X-Api-Key": "ge_your_key_here" }
+    }
+  }
+}
+```
+
+Claude Desktop's config file launches local commands rather than taking a URL, so bridge it with [mcp-remote](https://www.npmjs.com/package/mcp-remote) (needs Node). Keep no spaces around the `:` in the header value:
+
+```json
+{
+  "mcpServers": {
+    "giteasy": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://giteasy-mcp.azurewebsites.net/mcp",
+        "--header",
+        "X-Api-Key:${GITEASY_KEY}"
+      ],
+      "env": { "GITEASY_KEY": "ge_your_key_here" }
+    }
+  }
+}
+```
+
+Read tools such as `show_history` and `find_changes` don't count against the limit. The [how-to](https://detentpoint.com/giteasy/how) lists every tool, and paid plans for heavier use are on the [pricing page](https://detentpoint.com/giteasy).
 
 ## The full command surface
 
@@ -139,7 +178,7 @@ Running GitEasy from a CI job or an AI agent? See [`docs/USING-IN-CI-AND-AGENTS.
 
 ## Status
 
-GitEasy is at **1.5.3** — feature-complete public surface (21 commands), 569 Pester tests on both PowerShell hosts, and full plain-English contract.
+GitEasy is at **1.5.6** on the [PowerShell Gallery](https://www.powershellgallery.com/packages/GitEasy): feature-complete public surface, 569 Pester tests on both PowerShell hosts, and full plain-English contract.
 
 See [CHANGELOG.md](CHANGELOG.md) for the history.
 
