@@ -1,11 +1,11 @@
-@{
+﻿@{
     RootModule           = 'GitEasy.psm1'
-    ModuleVersion        = '1.5.6'
+    ModuleVersion        = '1.5.7'
     GUID                 = '2e113abf-c0e7-4dfb-9cb1-69476d7541f6'
     Author               = 'Keith Ramsey'
     CompanyName          = 'Keith Ramsey'
     Copyright            = '(c) 2026 Keith Ramsey. Licensed under MPL-2.0.'
-    Description          = 'Save your work without learning Git. Plain-English PowerShell commands for sysadmins, change managers, DBAs, compliance teams, and 25 other non-developer roles — no jargon, no raw Git output. Save-Work, Find-CodeChange, Show-History, Test-Login. Credentials scrubbed before anything hits disk. PS 5.1 and 7. MPL-2.0.'
+    Description          = 'Save your work without learning Git. Plain-English PowerShell commands for sysadmins, change managers, DBAs, compliance teams, and 25 other non-developer roles — no jargon, no raw Git output. Save-Work, Find-CodeChange, Show-History, Test-Login. Credentials scrubbed before anything hits disk. PS 5.1 and 7. MPL-2.0. Use it from an AI agent: GitEasy MCP, free tier at https://detentpoint.com/giteasy'
     PowerShellVersion    = '5.1'
     CompatiblePSEditions = @('Desktop', 'Core')
     FormatsToProcess     = @('Format\GitEasy.format.ps1xml')
@@ -62,6 +62,13 @@
             ProjectUri   = 'https://github.com/greenmtnsun/GitEasy'
             IconUri      = 'https://raw.githubusercontent.com/greenmtnsun/GitEasy/main/Assets/icon.png'
             ReleaseNotes = @'
+GitEasy 1.5.7 - 2026-10-24
+==========================
+
+Gallery listing only, no code change: the description now points to
+GitEasy MCP, the hosted version for AI agents, with a free tier at
+https://detentpoint.com/giteasy
+
 GitEasy 1.5.6 - 2026-08-09
 ==========================
 
