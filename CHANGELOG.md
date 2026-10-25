@@ -4,6 +4,12 @@ All notable changes to this module are recorded here. The format is loosely [Kee
 
 ## [Unreleased]
 
+## [1.5.7] - 2026-10-24
+
+### Changed
+
+- **PowerShell Gallery description** now ends with a pointer to GitEasy MCP, the hosted version for AI agents, and its free tier at https://detentpoint.com/giteasy. Manifest only, no code change.
+
 ## [1.5.6] - 2026-08-09
 
 ### Added
