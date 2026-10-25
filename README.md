@@ -94,7 +94,7 @@ If the repo has not been published anywhere yet, Save-Work will tell you so and 
 GitEasy MCP puts the same plain-English git behind 22 MCP tools, so an AI agent can branch, commit, push, tag a release, and fetch updates without raw git flags. It includes the write operations many git MCP servers leave out: `push`, `save_work` (stage, commit, and push in one step), `new_release` (annotated tag, pushed), and `get_updates` (fetch and show incoming commits).
 
 1. Get a free key (500 write calls a month, no card) at [detentpoint.com/giteasy](https://detentpoint.com/giteasy).
-2. Add the server to Claude Desktop, Cursor, or any MCP client that speaks Streamable HTTP:
+2. Add the server to a client that takes a Streamable HTTP config, such as Cursor or Claude Code:
 
 ```json
 {
@@ -103,6 +103,25 @@ GitEasy MCP puts the same plain-English git behind 22 MCP tools, so an AI agent 
       "type": "http",
       "url": "https://giteasy-mcp.azurewebsites.net/mcp",
       "headers": { "X-Api-Key": "ge_your_key_here" }
+    }
+  }
+}
+```
+
+Claude Desktop's config file launches local commands rather than taking a URL, so bridge it with [mcp-remote](https://www.npmjs.com/package/mcp-remote) (needs Node). Keep no spaces around the `:` in the header value:
+
+```json
+{
+  "mcpServers": {
+    "giteasy": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://giteasy-mcp.azurewebsites.net/mcp",
+        "--header",
+        "X-Api-Key:${GITEASY_KEY}"
+      ],
+      "env": { "GITEASY_KEY": "ge_your_key_here" }
     }
   }
 }
