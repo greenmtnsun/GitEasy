@@ -1,0 +1,50 @@
+@startuml delivery_pipeline_review_loop
+title reviewLoop: one review until clean, carried or stopped (review-loops spec 1.2.1)
+
+legend top center
+The reviewer is a fresh agent every round and never repairs.
+Any agent that returns nothing also ends the loop as stopped.
+A Keith ruling (keithRulings, passed when a stopped run is resumed) is "waiting"
+until a repair round carries it out. Each ruling is carried out once.
+end legend
+
+start
+:round = 0;
+repeat
+  :round = round + 1;
+  :Fresh reviewer agent reviews the scope\n(round 2 on: reports every prior finding by id first;\npass 2 on: ids carry the pass, e.g. code-p2-1);
+  :open = findings in state open\n(a critical or high finding marked waived counts as open,\nunless Keith's ruling on it was carried out);
+  if (An open needsKeith finding\nhas no Keith ruling waiting?) then (yes)
+    :Return stopped: needs Keith\n(diagram, Steps or code mismatch); <<#pink>>
+    stop
+  endif
+  if (No open findings?) then (yes)
+    :Return clean\n(waivers listed for the ledger); <<#palegreen>>
+    stop
+  endif
+  if (A finding still open after 2 repair rounds?) then (yes)
+    :Return stopped (CLAUDE.md section 18); <<#pink>>
+    stop
+  endif
+  if (round >= maxRounds\n(3 for a small item, else 5)?) then (yes)
+    if (A medium, high or critical finding\nhas no Keith ruling waiting?) then (yes)
+      :Return stopped: round cap; <<#pink>>
+      stop
+    elseif (No Keith ruling waiting?) then (yes)
+      :Return carried: the open low findings go to\nthe ledger as open items for Keith; <<#palegreen>>
+      stop
+    else (a ruling is waiting)
+      :Go on past the cap: this repair round\ncarries out the ruling, one more review follows;
+    endif
+  endif
+  :Builder agent repairs each open finding, proposes a waiver,\nor escalates; it carries out each waiting Keith ruling exactly;
+  if (Escalated, or a waiver proposed for a critical\nor high finding Keith did not rule on?) then (yes)
+    :Return stopped: goes to Keith\n(this round's repairs are not re-tested or reviewed;\na resume with Keith's ruling reruns this repair round); <<#pink>>
+    stop
+  endif
+  :Mark this round's Keith rulings carried out;\ncount one repair round for each open finding;
+  if (This review re-runs tests?) then (yes)
+    :Fresh agent re-runs static analysis and unit tests\n(re-captures screenshots when hasUi);
+  endif
+repeat while (next round)
+@enduml

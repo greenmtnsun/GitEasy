@@ -1,0 +1,290 @@
+{
+  "exit_reason": "all_passed (iteration 1)",
+  "original_description": "How to run a review that repeats until no finding stays open (code review, security review, UI design review, UI review, or any reviewer-and-builder cycle) in any orchestration, such as the delivery-pipeline workflow, a review walked by hand in conversation, a release QA pass, or a custom Workflow script. Use it whenever work must be \"reviewed until clean\", whenever a review round finds problems that need fixing and re-checking, when a review loop stops and asks Keith, when resuming a stopped run with Keith's rulings (keithRulings), when deciding what happens to findings at the round cap, or when writing waivers and carried findings to a project's PIPELINE.md. Use it even when the request only says \"review this and fix what you find\", since that's a review loop.",
+  "best_description": "How to run a review that repeats until no finding stays open (code review, security review, UI design review, UI review, or any reviewer-and-builder cycle) in any orchestration, such as the delivery-pipeline workflow, a review walked by hand in conversation, a release QA pass, or a custom Workflow script. Use it whenever work must be \"reviewed until clean\", whenever a review round finds problems that need fixing and re-checking, when a review loop stops and asks Keith, when resuming a stopped run with Keith's rulings (keithRulings), when deciding what happens to findings at the round cap, or when writing waivers and carried findings to a project's PIPELINE.md. Use it even when the request only says \"review this and fix what you find\", since that's a review loop.",
+  "best_score": "8/8",
+  "best_train_score": "12/12",
+  "best_test_score": "8/8",
+  "final_description": "How to run a review that repeats until no finding stays open (code review, security review, UI design review, UI review, or any reviewer-and-builder cycle) in any orchestration, such as the delivery-pipeline workflow, a review walked by hand in conversation, a release QA pass, or a custom Workflow script. Use it whenever work must be \"reviewed until clean\", whenever a review round finds problems that need fixing and re-checking, when a review loop stops and asks Keith, when resuming a stopped run with Keith's rulings (keithRulings), when deciding what happens to findings at the round cap, or when writing waivers and carried findings to a project's PIPELINE.md. Use it even when the request only says \"review this and fix what you find\", since that's a review loop.",
+  "iterations_run": 1,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "How to run a review that repeats until no finding stays open (code review, security review, UI design review, UI review, or any reviewer-and-builder cycle) in any orchestration, such as the delivery-pipeline workflow, a review walked by hand in conversation, a release QA pass, or a custom Workflow script. Use it whenever work must be \"reviewed until clean\", whenever a review round finds problems that need fixing and re-checking, when a review loop stops and asks Keith, when resuming a stopped run with Keith's rulings (keithRulings), when deciding what happens to findings at the round cap, or when writing waivers and carried findings to a project's PIPELINE.md. Use it even when the request only says \"review this and fix what you find\", since that's a review loop.",
+      "train_passed": 12,
+      "train_failed": 0,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "security review the token refresh code in src/auth/refresh.ts, have the builder repair anything medium or worse, and get a new reviewer to check again after every fix",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can an agent waive a high finding if the fix is out of scope? the builder wants to waive security-2 (high) on the new upload endpoint and move on",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "GitEasy 2.4 is almost ready. before we tag it, run the code review again, keep fixing and re-reviewing until nothing is left, and put whatever gets carried in the ledger",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the UI design review on the WM-117 mockups hit round 5 with one low finding still open. does that stop the run or does it carry on, and where does the low finding go?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the DetentShell runspace pool change is built. can you have a fresh agent review it, fix whatever it flags, and keep going round until nothing's open? log any waivers in docs\\PIPELINE.md",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "delivery-pipeline run halted at Verify, askKeith says code-4 is still open after 2 repair rounds. Keith ruled 'drop the retry, surface the error to the caller'. what's the exact resume call and what happens after it?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between running code-review at level high and at ultra? which one costs more and when would I want ultra?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "do a security review of hooks\\ps-authoring-guards.ps1: is there any injection risk in how it parses the tool input JSON? report only, don't change anything",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "is the self hosted CI runner up? the PR checks on ClusterValidator have been queued for 20 minutes",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this PR for correctness bugs, just list the findings with file and line, I'll fix them myself later",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "check this blog post draft for AI writing tells and run vale on it before I post it to dev.to",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the delivery pipeline is at Ship and wants to push WikiMint to dev. what does the official process require before a production deploy is allowed?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 8,
+      "test_failed": 0,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "walk a review loop by hand on this 60 line function in Tools\\Sign-Module.ps1. what's the round cap for something this small and how many reviewers per round?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I'm writing a custom Workflow script that builds three modules in parallel and each one needs a code review that repeats until clean. How should that loop be structured so it follows the same rules as the delivery pipeline (round cap, carried lows, the 2-repair stop)?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review Get-ClusterHealth.ps1 for bugs and security problems and fix what you find. dont stop at one pass, I want it clean before I hand it to the DBA team",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "after the repair round the security reviewer flagged new issues in files the code fix touched. do the code reviews have to run again on those files too, or just security?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "forge deploy for the WikiMint app just failed with a manifest validation error about the macro module key, help me figure out why",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "draw the UML activity diagram for the new retry logic in SyncEngine.ps1, render check it with plantuml",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write Pester tests for Get-FolderSizeReport that cover empty folders, nested files and a folder name with square brackets in it",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "milestone 3 is done for GitEasy, audit the test suite for flaky tests and tests that don't actually assert anything",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 12,
+      "failed": 0,
+      "total": 12,
+      "results": [
+        {
+          "query": "security review the token refresh code in src/auth/refresh.ts, have the builder repair anything medium or worse, and get a new reviewer to check again after every fix",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "can an agent waive a high finding if the fix is out of scope? the builder wants to waive security-2 (high) on the new upload endpoint and move on",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "GitEasy 2.4 is almost ready. before we tag it, run the code review again, keep fixing and re-reviewing until nothing is left, and put whatever gets carried in the ledger",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the UI design review on the WM-117 mockups hit round 5 with one low finding still open. does that stop the run or does it carry on, and where does the low finding go?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the DetentShell runspace pool change is built. can you have a fresh agent review it, fix whatever it flags, and keep going round until nothing's open? log any waivers in docs\\PIPELINE.md",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "delivery-pipeline run halted at Verify, askKeith says code-4 is still open after 2 repair rounds. Keith ruled 'drop the retry, surface the error to the caller'. what's the exact resume call and what happens after it?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between running code-review at level high and at ultra? which one costs more and when would I want ultra?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "do a security review of hooks\\ps-authoring-guards.ps1: is there any injection risk in how it parses the tool input JSON? report only, don't change anything",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "is the self hosted CI runner up? the PR checks on ClusterValidator have been queued for 20 minutes",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this PR for correctness bugs, just list the findings with file and line, I'll fix them myself later",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "check this blog post draft for AI writing tells and run vale on it before I post it to dev.to",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the delivery pipeline is at Ship and wants to push WikiMint to dev. what does the official process require before a production deploy is allowed?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,565 @@
+{
+  "exit_reason": "all_passed (iteration 2)",
+  "original_description": "The reviewer for UI designs before code exists (mockups, screen sketches, state diagrams, the design decision record) and for built screens compared against the approved mockups. Use it as the reviewer in the delivery-pipeline UI design review loop (Design phase) and in the Verify-phase UI review, and whenever Keith or a session asks to \"review these mockups\", \"check this screen design\", \"is this UI accessible\", \"does the build match the mockup\", or wants a design looked over before Build starts, for any product (Forge/Confluence apps, DetentShell, websites). Produces findings in the review-loop finding shape. Use it even when nobody says \"review\", for example a request to sanity-check screens, focus order, contrast or wording on a design.",
+  "best_description": "The reviewer for UI designs before code exists (mockups, screen sketches, state diagrams, the design decision record) and for built screens compared against the approved mockups. Use it as the reviewer in the delivery-pipeline UI design review loop (Design phase) and in the Verify-phase UI review, and whenever Keith or a session asks to \"review these mockups\", \"check this screen design\", \"is this UI accessible\", \"does the build match the mockup\", or wants a design looked over before Build starts, for any product (Forge/Confluence apps, DetentShell, websites). Produces findings in the review-loop finding shape. Use it even when nobody says \"review\", for example a request to sanity-check screens, focus order, contrast or wording on a design.",
+  "best_score": "8/8",
+  "best_train_score": "11/12",
+  "best_test_score": "8/8",
+  "final_description": "Use this skill to critique any UI design or screen behavior someone describes, sketches, mocks up or screenshots, from a whole flow down to one error message, validation state, empty or loading state, toast or dialog. It covers designs before code exists (mockups, state diagrams, the design decision record) and built screens compared against the approved mockups. It is the reviewer for the delivery-pipeline UI design review loop (Design phase) and the Verify-phase UI review, for Forge/Confluence apps, DetentShell and websites. Use it for questions like \"is this design ok?\", \"does this error handling make sense?\", \"is this accessible?\" or \"does the build match the mockup?\", including casual ones that never say \"review\". It checks states, focus, screen readers, contrast, layout, tokens, consistency and wording, and reports findings in the review-loop shape. Not for creating a new visual style, writing UI code, drawing diagrams, or standalone WCAG trivia.",
+  "iterations_run": 2,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "The reviewer for UI designs before code exists (mockups, screen sketches, state diagrams, the design decision record) and for built screens compared against the approved mockups. Use it as the reviewer in the delivery-pipeline UI design review loop (Design phase) and in the Verify-phase UI review, and whenever Keith or a session asks to \"review these mockups\", \"check this screen design\", \"is this UI accessible\", \"does the build match the mockup\", or wants a design looked over before Build starts, for any product (Forge/Confluence apps, DetentShell, websites). Produces findings in the review-loop finding shape. Use it even when nobody says \"review\", for example a request to sanity-check screens, focus order, contrast or wording on a design.",
+      "train_passed": 11,
+      "train_failed": 1,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "is this error state design ok? when the email is wrong the form just turns the field border red and pops a toast saying 'invalid input' in the top right corner",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "compare the new onboarding wizard mockup against the screens we already shipped: are the buttons, required-field marking and wording consistent?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review the dark mode variants of the dashboard mockups. any text below 4.5:1 or icons and borders below 3:1? the PNGs are in design/dark",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "UI design review round 2 for the DetentShell settings dialog. prior findings were ui-design-1 to 6, the repaired mockup is docs/ui/settings-r2.png. which are fixed and is anything new?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "before we build the new settings page, look over the mockup (settings-v2.html and the three PNGs in docs/mockups) and tell me what's wrong: contrast, focus order, narrow widths, anything that doesn't match DR-31",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "here are screenshots of the built signup flow from the dev site. do they match the approved mockups? check the keyboard order and what a screen reader would announce",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the hero section on the landing page looks generic. give me a bolder typography and colour direction, maybe something less like every other SaaS site",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write the release notes for WikiMint 1.4, mostly about the new repository form and the progress view",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "draw a UML state diagram for the signup form: idle, validating, submitting, success, error",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the settings page from the approved mockup in React using the Forge UI Kit components, wire the save button to the resolver",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the WCAG 2.2 success criterion number for focus not obscured, and is it level AA or AAA?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the VS Code test host screenshots come out blurry on my 4K monitor, how do I capture them at scale factor 1?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 8,
+      "test_failed": 0,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "Keith approved the app-1 mockup last week but the dev changed the default selection in the build. review the built screen against the approved one and say what else drifted",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "contrast check for the empty-state mockup: muted text #8a94a6 on #f7f8fa and the disabled button outline #c1c7d0 on white. pass or fail for WCAG AA, and what would you change?",
+          "should_trigger": true,
+          "trigger_rate": 0.6666666666666666,
+          "triggers": 2,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the forge macro config panel design, will it actually work at 300px wide in a confluence sidebar? and are the UI Kit props the mockup relies on real?",
+          "should_trigger": true,
+          "trigger_rate": 0.6666666666666666,
+          "triggers": 2,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "states.puml for the checkout form has a Submitting state but the mockup has no frame for it. what else is missing from the design before Build starts?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a header image for the blog post about PowerShell runspaces, something like a control room at night",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this C# class for thread safety bugs, the cache dictionary gets hit from several tasks at once",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "make a bar chart of monthly signups for the last 12 months with colours that work for colour-blind readers",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "jest test in Forge/test/frontend/form.test.jsx fails: expected the Start button to be enabled after typing a URL. can you fix it",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 11,
+      "failed": 1,
+      "total": 12,
+      "results": [
+        {
+          "query": "is this error state design ok? when the email is wrong the form just turns the field border red and pops a toast saying 'invalid input' in the top right corner",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "compare the new onboarding wizard mockup against the screens we already shipped: are the buttons, required-field marking and wording consistent?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review the dark mode variants of the dashboard mockups. any text below 4.5:1 or icons and borders below 3:1? the PNGs are in design/dark",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "UI design review round 2 for the DetentShell settings dialog. prior findings were ui-design-1 to 6, the repaired mockup is docs/ui/settings-r2.png. which are fixed and is anything new?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "before we build the new settings page, look over the mockup (settings-v2.html and the three PNGs in docs/mockups) and tell me what's wrong: contrast, focus order, narrow widths, anything that doesn't match DR-31",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "here are screenshots of the built signup flow from the dev site. do they match the approved mockups? check the keyboard order and what a screen reader would announce",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the hero section on the landing page looks generic. give me a bolder typography and colour direction, maybe something less like every other SaaS site",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write the release notes for WikiMint 1.4, mostly about the new repository form and the progress view",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "draw a UML state diagram for the signup form: idle, validating, submitting, success, error",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the settings page from the approved mockup in React using the Forge UI Kit components, wire the save button to the resolver",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the WCAG 2.2 success criterion number for focus not obscured, and is it level AA or AAA?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the VS Code test host screenshots come out blurry on my 4K monitor, how do I capture them at scale factor 1?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill to critique any UI design or screen behavior someone describes, sketches, mocks up or screenshots, from a whole flow down to one error message, validation state, empty or loading state, toast or dialog. It covers designs before code exists (mockups, state diagrams, the design decision record) and built screens compared against the approved mockups. It is the reviewer for the delivery-pipeline UI design review loop (Design phase) and the Verify-phase UI review, for Forge/Confluence apps, DetentShell and websites. Use it for questions like \"is this design ok?\", \"does this error handling make sense?\", \"is this accessible?\" or \"does the build match the mockup?\", including casual ones that never say \"review\". It checks states, focus, screen readers, contrast, layout, tokens, consistency and wording, and reports findings in the review-loop shape. Not for creating a new visual style, writing UI code, drawing diagrams, or standalone WCAG trivia.",
+      "train_passed": 12,
+      "train_failed": 0,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "is this error state design ok? when the email is wrong the form just turns the field border red and pops a toast saying 'invalid input' in the top right corner",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "compare the new onboarding wizard mockup against the screens we already shipped: are the buttons, required-field marking and wording consistent?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review the dark mode variants of the dashboard mockups. any text below 4.5:1 or icons and borders below 3:1? the PNGs are in design/dark",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "UI design review round 2 for the DetentShell settings dialog. prior findings were ui-design-1 to 6, the repaired mockup is docs/ui/settings-r2.png. which are fixed and is anything new?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "before we build the new settings page, look over the mockup (settings-v2.html and the three PNGs in docs/mockups) and tell me what's wrong: contrast, focus order, narrow widths, anything that doesn't match DR-31",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "here are screenshots of the built signup flow from the dev site. do they match the approved mockups? check the keyboard order and what a screen reader would announce",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the hero section on the landing page looks generic. give me a bolder typography and colour direction, maybe something less like every other SaaS site",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write the release notes for WikiMint 1.4, mostly about the new repository form and the progress view",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "draw a UML state diagram for the signup form: idle, validating, submitting, success, error",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the settings page from the approved mockup in React using the Forge UI Kit components, wire the save button to the resolver",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the WCAG 2.2 success criterion number for focus not obscured, and is it level AA or AAA?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the VS Code test host screenshots come out blurry on my 4K monitor, how do I capture them at scale factor 1?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 8,
+      "test_failed": 0,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "Keith approved the app-1 mockup last week but the dev changed the default selection in the build. review the built screen against the approved one and say what else drifted",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "contrast check for the empty-state mockup: muted text #8a94a6 on #f7f8fa and the disabled button outline #c1c7d0 on white. pass or fail for WCAG AA, and what would you change?",
+          "should_trigger": true,
+          "trigger_rate": 0.6666666666666666,
+          "triggers": 2,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the forge macro config panel design, will it actually work at 300px wide in a confluence sidebar? and are the UI Kit props the mockup relies on real?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "states.puml for the checkout form has a Submitting state but the mockup has no frame for it. what else is missing from the design before Build starts?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "generate a header image for the blog post about PowerShell runspaces, something like a control room at night",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this C# class for thread safety bugs, the cache dictionary gets hit from several tasks at once",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "make a bar chart of monthly signups for the last 12 months with colours that work for colour-blind readers",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "jest test in Forge/test/frontend/form.test.jsx fails: expected the Start button to be enabled after typing a URL. can you fix it",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 12,
+      "failed": 0,
+      "total": 12,
+      "results": [
+        {
+          "query": "is this error state design ok? when the email is wrong the form just turns the field border red and pops a toast saying 'invalid input' in the top right corner",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "compare the new onboarding wizard mockup against the screens we already shipped: are the buttons, required-field marking and wording consistent?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review the dark mode variants of the dashboard mockups. any text below 4.5:1 or icons and borders below 3:1? the PNGs are in design/dark",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "UI design review round 2 for the DetentShell settings dialog. prior findings were ui-design-1 to 6, the repaired mockup is docs/ui/settings-r2.png. which are fixed and is anything new?",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "before we build the new settings page, look over the mockup (settings-v2.html and the three PNGs in docs/mockups) and tell me what's wrong: contrast, focus order, narrow widths, anything that doesn't match DR-31",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "here are screenshots of the built signup flow from the dev site. do they match the approved mockups? check the keyboard order and what a screen reader would announce",
+          "should_trigger": true,
+          "trigger_rate": 1.0,
+          "triggers": 3,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the hero section on the landing page looks generic. give me a bolder typography and colour direction, maybe something less like every other SaaS site",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write the release notes for WikiMint 1.4, mostly about the new repository form and the progress view",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "draw a UML state diagram for the signup form: idle, validating, submitting, success, error",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the settings page from the approved mockup in React using the Forge UI Kit components, wire the save button to the resolver",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the WCAG 2.2 success criterion number for focus not obscured, and is it level AA or AAA?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the VS Code test host screenshots come out blurry on my 4K monitor, how do I capture them at scale factor 1?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

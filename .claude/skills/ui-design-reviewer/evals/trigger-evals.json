@@ -1,0 +1,22 @@
+[
+  {"query": "before we build the new settings page, look over the mockup (settings-v2.html and the three PNGs in docs/mockups) and tell me what's wrong: contrast, focus order, narrow widths, anything that doesn't match DR-31", "should_trigger": true},
+  {"query": "here are screenshots of the built signup flow from the dev site. do they match the approved mockups? check the keyboard order and what a screen reader would announce", "should_trigger": true},
+  {"query": "the forge macro config panel design, will it actually work at 300px wide in a confluence sidebar? and are the UI Kit props the mockup relies on real?", "should_trigger": true},
+  {"query": "contrast check for the empty-state mockup: muted text #8a94a6 on #f7f8fa and the disabled button outline #c1c7d0 on white. pass or fail for WCAG AA, and what would you change?", "should_trigger": true},
+  {"query": "UI design review round 2 for the DetentShell settings dialog. prior findings were ui-design-1 to 6, the repaired mockup is docs/ui/settings-r2.png. which are fixed and is anything new?", "should_trigger": true},
+  {"query": "is this error state design ok? when the email is wrong the form just turns the field border red and pops a toast saying 'invalid input' in the top right corner", "should_trigger": true},
+  {"query": "compare the new onboarding wizard mockup against the screens we already shipped: are the buttons, required-field marking and wording consistent?", "should_trigger": true},
+  {"query": "Keith approved the app-1 mockup last week but the dev changed the default selection in the build. review the built screen against the approved one and say what else drifted", "should_trigger": true},
+  {"query": "states.puml for the checkout form has a Submitting state but the mockup has no frame for it. what else is missing from the design before Build starts?", "should_trigger": true},
+  {"query": "review the dark mode variants of the dashboard mockups. any text below 4.5:1 or icons and borders below 3:1? the PNGs are in design/dark", "should_trigger": true},
+  {"query": "build the settings page from the approved mockup in React using the Forge UI Kit components, wire the save button to the resolver", "should_trigger": false},
+  {"query": "the hero section on the landing page looks generic. give me a bolder typography and colour direction, maybe something less like every other SaaS site", "should_trigger": false},
+  {"query": "make a bar chart of monthly signups for the last 12 months with colours that work for colour-blind readers", "should_trigger": false},
+  {"query": "generate a header image for the blog post about PowerShell runspaces, something like a control room at night", "should_trigger": false},
+  {"query": "jest test in Forge/test/frontend/form.test.jsx fails: expected the Start button to be enabled after typing a URL. can you fix it", "should_trigger": false},
+  {"query": "review this C# class for thread safety bugs, the cache dictionary gets hit from several tasks at once", "should_trigger": false},
+  {"query": "what's the WCAG 2.2 success criterion number for focus not obscured, and is it level AA or AAA?", "should_trigger": false},
+  {"query": "draw a UML state diagram for the signup form: idle, validating, submitting, success, error", "should_trigger": false},
+  {"query": "write the release notes for WikiMint 1.4, mostly about the new repository form and the progress view", "should_trigger": false},
+  {"query": "the VS Code test host screenshots come out blurry on my 4K monitor, how do I capture them at scale factor 1?", "should_trigger": false}
+]

@@ -1,0 +1,189 @@
+{
+  "spec": "delivery-review-loops",
+  "status": "Adopted by Keith 2026-11-14, as drafted. Amended by Keith 2026-11-15 after the WikiMint trial (round cap, rulings) and after the skill tests (loop size). Values marked 'default' are Keith's to change.",
+  "version": "1.2.2",
+  "adopted": "2026-11-14",
+  "changes": [
+    "1.2.2 (2026-11-17, Keith chose items 1 through 5 of the verification plan taken from the Claude Code team's practice): every reviewer reads the repo's REVIEW.md from the default branch before the code, never from the working tree or the branch under review, so a change cannot edit its own checks; with no such file it says so and reviews against the house bars. Written into the reviewer prompt (reviewLoop) and loop.reviewFocus. The control flow and the diagrams are unchanged. A rule earns a line in REVIEW.md when the miss recurred in two changes and a diff can show it, the PATTERNS.md bar.",
+    "1.2.1 (2026-11-15, Keith chose 'Keep it, say so' after round 2 of the skill tests): a stop on a builder escalation, or on a waiver proposed for a critical or high finding Keith did not rule on, still comes straight after the repair round, so that round's repairs are not re-tested or reviewed. The stop record now says so, and that a resume with Keith's ruling reruns that repair round. Also written down: the ledger holds only waivers and carried findings, never a stop, a ruling or a pending resume. No rule changed.",
+    "1.2.0 (2026-11-15, Keith chose 'Smaller loop for small work' after the skill tests, where a hand-walked loop on a 40-line function took 96 minutes and about 1.8M tokens): a small item, one source file under 200 lines with test files not counted, runs the Verify phase as one code-and-security loop with one fresh reviewer per round applying both checklists, and every Verify loop caps at 3 rounds. Everything else keeps separate code and security loops and the 5-round cap. The Design phase is unchanged. Also written down, from the code as it stands: a ruling on a finding that stopped at the 2-repair rule is carried out at that finding's first repair round in the replay, and the run goes live from there (rulings.afterTwoRepairStop).",
+    "1.1.1 (2026-11-15, Keith chose 'Both'): the UI design review and UI review name the new ui-design-reviewer skill as their reviewer, closing the open item. The new review-loop skill is the entry point for running a loop from any orchestration. The ui-design 'blocks' line now says 'clean or carried', which the 1.1.0 cap rule and the code already did. No rule changed.",
+    "1.1.0 (2026-11-15, Keith's rulings after the WikiMint trial): at the round cap, open low findings are carried to the ledger as open items for Keith and the run goes on; medium and above still stop. After a stop, Keith's rulings are passed on resume (keithRulings): the next repair round carries out each ruling, then one more fresh review checks it, past the cap if need be. A stop now lists each finding's where, evidence and suggested repair, plus the phase agents' open items. From the second pass of a phase, finding ids carry the pass.",
+    "1.0.1 (2026-11-14): waivers go to the project's own ledger. The workflow takes ledgerPath for a repo that holds more than one product. Found by the WikiMint trial: WikiEngine's root Docs/PIPELINE.md is the Insights generator's ledger."
+  ],
+  "extends": {
+    "process": "Official delivery process",
+    "blueprint": "https://claude.ai/artifact/Ebg1FZUG7tUyWU6JrdkzWm",
+    "statusEdition": "https://claude.ai/artifact/7cpypKv12e9EkyyDtykLAy",
+    "draftPage": "https://claude.ai/artifact/MrQZRaDRyjXUERoQ2Uk8zc"
+  },
+  "implementedIn": {
+    "workflow": "C:\\Users\\keith\\.claude\\workflows\\delivery-pipeline.js (REVIEWS, reviewPhase, reviewLoop, and the small-item check before the Verify reviews). The script cannot read files, so it carries its own copy of these rules: change both together.",
+    "diagrams": "C:\\Users\\keith\\.claude\\skills\\delivery-pipeline\\uml\\",
+    "entryPoint": "C:\\Users\\keith\\.claude\\skills\\review-loop\\SKILL.md (how to run a loop from any orchestration)"
+  },
+  "loop": {
+    "steps": ["review", "repair", "re-run", "re-review"],
+    "reviewFocus": {
+      "decidedBy": "Keith, 2026-11-17",
+      "file": "REVIEW.md at the repo root, read from the default branch: git show origin/HEAD:REVIEW.md, then main, then master. Never from the working tree or the branch under review.",
+      "holds": "What to look at first, rules from past misses with the miss named, and what not to flag. Template: C:\\Users\\keith\\.claude\\skills\\review-loop\\TEMPLATE-REVIEW.md.",
+      "absent": "The reviewer says so in its notes and reviews against the house bars alone.",
+      "ruleBar": "A rule earns a line when the miss recurred in at least two changes and a diff can show it (PATTERNS.md)."
+    },
+    "reviewer": "A fresh agent every round. Never the agent that built or repaired the work.",
+    "carryForward": "Each round's reviewer gets the findings from the round before. It reports on each one by id (still present, gone, or waiver accepted) before it looks for new findings.",
+    "rerun": "After a repair round, the phase's tests and static analysis run again first. Then every review in the same phase runs again on the files that round changed.",
+    "size": {
+      "decidedBy": "Keith, 2026-11-15",
+      "smallItem": "The change under review is one source file under 200 lines. Test files are not counted. In the workflow, the check runs before the Verify reviews: when Build changed exactly one non-test file, a fresh agent counts its lines.",
+      "small": "One code-and-security loop (review code-security) with one fresh reviewer per round applying both checklists, then the UI review when the project has a UI. Every loop in the phase, and the phase's cross-review passes, cap at 3 rounds.",
+      "other": "Separate code, security and UI loops, each with its own fresh reviewer per round, and the 5-round cap.",
+      "design": "The Design phase's UI design review is not sized; it keeps the 5-round cap."
+    },
+    "exit": {
+      "rule": "fixed-or-waived",
+      "decidedBy": "Keith, 2026-11-14",
+      "meaning": "The loop exits when no finding is open. A finding closes when it is repaired, or when it carries a written waiver reason that the next round's reviewer accepts.",
+      "log": "Every waiver is written to the project's pipeline ledger (Docs/PIPELINE.md, or the ledgerPath the run is given when one repo holds several products) and listed for Keith at the end of the run. Carried findings are written there too, as open items for Keith. Nothing else goes there: a stop, a ruling and a pending resume stay in the stop record and the run's result."
+    },
+    "stop": {
+      "sameFindingRepairRounds": 2,
+      "sameFindingMeaning": "A finding still open after 2 repair rounds stops the loop (CLAUDE.md section 18).",
+      "maxRounds": 5,
+      "maxRoundsSmallItem": 3,
+      "maxRoundsNote": "Default. Ends a loop where every round turns up new findings. Cross-review re-runs inside a phase also stop after this many passes. A small item (loop.size) uses maxRoundsSmallItem instead.",
+      "atCap": {
+        "decidedBy": "Keith, 2026-11-15",
+        "medium, high or critical open": "Stop and ask Keith.",
+        "only low findings open": "Carried: each goes to the ledger as an open item for Keith, and the run goes on. The loop's status is 'carried', not 'clean'."
+      },
+      "onStop": "Stop and ask Keith. The stage is never marked clean on a stop, and no later phase runs. The stop record lists each finding behind the stop (where, evidence, suggested repair, and the builder's action if it escalated), the phase agents' open items for Keith, and the low findings carried so far. A stop on a builder escalation, or on a waiver proposed for a critical or high finding, comes straight after the repair round: that round's repairs are not re-tested or reviewed, and the stop record says so. A resume with Keith's ruling reruns that repair round (Keith kept this on 2026-11-15)."
+    },
+    "rulings": {
+      "decidedBy": "Keith, 2026-11-15",
+      "how": "Keith rules on the findings in the stop record. The session resumes the stopped run with the same args plus keithRulings: [{ id, ruling }].",
+      "effect": "The next repair round that sees the finding open carries out the ruling exactly; it overrides the suggested repair and the waiver rule. Then one more fresh review checks the work, even past the round cap. Each ruling is carried out once: a finding still open afterwards follows the normal rules again.",
+      "afterTwoRepairStop": "A finding that stopped the loop by still being open after 2 repair rounds: on resume, the replay reaches that finding's first repair round, and that round carries out the ruling in place of the original repair. Agents before it replay from cache; every agent from it on runs live. If the finding is still open after the ruled repair, it gets one ordinary repair round; still open after that, it has had 2 repair rounds again, so the loop stops and comes back to Keith.",
+      "cache": "Rulings reach only that repair round's prompt, so every earlier agent replays from cache on resume."
+    },
+    "waiver": {
+      "proposedBy": "The builder, during the repair round.",
+      "acceptedBy": "The next round's fresh reviewer. A rejected waiver leaves the finding open.",
+      "notWaivableByAgents": ["critical", "high"],
+      "notWaivableNote": "Default. A critical or high finding that cannot be repaired goes to Keith instead of being waived, unless Keith rules to waive it."
+    },
+    "neverRepairedInLoop": [
+      "A mismatch between a diagram, a Steps: blueprint and the code. The reviewer marks it needsKeith and the loop stops (CLAUDE.md section 5); the builder never resolves it alone. With a Keith ruling on it, the builder carries out the ruling."
+    ]
+  },
+  "finding": {
+    "id": "Stable across rounds. The reviewer that first reports it assigns it; later rounds reuse it. From the second pass of a phase, ids carry the pass (code-p2-1), so a ruling names exactly one finding.",
+    "severity": "critical | high | medium | low",
+    "where": "file:line, screen name, or mockup region",
+    "evidence": "What the reviewer saw: quoted code, a screenshot path, or the rule it breaks",
+    "suggestedRepair": "One or two sentences",
+    "state": "open | repaired | waived",
+    "waiverReason": "Required when state is waived",
+    "needsKeith": "true for a diagram, Steps: or code mismatch; stops the loop"
+  },
+  "reviews": [
+    {
+      "id": "ui-design",
+      "name": "UI design review",
+      "phase": "Design",
+      "after": "UML",
+      "appliesWhen": "The Discovery brief says the project has a UI.",
+      "reviewer": "The ui-design-reviewer skill (C:\\Users\\keith\\.claude\\skills\\ui-design-reviewer\\SKILL.md), written 2026-11-15 from the WikiMint trial's 22 findings.",
+      "input": [
+        "Mockups or screen sketches from the Design phase",
+        "The project's design system or brand rules",
+        "The Design-phase decision records"
+      ],
+      "checks": [
+        "Matches the design system or brand rules",
+        "Every screen state is drawn: empty, loading, error, full",
+        "Labels are plain English",
+        "Accessibility: contrast, keyboard path, readable at the target sizes"
+      ],
+      "rerun": false,
+      "blocks": "Build does not start until this loop is clean or carried (carried: only low findings open at the cap, per the 1.1.0 rule)."
+    },
+    {
+      "id": "code",
+      "name": "Code review",
+      "phase": "Verify",
+      "after": "Integration tests",
+      "appliesWhen": "Always, except a small item (loop.size), where code-security takes its place.",
+      "reviewer": "The code-review skill at level high (default; max and ultra only on Keith's explicit ask, per that skill), held to the house bars: function-design, software-creation and compliance-checklist for PowerShell, or the stack's named equivalent.",
+      "input": [
+        "The change since the Build phase started",
+        "The Design-phase decision records and UML",
+        "The latest test and static-analysis run"
+      ],
+      "checks": [
+        "Correctness bugs",
+        "Code matches its Steps: blueprint and diagrams (a mismatch is needsKeith)",
+        "Structured results on every path, error cases handled",
+        "No dead code left by the change",
+        "Failing tests or static-analysis errors in the latest run"
+      ],
+      "rerun": true
+    },
+    {
+      "id": "security",
+      "name": "Security review",
+      "phase": "Verify",
+      "after": "Code review",
+      "appliesWhen": "Always, except a small item (loop.size), where code-security takes its place.",
+      "reviewer": "virtual-security-reviewer (the cross-suite CWE list).",
+      "input": [
+        "The change since the Build phase started",
+        "Trust boundaries from the UML"
+      ],
+      "checks": [
+        "Injection classes",
+        "Trust boundaries and named assumptions",
+        "Secrets and credential handling"
+      ],
+      "rerun": true
+    },
+    {
+      "id": "code-security",
+      "name": "Code and security review",
+      "phase": "Verify",
+      "after": "Integration tests",
+      "appliesWhen": "A small item (loop.size), in place of the code review and the security review.",
+      "reviewer": "One fresh agent per round applying both: the code-review skill at level high, held to the same house bars as the code review, and virtual-security-reviewer (the cross-suite CWE list).",
+      "input": [
+        "The change since the Build phase started",
+        "The Design-phase decision records and UML",
+        "The latest test and static-analysis run"
+      ],
+      "checks": [
+        "Every check of the code review",
+        "Every check of the security review"
+      ],
+      "rerun": true
+    },
+    {
+      "id": "ui",
+      "name": "UI review",
+      "phase": "Verify",
+      "after": "Visual UI testing",
+      "appliesWhen": "The project has a UI.",
+      "reviewer": "A fresh agent using the ui-design-reviewer skill's 'Built screens' section, comparing the latest window screenshots with the mockups approved in the UI design review.",
+      "input": [
+        "Window screenshots of each screen state",
+        "The approved mockups"
+      ],
+      "checks": [
+        "Built screens match the approved design",
+        "Nothing clipped or overlapping at the target sizes",
+        "Both themes, where the product has them",
+        "Labels match the approved wording"
+      ],
+      "rerun": true
+    }
+  ]
+}

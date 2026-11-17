@@ -1,0 +1,659 @@
+<title>Review Loop Handbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: one reading column (46rem) with a contents strip under the header; the round diagram is a two-column grid (step | exit) that stacks on phones. */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #18202b;
+  --muted: #536074;
+  --rule: #d8dee8;
+  --accent: #2c4fb5;
+  --accent-soft: #e5ebfa;
+  --code-bg: #edf0f5;
+  --ok: #1d7448;
+  --ok-soft: #e1f2e8;
+  --warn: #855600;
+  --warn-soft: #faefd6;
+  --stop: #ad2620;
+  --stop-soft: #fae4e2;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, "Cascadia Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --surface: #161d27; --ink: #e5e9ef; --muted: #9ba6b6; --rule: #283240;
+    --accent: #8fa9ff; --accent-soft: #1c2640; --code-bg: #1a222e;
+    --ok: #6fd1a0; --ok-soft: #12281d; --warn: #efc061; --warn-soft: #2c2311; --stop: #ff8f86; --stop-soft: #391917;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --surface: #161d27; --ink: #e5e9ef; --muted: #9ba6b6; --rule: #283240;
+  --accent: #8fa9ff; --accent-soft: #1c2640; --code-bg: #1a222e;
+  --ok: #6fd1a0; --ok-soft: #12281d; --warn: #efc061; --warn-soft: #2c2311; --stop: #ff8f86; --stop-soft: #391917;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.page {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.55rem; font-weight: 600; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 0.08em 0.35em;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+pre {
+  margin: 0;
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
+ul, ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+
+section { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 16px; }
+.section-head { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.muted { color: var(--muted); }
+
+/* Header */
+header { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 1.12rem; color: var(--ink); max-width: 40rem; }
+.meta { font-size: 0.88rem; color: var(--muted); }
+
+/* Contents */
+.toc {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding-block: 14px;
+}
+.toc ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 24px;
+  font-size: 0.93rem;
+}
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+/* Two skills */
+.skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.skill {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.skill h3 code { font-size: 0.95em; background: var(--accent-soft); color: var(--accent); }
+.skill .use { font-size: 0.92rem; color: var(--muted); }
+
+/* The round */
+.flow { list-style: none; padding: 0; gap: 0; counter-reset: step; position: relative; }
+.step {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0 12px 44px;
+  position: relative;
+  border-left: 2px solid var(--rule);
+  margin-left: 14px;
+}
+.step::before {
+  content: counter(step);
+  position: absolute;
+  left: -15px;
+  top: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: grid;
+  place-items: center;
+}
+.step-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kind {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.step-exit { display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 0.92rem; }
+.exit { display: flex; gap: 8px; align-items: baseline; }
+.pill {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.pill.ok { color: var(--ok); background: var(--ok-soft); }
+.pill.warn { color: var(--warn); background: var(--warn-soft); }
+.pill.stop { color: var(--stop); background: var(--stop-soft); }
+.pill.go { color: var(--accent); background: var(--accent-soft); }
+.loop-back {
+  margin-left: 14px;
+  padding: 10px 0 0 44px;
+  border-left: 2px dashed var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+/* Outcomes */
+.outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.outcome {
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  min-width: 0;
+  font-size: 0.93rem;
+}
+.outcome.ok { border-top: 4px solid var(--ok); }
+.outcome.warn { border-top: 4px solid var(--warn); }
+.outcome.stop { border-top: 4px solid var(--stop); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--font-display); font-weight: 600; font-size: 0.86rem; background: var(--code-bg); }
+tr:last-child td { border-bottom: none; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Notes */
+.note {
+  background: var(--accent-soft);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.93rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.note .kind { color: var(--accent); }
+.checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.check {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+  min-width: 0;
+}
+.check h3 { font-size: 0.98rem; }
+.check .trial { color: var(--muted); font-size: 0.84rem; }
+.steps-list { counter-reset: none; }
+.status-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+
+footer { border-top: 1px solid var(--rule); padding-top: 16px; font-size: 0.85rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+
+@media (max-width: 640px) {
+  h1 { font-size: 1.9rem; }
+  .toc ol, .skills, .outcomes, .checks, .status-grid { grid-template-columns: minmax(0, 1fr); }
+  .step { grid-template-columns: minmax(0, 1fr); gap: 8px; padding-left: 32px; }
+  .loop-back { padding-left: 32px; }
+}
+@media (min-width: 641px) and (max-width: 860px) {
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --bg: #ffffff; --surface: #ffffff; --ink: #111820; --muted: #4a5568; --rule: #cfd6e0;
+    --accent: #2c4fb5; --accent-soft: #eef2fb; --code-bg: #f1f3f7;
+    --ok: #1d7448; --ok-soft: #e9f5ee; --warn: #855600; --warn-soft: #fbf3e2; --stop: #ad2620; --stop-soft: #fbecea;
+    color-scheme: light;
+  }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @page { margin: 14mm 13mm; }
+  body { font-size: 11pt; }
+  .page { max-width: none; padding-block: 0; gap: 26px; }
+  .toc { display: none; }
+  h2 { break-after: avoid; }
+  .step, .outcome, .skill, .check, .note, pre, tr { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+
+<div class="page">
+
+<header>
+  <span class="eyebrow">Official delivery process · review loops spec 1.2.1</span>
+  <h1>Review loop handbook</h1>
+  <p class="lede">How to run a review that repeats until no finding stays open, and how to use the two skills built for it: <code>review-loop</code> and <code>ui-design-reviewer</code>.</p>
+  <p class="meta">Keith adopted the rules on 2026-11-14 and amended them on 2026-11-15 after the WikiMint trial. The Meta session wrote this guide on 2026-11-15 from the rules file, the workflow script, and the WikiMint trial report. Where it and the rules file disagree, the rules file wins.</p>
+</header>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#skills">The two skills</a></li>
+    <li><a href="#round">One round, step by step</a></li>
+    <li><a href="#outcomes">How a loop ends</a></li>
+    <li><a href="#reviewers">Which reviewer runs which review</a></li>
+    <li><a href="#before">Before you launch</a></li>
+    <li><a href="#run">Three ways to run a loop</a></li>
+    <li><a href="#stops">When a loop stops</a></li>
+    <li><a href="#ui">Using the UI design reviewer</a></li>
+    <li><a href="#ledger">Waivers and the ledger</a></li>
+    <li><a href="#mistakes">Mistakes the trials caught</a></li>
+    <li><a href="#files">Where everything lives</a></li>
+    <li><a href="#status">What has run for real</a></li>
+  </ol>
+</nav>
+
+<section id="skills">
+  <div class="section-head">
+    <span class="eyebrow">Start here</span>
+    <h2>The two skills</h2>
+  </div>
+  <p>A review loop is one review that repeats until no finding is open. A fresh reviewer finds problems, the builder fixes them or proposes a waiver, the tests run again, and a new reviewer checks the result. Two skills cover it.</p>
+  <div class="skills">
+    <article class="skill">
+      <h3><code>review-loop</code></h3>
+      <p>How to run any review that repeats until clean: in the delivery-pipeline workflow, by hand in a conversation, in a release QA pass, or inside a custom Workflow script. It points at the single rules file and doesn't restate the numbers.</p>
+      <p class="use">Reach for it when a review has to repeat until clean, or someone says "review this and fix what you find." It also covers a loop that stops and asks Keith, and a stopped run that resumes with his rulings.</p>
+    </article>
+    <article class="skill">
+      <h3><code>ui-design-reviewer</code></h3>
+      <p>The reviewer for screen designs before code exists (mockups, state diagrams, the design decision record), and for built screens compared with the approved mockups. Written from the 22 findings of the WikiMint trial.</p>
+      <p class="use">Reach for it as the reviewer in the UI design review (Design phase) and the UI review (Verify phase). Use it too when someone asks to check screens, focus order, contrast, or wording on a design.</p>
+    </article>
+  </div>
+</section>
+
+<section id="round">
+  <div class="section-head">
+    <span class="eyebrow">The mechanism</span>
+    <h2>One round, step by step</h2>
+  </div>
+  <p>Every round runs these checks in this order. The right-hand column shows where a round can leave the loop.</p>
+  <ol class="flow" aria-label="The steps of one review round">
+    <li class="step">
+      <div class="step-body"><span class="kind">Reviewer</span><p>A fresh reviewer agent reviews the scope. It never built or repaired the work. From round 2 it reports on every earlier finding by id (repaired, still open, or waiver accepted) before it looks for new ones.</p></div>
+      <div class="step-exit"></div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Check</span><p>Is a mismatch between a diagram, a <code>Steps:</code> blueprint and the code open (marked <code>needsKeith</code>), with no Keith ruling waiting on it?</p></div>
+      <div class="step-exit"><div class="exit"><span class="pill stop">Stopped</span><span>Goes to Keith. The builder never settles a mismatch alone (CLAUDE.md section 5).</span></div></div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Check</span><p>Is no finding open?</p></div>
+      <div class="step-exit"><div class="exit"><span class="pill ok">Clean</span><span>The loop ends and lists any waivers for the ledger.</span></div></div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Check</span><p>Is any finding still open after 2 repair rounds?</p></div>
+      <div class="step-exit"><div class="exit"><span class="pill stop">Stopped</span><span>Two tries is the limit (CLAUDE.md section 18).</span></div></div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Check</span><p>Is this the round cap: round 5, or round 3 for a small item?</p></div>
+      <div class="step-exit">
+        <div class="exit"><span class="pill stop">Stopped</span><span>A medium, high or critical finding is open with no Keith ruling waiting.</span></div>
+        <div class="exit"><span class="pill warn">Carried</span><span>Only low findings are open. Each goes to the ledger as an open item for Keith, and the work goes on.</span></div>
+        <div class="exit"><span class="pill go">Go on</span><span>A Keith ruling is waiting. This repair carries it out and one more review follows.</span></div>
+      </div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Builder</span><p>The builder repairs each open finding, proposes a waiver with a written reason, or escalates. It carries out each waiting Keith ruling exactly, in place of the suggested repair.</p></div>
+      <div class="step-exit"><div class="exit"><span class="pill stop">Stopped</span><span>The builder escalated, or proposed a waiver for a critical or high finding that Keith didn't rule on. The stop comes straight after the repair, so that round's repairs aren't re-tested or reviewed. A resume with Keith's ruling reruns the round.</span></div></div>
+    </li>
+    <li class="step">
+      <div class="step-body"><span class="kind">Re-run</span><p>A fresh agent runs the tests and static analysis again and records exact counts. This happens in the code, security and UI reviews. The UI design review has no tests to run.</p></div>
+      <div class="step-exit"></div>
+    </li>
+  </ol>
+  <p class="loop-back">Next round: back to step 1 with a new reviewer</p>
+  <p>A phase can hold more than one review. Verify runs code, then security, then UI. When a loop changes files, every other review in that phase looks again at those files. From the second pass, finding ids carry the pass number, such as <code>code-p2-1</code>, so a ruling always names exactly one finding. If the cross checks haven't settled after 5 passes, the phase stops.</p>
+</section>
+
+<section id="outcomes">
+  <div class="section-head">
+    <span class="eyebrow">Results</span>
+    <h2>How a loop ends</h2>
+  </div>
+  <div class="outcomes">
+    <div class="outcome ok">
+      <span class="pill ok" style="align-self:flex-start">Clean</span>
+      <p>No finding is open. The builder repaired each one, or the next reviewer accepted its waiver.</p>
+    </div>
+    <div class="outcome warn">
+      <span class="pill warn" style="align-self:flex-start">Carried</span>
+      <p>Round 5 came with only low findings open. They go to the ledger as open items for Keith, and the run goes on. The run doesn't count a carried loop as clean.</p>
+    </div>
+    <div class="outcome stop">
+      <span class="pill stop" style="align-self:flex-start">Stopped</span>
+      <p>A stop rule fired. The phase is never marked clean, no later phase runs, and the question goes to Keith.</p>
+    </div>
+  </div>
+  <p>A stopped run isn't the end. Keith rules on the findings, and the run resumes with his rulings. See <a href="#stops">When a loop stops</a>.</p>
+</section>
+
+<section id="reviewers">
+  <div class="section-head">
+    <span class="eyebrow">Who reviews</span>
+    <h2>Which reviewer runs which review</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Review</th><th>Phase</th><th>Runs when</th><th>Reviewer</th><th>Tests re-run</th></tr></thead>
+      <tbody>
+        <tr><td>UI design</td><td>Design, after UML</td><td>The project has a UI</td><td><code>ui-design-reviewer</code></td><td>No</td></tr>
+        <tr><td>Code</td><td>Verify, after integration tests</td><td>Always</td><td><code>code-review</code> at level high</td><td>Yes</td></tr>
+        <tr><td>Security</td><td>Verify, after code review</td><td>Always</td><td><code>virtual-security-reviewer</code></td><td>Yes</td></tr>
+        <tr><td>Code and security</td><td>Verify, after integration tests</td><td>A small item, in place of the two rows above</td><td>One agent applying <code>code-review</code> at level high and <code>virtual-security-reviewer</code></td><td>Yes</td></tr>
+        <tr><td>UI</td><td>Verify, after visual UI testing</td><td>The project has a UI</td><td><code>ui-design-reviewer</code>, "Built screens" section</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Build doesn't start until the UI design loop is clean or carried. Code review runs at level high. Max and ultra run only when Keith asks for them.</p>
+  <p>A small item is one source file under 200 lines, with test files not counted. Keith set the rule on 2026-11-15 (spec 1.2.0), after a test loop on a 40-line function ran 96 minutes with two reviewers a round. For a small item, Verify runs one code-and-security loop, and every Verify loop stops at round 3 instead of 5. The workflow checks the size itself before the Verify reviews. The Design phase isn't sized.</p>
+</section>
+
+<section id="before">
+  <div class="section-head">
+    <span class="eyebrow">Setup</span>
+    <h2>Before you launch</h2>
+  </div>
+  <p>These come from the WikiMint trial of 2026-11-14.</p>
+  <ul>
+    <li>Pick one small item: one function, one screen, or a few files.</li>
+    <li>Settle uncommitted files first, or let the run record them. Discovery lists them in <code>treeAtStart</code>, Build leaves them alone, and they stay out of the commit.</li>
+    <li>Put the stack, how tests run, what done means and the deploy rule in the description. For a Store app the deploy rule is "do not deploy; report devDeployed=false".</li>
+    <li>Pass <code>hasUi</code>, so the UI loops run when they should and stay off when they shouldn't.</li>
+    <li>Pass <code>ledgerPath</code> when one repo holds more than one product.</li>
+    <li>Budget the time. In the trial, a review round took 3 to 9 minutes and a repair round 7 to 16. Discovery, Design and five UI design rounds took 1 hour 52 minutes.</li>
+  </ul>
+</section>
+
+<section id="run">
+  <div class="section-head">
+    <span class="eyebrow">Running it</span>
+    <h2>Three ways to run a loop</h2>
+  </div>
+
+  <h3>In the delivery-pipeline workflow</h3>
+  <p>The workflow runs every loop for you. It refuses to start without <code>project</code> and <code>description</code>. Without <code>stack</code>, its agents ask before assuming PowerShell and Pester.</p>
+<pre><code>Workflow({ name: 'delivery-pipeline', args: {
+  project: '&lt;product name&gt;',
+  path: '&lt;repo folder&gt;',
+  description: '&lt;the item, what done means, how tests run, the deploy rule&gt;',
+  stack: '&lt;how this repo builds and tests&gt;',
+  cloudTarget: 'Azure',
+  hasUi: false,
+  ledgerPath: '&lt;repo folder&gt;\\Docs\\PIPELINE.md'
+} })</code></pre>
+  <p>Keep the run id and the script path from the launch result. A resume needs both.</p>
+
+  <h3>By hand, in a conversation</h3>
+  <ol>
+    <li>Start each review round as a new subagent (the Agent tool), with the review's checks and the finding shape from the rules file. Don't reuse an agent across rounds.</li>
+    <li>Act as the builder: repair, or propose a waiver with a written reason.</li>
+    <li>Run the tests and static analysis for real, and record exact counts.</li>
+    <li>Give the next reviewer the earlier findings and your repairs.</li>
+    <li>Apply the stop rules and the cap exactly as written. A loop walked by hand follows the same rules as the workflow.</li>
+  </ol>
+
+  <h3>Inside another Workflow script</h3>
+  <p>The loop code lives only in <code>delivery-pipeline.js</code>. A new script that needs it copies <code>reviewLoop</code>, <code>reviewPhase</code>, <code>loopResult</code>, <code>haltForKeith</code>, the four review schemas, <code>REVIEWS</code> and the limits, then proves the copy against the scenario tests before running it. No standalone review-loop workflow exists yet.</p>
+</section>
+
+<section id="stops">
+  <div class="section-head">
+    <span class="eyebrow">Keith's part</span>
+    <h2>When a loop stops</h2>
+  </div>
+  <p>The run comes back with <code>halted: true</code> and a stop record. The record holds enough to ask Keith without opening the run's journal:</p>
+  <ul>
+    <li>each finding behind the stop, with its location, the evidence, the suggested repair, and the builder's action if it escalated;</li>
+    <li>after an escalation, a line saying that round's repairs weren't re-tested or reviewed;</li>
+    <li>the open items the phase agents left for Keith (<code>openForKeith</code>);</li>
+    <li>the low findings carried so far;</li>
+    <li>a resume hint.</li>
+  </ul>
+  <ol>
+    <li>Take it to Keith in the question window, one finding per question, with a recommended answer.</li>
+    <li>Write his answer as a ruling: <code>{ id: 'code-3', ruling: '&lt;Keith's words&gt;' }</code>.</li>
+    <li>Resume with the same args plus <code>keithRulings</code>.</li>
+    <li>One repair round carries out each ruling, then one more fresh review checks it, past the cap if need be. The loop carries out each ruling once. If its finding is still open after that, the normal rules apply again.</li>
+    <li>A ruling on a finding that stopped at the 2-repair rule lands on that finding's first repair round in the replay, in place of the original repair. Every agent from there on runs live, and the finding gets one more ordinary repair before the 2-repair rule can stop the loop again.</li>
+  </ol>
+<pre><code>Workflow({ scriptPath: '&lt;from the launch result&gt;', resumeFromRunId: '&lt;run id&gt;',
+  args: { ...the same args..., keithRulings: [{ id: 'code-3', ruling: '...' }] } })</code></pre>
+  <div class="note">
+    <span class="kind">Why only the rulings may change</span>
+    <p>The Workflow engine caches each agent by its prompt and options. Rulings reach only the repair round that carries them out, so every earlier agent replays from cache. Change the description, or anything else in the args, and every prompt changes: the run starts again from Discovery.</p>
+  </div>
+  <p>Never resolve a stop yourself, even when the answer looks obvious.</p>
+</section>
+
+<section id="ui">
+  <div class="section-head">
+    <span class="eyebrow">The new reviewer</span>
+    <h2>Using the UI design reviewer</h2>
+  </div>
+  <p>The reviewer reports findings a builder can act on. It doesn't redesign and it doesn't repair, and in a loop it's a fresh agent every round.</p>
+
+  <h3>Gather before judging</h3>
+  <ol>
+    <li>The mockups: the source file (HTML or XAML carries notes and states a PNG hides) and every captured image of a state it comments on.</li>
+    <li>The design decision record and any state diagram for the screens.</li>
+    <li>The product's component reference, from the real source: the forge MCP tools for Forge and Confluence apps, the PS7-ISE theme and control styles for DetentShell, the site's own CSS tokens for websites.</li>
+    <li>Screens Keith has approved and his rulings on this design. Something he ruled out being absent is correct, not a gap.</li>
+    <li>The product's existing screens, so the new design matches what already ships.</li>
+  </ol>
+
+  <h3>Measure instead of judging by eye</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Check</th><th>How</th><th>What it caught in the trial</th></tr></thead>
+      <tbody>
+        <tr><td>Contrast</td><td>Sample pixels from the captured image and compute the WCAG ratio. Text needs 4.5:1; large text, input borders and focus rings need 3:1.</td><td class="num">Input border at 1.3:1</td></tr>
+        <tr><td>Narrow width</td><td>Render a scratch copy of the mockup's markup with headless Edge at the narrowest width the product allows (300px for a Confluence macro column).</td><td>Cards side by side with no wrap rule</td></tr>
+        <tr><td>Component props</td><td>Confirm every prop the design relies on exists in the component reference.</td><td><code>Textfield</code> had no <code>aria-label</code>; <code>SectionMessage</code> had no <code>role</code></td></tr>
+        <tr><td>Diagrams</td><td>Render the state diagram (PlantUML, <code>-failfast2</code>) and match its transitions to the mockup's states.</td><td>A transition re-entered a state at the wrong substate</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The reviewer works in scratch copies and changes no repository file.</p>
+
+  <h3>The nine areas</h3>
+  <div class="checks">
+    <div class="check"><h3>Every state drawn</h3><p>Empty, loading, error, full, and the in-between states users hit.</p><p class="trial">Trial: "Check again while it runs" was never drawn.</p></div>
+    <div class="check"><h3>Keyboard and focus</h3><p>Focus never sits on a disabled control, and survives a component swap.</p><p class="trial">Trial: Start went disabled while it held focus.</p></div>
+    <div class="check"><h3>Screen readers</h3><p>Controls name their state. A live region that exists before the words arrive announces each change.</p><p class="trial">Watch for: a focus move in the same render can cut an announcement off.</p></div>
+    <div class="check"><h3>Layout at real sizes</h3><p>Narrowest and widest widths, both themes, text that wraps instead of clipping.</p><p class="trial">Trial: cards broke at 300px.</p></div>
+    <div class="check"><h3>Design tokens</h3><p>Colors and spacing name the product's tokens, as its shipped screens do.</p><p class="trial">Trial: the design gave the selected card only as #0C66E4.</p></div>
+    <div class="check"><h3>Consistency</h3><p>Field marking, button order and nouns match the screens that ship.</p><p class="trial">Trial: one form marked optional fields, the other required ones.</p></div>
+    <div class="check"><h3>Errors users can act on</h3><p>A field error marks the field, retry advice doesn't loop, long waits say how long.</p><p class="trial">Trial: "try again in 30 seconds" for a job that runs up to 15 minutes.</p></div>
+    <div class="check"><h3>Artifacts agree</h3><p>The decision record, the state diagram and the mockups describe the same behavior.</p><p class="trial">Trial: one line of counts in the record, three blocks in the mockup.</p></div>
+    <div class="check"><h3>Plain English</h3><p>Plain words, no hype, no em dashes in new screen text, Keith's wording kept.</p><p class="trial">Watch for: one thing called by two names, such as "files" and "programs".</p></div>
+  </div>
+
+  <h3>Severity decides what happens at the round cap</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Severity</th><th>Means</th><th>Open at the cap</th></tr></thead>
+      <tbody>
+        <tr><td>Critical</td><td>The builder can't build the design as drawn, or it breaks one of Keith's rulings.</td><td><span class="pill stop">Stops</span></td></tr>
+        <tr><td>High</td><td>A core task fails for a keyboard or screen-reader user, or a state users will hit is missing with no defined behavior.</td><td><span class="pill stop">Stops</span></td></tr>
+        <tr><td>Medium</td><td>The task works but misleads or slows some users: focus in the wrong place, an unannounced change, a layout that breaks at a supported width.</td><td><span class="pill stop">Stops</span></td></tr>
+        <tr><td>Low</td><td>Polish and consistency: a token name, a wording mismatch, an edge case with a sensible default.</td><td><span class="pill warn">Carried</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Grade by what happens to a user, in both directions. Later rounds tend to find small issues in the text the last repair wrote. In the trial, rounds 2 to 5 found 8 new issues, 7 of them low, all in text the previous repair had written.</p>
+
+  <h3>Reporting a finding</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Field</th><th>What goes in it</th></tr></thead>
+      <tbody>
+        <tr><td><code>id</code></td><td><code>ui-design-&lt;n&gt;</code>, or the form the loop prompt gives. Keep ids from earlier rounds.</td></tr>
+        <tr><td><code>severity</code></td><td>critical, high, medium or low</td></tr>
+        <tr><td><code>where</code></td><td>File and line, state number, or mockup region</td></tr>
+        <tr><td><code>evidence</code></td><td>What the reviewer saw, quoted, with the measurement or reference it checked</td></tr>
+        <tr><td><code>suggestedRepair</code></td><td>One or two sentences</td></tr>
+        <tr><td><code>needsKeith</code></td><td>True only when the design contradicts something Keith ruled or an approved diagram from an earlier phase. Disagreement between artifacts the builder wrote in this phase is a normal finding.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The reviewer's notes list what it read, what it measured and how, and what it didn't open, so anyone can repeat the checks.</p>
+
+  <h3>Built screens, in the Verify UI review</h3>
+  <ul>
+    <li>Capture the app's window, not the whole screen, at a known scale factor.</li>
+    <li>Compare state by state: every approved state has a screenshot, the wording matches the approved text exactly, nothing clips or overlaps, and focus shows where the design put it.</li>
+    <li>A difference from the approved mockup is a finding even when the built version looks fine. Either the build matches the mockup, or the design changes on purpose.</li>
+  </ul>
+</section>
+
+<section id="ledger">
+  <div class="section-head">
+    <span class="eyebrow">Record keeping</span>
+    <h2>Waivers and the ledger</h2>
+  </div>
+  <ul>
+    <li>The builder proposes a waiver during a repair round, with a written reason.</li>
+    <li>The next round's fresh reviewer accepts it or rejects it. A rejected waiver leaves the finding open.</li>
+    <li>Agents can't waive a critical or high finding. It goes to Keith instead, unless Keith rules to waive it.</li>
+    <li>Every waiver and every carried finding goes in the project's <code>Docs\PIPELINE.md</code>, or the file named by <code>ledgerPath</code>. The run lists them for Keith at the end.</li>
+    <li>Nothing else goes in the ledger: not a stop, a ruling or a pending resume. Those stay in the stop record and the run's result.</li>
+  </ul>
+  <p>In WikiEngine, WikiMint's ledger is <code>WikiMint\Docs\PIPELINE.md</code>. The root ledger there belongs to the Insights generator.</p>
+</section>
+
+<section id="mistakes">
+  <div class="section-head">
+    <span class="eyebrow">Lessons</span>
+    <h2>Mistakes the trials caught</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>What went wrong</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td>The first handoff named WikiEngine's root ledger, which belongs to another product.</td><td>Pass <code>ledgerPath</code> whenever a repo holds more than one product (spec 1.0.1).</td></tr>
+        <tr><td>GitEasy <code>save_work</code> skipped the repo's commit gates (BUG-031).</td><td>Commit with plain git, an explicit file list and <code>#giteasy-ok</code>.</td></tr>
+        <tr><td>The WikiMint run stopped at round 5 on a single low finding, <code>ui-design-22</code>.</td><td>Since spec 1.1.0, lows open at the cap go to the ledger as carried findings and the run goes on.</td></tr>
+        <tr><td>Rounds 2 to 5 spent about 52 minutes and 711k output tokens to find 8 new issues, 7 of them low.</td><td>Expect later rounds to polish the last repair's wording, and grade those findings at the severity they deserve.</td></tr>
+        <tr><td>Editing the workflow script during a run has no effect on that run.</td><td>A run keeps the copy it launched with. Edit between runs only.</td></tr>
+        <tr><td>Changing anything in the args on resume reruns every agent.</td><td>Resume with the same args plus <code>keithRulings</code>, and nothing else.</td></tr>
+        <tr><td>In a skill test, a run wrote a ledger row for a halt and Keith's ruling.</td><td>The ledger holds waivers and carried findings only (spec 1.2.1).</td></tr>
+        <tr><td>In a skill test, a reviewer held a 46-line standalone script to the never-throw rule for module functions, and the builder had to escalate.</td><td>Brief reviewers to apply each house bar only where its own skill says it applies.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="files">
+  <div class="section-head">
+    <span class="eyebrow">Reference</span>
+    <h2>Where everything lives</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>What</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr><td>The rules (spec 1.2.x)</td><td><code>C:\Users\keith\.claude\skills\delivery-pipeline\review-loops.json</code></td></tr>
+        <tr><td>Control flow diagrams</td><td><code>C:\Users\keith\.claude\skills\delivery-pipeline\uml\</code> (01 and 02)</td></tr>
+        <tr><td>The running code</td><td><code>C:\Users\keith\.claude\workflows\delivery-pipeline.js</code></td></tr>
+        <tr><td>Scenario tests</td><td><code>C:\Users\keith\.claude\skills\delivery-pipeline\tests\run-scenarios.js</code></td></tr>
+        <tr><td>How to run a loop</td><td><code>C:\Users\keith\.claude\skills\review-loop\SKILL.md</code></td></tr>
+        <tr><td>The UI reviewer</td><td><code>C:\Users\keith\.claude\skills\ui-design-reviewer\SKILL.md</code></td></tr>
+        <tr><td>This guide</td><td><code>C:\Users\keith\.claude\skills\review-loop\guide\</code> (HTML and PDF)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Changing the rules</h3>
+  <p>The rules are Keith's. A change goes into <code>review-loops.json</code> (with a version bump and a <code>changes</code> entry), the <code>REVIEWS</code> block and limits in <code>delivery-pipeline.js</code>, the diagram titles and the tests, all in one commit. Then run the scenarios and expect <code>17/17 passed</code>:</p>
+<pre><code>node C:\Users\keith\.claude\skills\delivery-pipeline\tests\run-scenarios.js C:\Users\keith\.claude\workflows\delivery-pipeline.js</code></pre>
+</section>
+
+<section id="status">
+  <div class="section-head">
+    <span class="eyebrow">Track record</span>
+    <h2>What has run for real</h2>
+  </div>
+  <div class="status-grid">
+    <div class="note">
+      <span class="kind">Run: WikiMint, 2026-11-14</span>
+      <p>Discovery and Design, plus five UI design review rounds: 22 findings, 11 agents, 1,944,101 subagent tokens, and 1 hour 52 minutes in all. It stopped at round 5 on one low finding, which led to the amendments Keith made on 2026-11-15.</p>
+    </div>
+    <div class="note">
+      <span class="kind">Handed off: DetentShell, 2026-11-15</span>
+      <p>A small item with no screens, to run Build, Verify, the code and security loops, and Document for the first time. It hadn't run when the Meta session wrote this guide.</p>
+    </div>
+  </div>
+  <p>The code, security and UI review loops haven't run with real agents yet. The scenario tests cover their control flow with scripted agents. Both skills are new as of 2026-11-15 and haven't been through a skill evaluation.</p>
+</section>
+
+<footer>
+  <p>Review loops spec 1.2.1. Source: <code>C:\Users\keith\.claude\skills\review-loop\guide\review-loops-guide.html</code>.</p>
+  <p>Written for Keith and for the Claude sessions that run review loops.</p>
+</footer>
+
+</div>

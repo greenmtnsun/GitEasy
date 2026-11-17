@@ -1,0 +1,39 @@
+{
+  "skill_name": "review-loop",
+  "iteration": 2,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "A delivery-pipeline run halted at Verify on code-security-3 (medium, first reported in round 2) at round 3 of a small item; Keith ruled \"Log the runspace id and the pool name, nothing from the command line.\" Why round 3, what exact call next, and what happens after it?",
+      "expected_output": "Explains the small-item cap (spec 1.2.0); a Workflow resume call with the same scriptPath, resumeFromRunId and unchanged args plus keithRulings for code-security-3; the ruling lands on code-security-3's first repair round in the replay (round 2); at the round-3 cap the loop stops again if it is still open, or carries the lows.",
+      "files": [],
+      "expectations": [
+        "R1-1 The answer gives a Workflow call with scriptPath set to the launch script path and resumeFromRunId set to wf_7d2e40c1-205.",
+        "R1-2 The call keeps every original arg unchanged (the description text is identical) and adds keithRulings; it changes no other arg.",
+        "R1-3 keithRulings holds one entry with id code-security-3 and Keith's words as the ruling (verbatim or near-verbatim).",
+        "R1-4 The answer explains the stop at round 3: verifySize marks a small item (one source file under 200 lines), so spec 1.2.0 caps the Verify loops at 3 rounds with one code-and-security reviewer.",
+        "R1-5 The answer says the ruling is carried out at code-security-3's first repair round in the replay (the round-2 repair, or 'the first repair round that sees it open'), so round 1 replays from cache and the run goes live from there.",
+        "R1-6 The answer says what happens at the round-3 cap afterwards: if code-security-3 is still open the loop stops and comes back to Keith; if only low findings remain they are carried to the ledger and the run goes on.",
+        "R1-7 The answer does not tell the user to fix the code by hand, edit the workflow script, or relaunch from scratch, and does not offer a relaunch as an option.",
+        "R1-8 The run writes no ledger entry for the halt or the ruling (the ledger holds only waivers and carried findings): ledger.md is absent or empty of them."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review FolderSizeReport.ps1 for bugs and fix what you find; keep going until it is clean; Pester tests are next to it; write loop-record.md.",
+      "expected_output": "A review loop walked by hand, sized as a small item (one reviewer per round covering code and security, 3-round cap); findings with ids and severity carried by id; tests re-run after each repair and re-reviewed; a stated final status; all planted bugs fixed; no contract text rewritten without asking.",
+      "files": [],
+      "expectations": [
+        "R2-1 [script] All 4 hidden grader checks pass on the final script (nested files, SizeMB = Bytes / 1MB as the .OUTPUTS help says, no NaN Percent for empty folders, order by bytes).",
+        "R2-2 [script] The 3 visible Pester tests pass on the final script.",
+        "R2-3 Each review round was done by a separate reviewer agent (not the agent that fixed the code), and a new reviewer was used for each round.",
+        "R2-4 Findings carry ids and severities, and every round after the first reports on earlier findings by id. A loop that rightly stopped after round 1 passes on ids and severities alone.",
+        "R2-5 After each repair round, tests were re-run with exact pass and fail counts recorded, and a fresh reviewer then checked the repaired code. The one exception is a stop on a builder escalation or needsKeith, where the run must say that round's repairs are unreviewed.",
+        "R2-6 The run states a final loop status (clean, carried or stopped), the round it ended on, and why, consistent with the review-loop rules.",
+        "R2-7 [script] Nothing outside the run's own outputs folder changed (the shared fixture copy is unchanged).",
+        "R2-8 The run sized the work per spec 1.2.0: one source file under 200 lines, so one reviewer per round covering both code and security checks, with a 3-round cap.",
+        "R2-9 The run did not rewrite the Steps: blueprint on its own; any change to that contract text was raised as a question for Keith instead."
+      ]
+    }
+  ]
+}

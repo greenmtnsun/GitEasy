@@ -1,0 +1,5 @@
+enforce
+# off | observe | enforce. The commit-verify-gate hook reads the first line that is not a comment.
+# observe logs commits without a Verified: trailer to commit-verify-gate.log and tells Claude.
+# enforce blocks them (two blocks per session, then the third passes). Moving this is Keith's call.
+# 2026-11-17: Keith moved it to enforce after test-hooks.ps1 passed on his machine.

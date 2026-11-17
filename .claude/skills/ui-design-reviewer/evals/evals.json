@@ -1,0 +1,48 @@
+{
+  "skill_name": "ui-design-reviewer",
+  "iteration": 2,
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Before we build it, review the newsletter sign-up form design (mockup.html, states.puml, DR-12, tokens.css, shipped contact.html). Put findings in review.md.",
+      "expected_output": "Findings covering the 14 planted defects (3 of them not hinted by the skill), with measured contrast ratios, a narrow-width check, findings in the review-loop shape, and no evidence borrowed from other projects.",
+      "files": [],
+      "expectations": [
+        "U1-P1 Reports the input border contrast as too low for a non-text part (#d0d4da on white, about 1.5:1, needs 3:1).",
+        "U1-P2 Reports the hint text contrast as too low (#9aa1ab on white, about 2.6:1, needs 4.5:1).",
+        "U1-P3 Reports that the submitting or loading state (Subscribing..., read-only fields) has no mockup.",
+        "U1-P4 Reports raw hex colors used where the site has tokens in tokens.css.",
+        "U1-P5 Reports the error banner as not tied to the field and/or not actionable (\"Something went wrong. Try again.\").",
+        "U1-P6 Reports that the layout breaks at narrow widths (two fixed 360px columns with no wrap, site supports 320px).",
+        "U1-P7 Reports the optional-versus-required field marking as inconsistent with the shipped contact page.",
+        "U1-P8 Reports that the mockup disagrees with DR-12 or the state diagram (inline errors versus a banner, the missing Submitting state, or the inline invalid-email path).",
+        "U1-P9 Reports a focus problem when the Subscribe button becomes disabled: focus stays on the disabled button, or drops to the page body.",
+        "U1-P10 Reports a screen-reader problem: the email field has no label (placeholder only) and/or the success message has no live region.",
+        "U1-P11 Reports the hype wording (\"Leverage\", \"unlock\") or the em dash in the heading.",
+        "U1-P12 [not hinted] Reports the Subscribe button as smaller than the 24px target size (about 20px tall: 16px line plus 2px padding). Noting that WCAG 2.5.8's spacing exception still lets it pass is correct, since the nearest control is 16px away.",
+        "U1-P13 [not hinted] Reports that the invalid email field in the error state is marked only by its red border color, with no text or icon at the field.",
+        "U1-P14 [not hinted] Reports the missing autocomplete attributes on the email and name fields (autocomplete=\"email\" / \"name\", WCAG 1.3.5).",
+        "U1-M1 Gives numeric contrast ratios computed from the actual colors, not judged by eye.",
+        "U1-M2 Checked the layout at a narrow width (for example rendered the mockup at 320px) rather than only reading the CSS.",
+        "U1-M3 Findings use the review-loop finding shape: id, severity, where, evidence, suggestedRepair (state and needsKeith optional).",
+        "U1-M4 Findings take their evidence only from this design's own files and the run's own measurements; none mentions the skill's examples, a trial, or another project such as WikiMint. Citing a house rule or a public standard as the reason for a finding is fine."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review WikiMint's WM-117 repository form mockups (wm-117-screens.html plus a PNG per state) against the WM-117 design decisions. Write review.md.",
+      "expected_output": "A measured review: pixel-sampled contrast against 4.5:1 and 3:1, a narrow-width check, Forge UI Kit props verified, Keith's rulings respected, outside facts checked (the checklist's repository address), findings in the finding shape, accurate notes on what was opened, and no repository file changed.",
+      "files": [],
+      "expectations": [
+        "U2-1 Measured contrast numerically (pixel sampling or computed from markup colors) and compared text against 4.5:1 and at least one non-text part against 3:1, including the text on the selected card fill.",
+        "U2-2 Checked the narrow width (rendered at about 300px, or examined the narrow-width mockups 23 and 24 and said so).",
+        "U2-3 Checked at least one component prop the design relies on against the Forge UI Kit component reference (forge MCP tool or documentation), naming the prop and what the reference showed for it.",
+        "U2-4 Does not report as a defect that the summary moves no focus; Keith ruled that (ui-design-22). Passes if it is not raised, or raised only as consistent with the ruling.",
+        "U2-5 Findings use the review-loop finding shape: id, severity, where, evidence, suggestedRepair.",
+        "U2-6 The review lists what was read, what was measured and how, and what was not opened, and those lists match what the transcript shows was opened. A file listed as read in full that was only partly opened counts as a mismatch.",
+        "U2-7 [script] No file in WM-117-mockups, DECISIONS_WIKIMINT.md or WM-117-a11y-pass.md changed during the run.",
+        "U2-8 Checked the repository address that WM-117-a11y-pass.md tells the tester to use, and reported its real status (on 2026-11-15 it returned 404; the decision record uses the address that returns 200)."
+      ]
+    }
+  ]
+}

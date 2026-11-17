@@ -1,0 +1,46 @@
+@startuml delivery_pipeline_review_phase
+title reviewPhase: every review loop in one phase (review-loops spec 1.2.1)
+
+legend top center
+A stopped phase halts the workflow: no later phase runs, and the question goes to Keith
+with each finding's where, evidence and suggested repair, plus the phase agents' open items.
+A loop that ends carried (only low findings open at the cap) does not stop the phase.
+A small item is one source file under 200 lines; test files are not counted.
+end legend
+
+start
+if (Which phase?) then (Design)
+  :Reviews: ui-design (when hasUi)\nmaxRounds = 5;
+else (Verify)
+  if (Build changed exactly one\nnon-test file?) then (yes)
+    :Fresh agent counts that file's lines;
+  endif
+  if (Small item (under 200 lines)?) then (yes)
+    :Reviews: code-security (one fresh reviewer\napplying both checklists), then ui (when hasUi)\nmaxRounds = 3;
+  else (no)
+    :Reviews: code, security, then ui (when hasUi)\nmaxRounds = 5;
+  endif
+endif
+:Every review that applies gets the\nwhole phase change as pending scope;
+:pass = 0;
+while (A review still has pending scope?) is (yes)
+  :pass = pass + 1;
+  if (pass > maxRounds?) then (yes)
+    :Return stopped:\ncross re-runs did not settle; <<#pink>>
+    stop
+  endif
+  while (More reviews left in this pass, in order?) is (yes)
+    if (This review has pending scope?) then (yes)
+      :Take its pending scope and clear it\n(the scope carries the pass number and maxRounds);
+      :reviewLoop(review, scope)\n(see 02-activity-review-loop);
+      if (reviewLoop stopped?) then (yes)
+        :Return stopped with that loop's reason\nand the findings that stopped it; <<#pink>>
+        stop
+      endif
+      :Add the files that loop changed to\nevery other review's pending scope;
+    endif
+  endwhile (end of pass)
+endwhile (no)
+:Return clean with every review's result\n(carried findings included); <<#palegreen>>
+stop
+@enduml
